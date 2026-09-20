@@ -1,0 +1,3378 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="color-scheme" content="dark light">
+    <meta name="theme-color" content="#1F1F25">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>BeatPulse - PS4 DualShock 対応 MP3 音ゲー & 譜面エディタ</title>
+
+    <link rel="icon" type="image/png" href="data:image/png;base64,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">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&family=Noto+Sans+JP:wght@400;500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <script>
+        // 端末判定: スマホなら data-device="mobile"(専用レイアウト)。?ui=mobile / ?ui=desktop で強制も可能
+        (function () {
+            var device = 'desktop';
+            try {
+                var forced = /[?&]ui=(mobile|desktop)\b/.exec(location.search);
+                var ua = navigator.userAgent || '';
+                var uad = navigator.userAgentData;
+                var phone = (uad && uad.mobile === true) ||
+                    /iPhone|iPod|Android.*Mobile|Windows Phone|IEMobile|Mobile.*Firefox|BlackBerry|Opera Mini/i.test(ua);
+                device = forced ? forced[1] : (phone ? 'mobile' : 'desktop');
+            } catch (e) {}
+            document.documentElement.dataset.device = device;
+        })();
+        // 保存済みテーマを描画前に適用(ちらつき防止)。未設定ならダーク
+        (function () {
+            var mode = 'dark';
+            try { mode = localStorage.getItem('beatpulse_theme') === 'light' ? 'light' : 'dark'; } catch (e) {}
+            document.documentElement.dataset.theme = mode;
+        })();
+    </script>
+
+    <style>
+        /* =========================================================
+           Material Design 3 — design tokens
+           ========================================================= */
+        :root {
+            color-scheme: dark;
+            --font: "Roboto", "Noto Sans JP", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+            /* Color roles (dark) */
+            --primary: #B9C3FF;
+            --on-primary: #1E2C86;
+            --primary-container: #364399;
+            --on-primary-container: #DEE0FF;
+            --secondary: #C2C5DD;
+            --on-secondary: #2C2F42;
+            --secondary-container: #424559;
+            --on-secondary-container: #DEE1F9;
+            --tertiary: #FFB0CA;
+            --on-tertiary: #5E1133;
+            --tertiary-container: #7B2949;
+            --on-tertiary-container: #FFD9E3;
+            --error: #FFB4AB;
+            --on-error: #690005;
+            --error-container: #93000A;
+            --on-error-container: #FFDAD6;
+            --surface: #131318;
+            --surface-lowest: #0E0E13;
+            --surface-low: #1B1B21;
+            --surface-container: #1F1F25;
+            --surface-high: #2A292F;
+            --surface-highest: #35343A;
+            --on-surface: #E4E1E9;
+            --on-surface-variant: #C6C5D0;
+            --outline: #90909A;
+            --outline-variant: #46464F;
+            --inverse-surface: #E4E1E9;
+            --inverse-on-surface: #303036;
+            --inverse-primary: #515EB8;
+
+            /* Lane colors (custom colors, harmonized with the scheme) */
+            --lane-0: #4FE3F7;
+            --lane-1: #FF7BAF;
+            --lane-2: #FFD95A;
+            --lane-3: #62F0A5;
+            --on-lane: #0F1418;
+
+            /* Snackbar status icons (on inverse surface) */
+            --sb-success: #1B7A45;
+            --sb-warning: #A86200;
+            --sb-error: #BA1A1A;
+            --sb-info: #515EB8;
+
+            --elev-1: 0 1px 2px rgb(0 0 0 / .3), 0 1px 3px 1px rgb(0 0 0 / .15);
+            --elev-2: 0 1px 2px rgb(0 0 0 / .3), 0 2px 6px 2px rgb(0 0 0 / .15);
+            --elev-3: 0 1px 3px rgb(0 0 0 / .3), 0 4px 8px 3px rgb(0 0 0 / .15);
+
+            --ease: cubic-bezier(.2, 0, 0, 1);
+        }
+
+        :root[data-theme="light"] {
+            color-scheme: light;
+            --primary: #4A56B8;
+            --on-primary: #FFFFFF;
+            --primary-container: #DEE0FF;
+            --on-primary-container: #00105C;
+            --secondary: #5A5D72;
+            --on-secondary: #FFFFFF;
+            --secondary-container: #DEE1F9;
+            --on-secondary-container: #171A2C;
+            --tertiary: #984061;
+            --on-tertiary: #FFFFFF;
+            --tertiary-container: #FFD9E3;
+            --on-tertiary-container: #3E001D;
+            --error: #BA1A1A;
+            --on-error: #FFFFFF;
+            --error-container: #FFDAD6;
+            --on-error-container: #410002;
+            --surface: #FBF8FF;
+            --surface-lowest: #FFFFFF;
+            --surface-low: #F5F2FA;
+            --surface-container: #EFEDF4;
+            --surface-high: #E9E7EF;
+            --surface-highest: #E4E1E9;
+            --on-surface: #1B1B1F;
+            --on-surface-variant: #46464F;
+            --outline: #767680;
+            --outline-variant: #C6C5D0;
+            --inverse-surface: #303034;
+            --inverse-on-surface: #F2F0F7;
+            --inverse-primary: #BAC3FF;
+
+            --lane-0: #0092AD;
+            --lane-1: #E0367A;
+            --lane-2: #C98A00;
+            --lane-3: #12A566;
+            --on-lane: #FFFFFF;
+
+            --sb-success: #7BDC9F;
+            --sb-warning: #FFB868;
+            --sb-error: #FFB4AB;
+            --sb-info: #BAC3FF;
+
+            --elev-1: 0 1px 2px rgb(0 0 0 / .15), 0 1px 3px 1px rgb(0 0 0 / .08);
+            --elev-2: 0 1px 2px rgb(0 0 0 / .15), 0 2px 6px 2px rgb(0 0 0 / .08);
+            --elev-3: 0 1px 3px rgb(0 0 0 / .15), 0 4px 8px 3px rgb(0 0 0 / .08);
+        }
+
+        /* =========================================================
+           Base
+           ========================================================= */
+        *, *::before, *::after { box-sizing: border-box; }
+        html, body { margin: 0; }
+        body {
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            background: var(--surface);
+            color: var(--on-surface);
+            font: 400 14px/20px var(--font);
+            letter-spacing: .25px;
+            -webkit-font-smoothing: antialiased;
+            -webkit-user-select: none;
+            user-select: none;
+            overflow-x: hidden;
+        }
+        button, input, textarea, label, output { font: inherit; color: inherit; }
+        button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
+        input, textarea { user-select: text; -webkit-user-select: text; }
+        h1, h2, h3, h4, p, ul { margin: 0; padding: 0; }
+        ul { list-style: none; }
+        :focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+        .hidden { display: none !important; }
+        .sr-only {
+            position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+            overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+        }
+        .truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .muted { color: var(--on-surface-variant); }
+        .spacer { flex: 1 1 0; }
+
+        /* Icons: Material Symbols. アイコンフォントの読み込み完了まで非表示(文字化け防止) */
+        .ms {
+            font-family: "Material Symbols Outlined";
+            font-weight: 400; font-style: normal; font-size: 24px; line-height: 1;
+            letter-spacing: normal; text-transform: none; white-space: nowrap;
+            display: inline-block; flex: none; direction: ltr;
+            font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+            -webkit-font-feature-settings: "liga"; font-feature-settings: "liga";
+            visibility: hidden;
+        }
+        .icons-ready .ms { visibility: visible; }
+        .ms.fill { font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24; }
+
+        /* Type scale */
+        .t-headline-s { font: 400 24px/32px var(--font); letter-spacing: 0; }
+        .t-title-m { font: 500 16px/24px var(--font); letter-spacing: .15px; }
+        .t-title-s { font: 500 14px/20px var(--font); letter-spacing: .1px; }
+        .t-body-s { font: 400 12px/16px var(--font); letter-spacing: .4px; }
+        .t-label-l { font: 500 14px/20px var(--font); letter-spacing: .1px; }
+        .t-label-m { font: 500 12px/16px var(--font); letter-spacing: .5px; }
+
+        /* =========================================================
+           State layer + ripple (shared by interactive components)
+           ========================================================= */
+        :is(.btn, .icon-btn, .fab, .fab-ext, .chip, .seg-btn, .tab) {
+            position: relative; overflow: hidden;
+        }
+        :is(.btn, .icon-btn, .fab, .fab-ext, .chip, .seg-btn, .tab)::before {
+            content: ""; position: absolute; inset: 0; background: currentColor;
+            opacity: 0; transition: opacity .15s; pointer-events: none;
+        }
+        :is(.btn, .icon-btn, .fab, .fab-ext, .chip, .seg-btn, .tab):hover::before { opacity: .08; }
+        :is(.btn, .icon-btn, .fab, .fab-ext, .chip, .seg-btn, .tab):focus-visible::before,
+        :is(.btn, .icon-btn, .fab, .fab-ext, .chip, .seg-btn, .tab):active::before { opacity: .10; }
+        .sr-only:focus-visible + .btn { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+        .ripple {
+            position: absolute; border-radius: 50%; background: currentColor; opacity: .14;
+            transform: scale(0); animation: ripple .55s var(--ease) forwards; pointer-events: none;
+        }
+        @keyframes ripple { to { transform: scale(1); opacity: 0; } }
+
+        /* =========================================================
+           Buttons
+           ========================================================= */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+            height: 40px; padding: 0 24px; border: 0; border-radius: 20px;
+            background: var(--btn-bg, transparent); color: var(--btn-fg, var(--primary));
+            font: 500 14px/20px var(--font); letter-spacing: .1px; white-space: nowrap; cursor: pointer;
+            box-shadow: var(--btn-ring, none);
+            transition: box-shadow .2s, background-color .2s;
+        }
+        .btn .ms { font-size: 18px; }
+        .btn.has-icon { padding: 0 24px 0 16px; }
+        .btn-filled { --btn-bg: var(--primary); --btn-fg: var(--on-primary); }
+        .btn-filled:hover { box-shadow: var(--elev-1); }
+        .btn-tonal { --btn-bg: var(--secondary-container); --btn-fg: var(--on-secondary-container); }
+        .btn-outlined { --btn-fg: var(--primary); --btn-ring: inset 0 0 0 1px var(--outline); }
+        .btn-text { padding: 0 12px; }
+        .btn-text.has-icon { padding: 0 16px 0 12px; }
+        .btn-danger { --btn-fg: var(--error); }
+        .btn-danger-filled { --btn-bg: var(--error); --btn-fg: var(--on-error); }
+        .btn-rec { --btn-fg: var(--error); --btn-ring: inset 0 0 0 1px color-mix(in srgb, var(--error) 55%, transparent); }
+        .btn-rec[aria-pressed="true"] { --btn-bg: var(--error); --btn-fg: var(--on-error); --btn-ring: none; }
+        .btn-rec .ms { font-size: 14px; }
+        .btn-rec[aria-pressed="true"] .ms { animation: pulse 1.1s ease-in-out infinite; }
+        @keyframes pulse { 50% { opacity: .35; } }
+
+        .icon-btn {
+            display: inline-grid; place-items: center; flex: none;
+            width: 40px; height: 40px; border: 0; border-radius: 50%;
+            background: transparent; color: var(--on-surface-variant);
+        }
+        .icon-btn.sm { width: 32px; height: 32px; }
+        .icon-btn.sm .ms { font-size: 20px; }
+
+        .fab {
+            display: inline-grid; place-items: center; flex: none;
+            width: 56px; height: 56px; border: 0; border-radius: 16px;
+            background: var(--primary-container); color: var(--on-primary-container);
+            box-shadow: var(--elev-3);
+        }
+        .fab-ext {
+            display: flex; align-items: center; justify-content: center; gap: 12px;
+            width: 100%; height: 56px; padding: 0 20px; border: 0; border-radius: 16px;
+            background: var(--primary-container); color: var(--on-primary-container);
+            font: 500 16px/24px var(--font); letter-spacing: .15px;
+            box-shadow: var(--elev-3);
+        }
+
+        /* Filter chip */
+        .chip {
+            display: inline-flex; align-items: center; gap: 8px;
+            height: 32px; padding: 0 16px; border: 0; border-radius: 8px;
+            background: transparent; color: var(--on-surface-variant);
+            font: 500 14px/20px var(--font); letter-spacing: .1px; white-space: nowrap;
+            box-shadow: inset 0 0 0 1px var(--outline);
+            transition: background-color .15s;
+        }
+        .chip .chip-check { display: none; font-size: 18px; }
+        .chip[aria-pressed="true"] {
+            padding-left: 8px; background: var(--secondary-container);
+            color: var(--on-secondary-container); box-shadow: none;
+        }
+        .chip[aria-pressed="true"] .chip-check { display: inline-block; }
+
+        /* Segmented button */
+        .seg { display: inline-flex; border-radius: 20px; box-shadow: inset 0 0 0 1px var(--outline); overflow: hidden; }
+        .seg-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+            height: 40px; padding: 0 16px; border: 0; background: transparent; color: var(--on-surface);
+            font: 500 14px/20px var(--font); letter-spacing: .1px; white-space: nowrap;
+        }
+        .seg-btn + .seg-btn { border-left: 1px solid var(--outline); }
+        .seg-btn .ms { display: none; font-size: 18px; }
+        .seg-btn[aria-pressed="true"] { background: var(--secondary-container); color: var(--on-secondary-container); }
+        .seg-btn[aria-pressed="true"] .ms { display: inline-block; }
+
+        /* Badge / status chip */
+        .badge {
+            display: inline-flex; align-items: center; gap: 4px; height: 20px; padding: 0 8px;
+            border-radius: 6px; background: var(--tertiary-container); color: var(--on-tertiary-container);
+            font: 500 11px/16px var(--font); letter-spacing: .5px; flex: none;
+        }
+        .badge .ms { font-size: 14px; }
+        .status-chip {
+            display: inline-flex; align-items: center; gap: 8px; height: 32px; padding: 0 12px 0 8px;
+            border-radius: 8px; box-shadow: inset 0 0 0 1px var(--outline-variant);
+            color: var(--on-surface-variant); font: 500 12px/16px var(--font); letter-spacing: .5px;
+            transition: background-color .2s, color .2s;
+        }
+        .status-chip .ms { font-size: 18px; }
+        .status-chip[data-connected="true"] {
+            background: color-mix(in srgb, var(--lane-3) 18%, transparent);
+            color: var(--lane-3); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--lane-3) 45%, transparent);
+        }
+
+        /* Slider */
+        .slider {
+            --pct: 0%;
+            -webkit-appearance: none; appearance: none; width: 100%; height: 32px; margin: 0;
+            background: transparent; cursor: pointer;
+        }
+        .slider:focus-visible { outline: none; }
+        .slider::-webkit-slider-runnable-track {
+            height: 4px; border-radius: 2px;
+            background: linear-gradient(to right, var(--primary) var(--pct), var(--secondary-container) var(--pct));
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none; width: 20px; height: 20px; margin-top: -8px; border-radius: 50%;
+            background: var(--primary); box-shadow: 0 0 0 0 color-mix(in srgb, var(--primary) 16%, transparent);
+            transition: box-shadow .15s;
+        }
+        .slider:hover::-webkit-slider-thumb { box-shadow: 0 0 0 8px color-mix(in srgb, var(--primary) 12%, transparent); }
+        .slider:focus-visible::-webkit-slider-thumb,
+        .slider:active::-webkit-slider-thumb { box-shadow: 0 0 0 12px color-mix(in srgb, var(--primary) 16%, transparent); }
+        .slider::-moz-range-track { height: 4px; border-radius: 2px; background: var(--secondary-container); }
+        .slider::-moz-range-progress { height: 4px; border-radius: 2px; background: var(--primary); }
+        .slider::-moz-range-thumb { width: 20px; height: 20px; border: 0; border-radius: 50%; background: var(--primary); }
+
+        /* Outlined text field with floating label */
+        .tf { position: relative; display: block; }
+        .tf :is(input, textarea) {
+            display: block; width: 100%; padding: 16px; border: 0; border-radius: 4px;
+            background: transparent; color: var(--on-surface); outline: none;
+            font: 400 16px/24px var(--font); letter-spacing: .5px;
+            box-shadow: inset 0 0 0 1px var(--outline);
+        }
+        .tf input { height: 56px; }
+        .tf textarea { min-height: 96px; resize: vertical; }
+        .tf :is(input, textarea):hover { box-shadow: inset 0 0 0 1px var(--on-surface); }
+        .tf :is(input, textarea):focus { box-shadow: inset 0 0 0 2px var(--primary); }
+        .tf label {
+            position: absolute; left: 12px; top: 16px; padding: 0 4px; pointer-events: none;
+            background: var(--surface-high); color: var(--on-surface-variant);
+            font: 400 16px/24px var(--font); transition: top .15s var(--ease), font-size .15s var(--ease), line-height .15s var(--ease);
+        }
+        .tf :is(input, textarea):focus + label,
+        .tf :is(input, textarea):not(:placeholder-shown) + label { top: -8px; font-size: 12px; line-height: 16px; }
+        .tf :is(input, textarea):focus + label { color: var(--primary); }
+
+        /* Compact numeric field (BPM) */
+        .num-field {
+            display: inline-flex; align-items: center; gap: 4px; height: 40px; padding: 0 6px 0 16px;
+            border-radius: 8px; box-shadow: inset 0 0 0 1px var(--outline);
+        }
+        .num-field:focus-within { box-shadow: inset 0 0 0 2px var(--primary); }
+        .num-field > span { font: 500 12px/16px var(--font); letter-spacing: .5px; color: var(--on-surface-variant); }
+        .num-field input {
+            width: 64px; height: 36px; padding: 0 4px; border: 0; outline: none; background: transparent;
+            text-align: center; font: 500 16px/24px var(--font); letter-spacing: .15px; font-variant-numeric: tabular-nums;
+        }
+
+        /* =========================================================
+           App bar + tabs
+           ========================================================= */
+        .appbar {
+            position: sticky; top: 0; z-index: 40;
+            display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; column-gap: 16px;
+            min-height: 64px; padding: 0 12px 0 20px; background: var(--surface-container);
+        }
+        .brand { display: flex; align-items: center; gap: 12px; min-width: 0; height: 64px; }
+        .logo { display: block; flex: none; width: auto; height: 32px; }
+        .brand h1 { font: 500 22px/28px var(--font); letter-spacing: 0; }
+        .brand p { font: 400 12px/16px var(--font); letter-spacing: .4px; color: var(--on-surface-variant); }
+        .tabs { display: flex; height: 64px; }
+        .tab {
+            display: inline-flex; align-items: center; gap: 8px; height: 100%; padding: 0 24px;
+            border: 0; background: transparent; color: var(--on-surface-variant);
+            font: 500 14px/20px var(--font); letter-spacing: .1px; white-space: nowrap;
+        }
+        .tab .ms { font-size: 22px; }
+        .tab::after {
+            content: ""; position: absolute; left: 16px; right: 16px; bottom: 0; height: 3px;
+            border-radius: 3px 3px 0 0; background: var(--primary);
+            transform: scaleY(0); transform-origin: bottom; transition: transform .2s var(--ease);
+        }
+        .tab[aria-selected="true"] { color: var(--primary); }
+        .tab[aria-selected="true"]::after { transform: scaleY(1); }
+        .actions { display: flex; align-items: center; justify-content: flex-end; gap: 4px; min-width: 0; }
+        .actions .status-chip { margin-right: 8px; }
+
+        /* =========================================================
+           Layout
+           ========================================================= */
+        .app {
+            flex: 1; display: flex; flex-direction: column; gap: 16px; min-height: 0;
+            width: 100%; max-width: 1440px; margin: 0 auto; padding: 16px;
+        }
+        .card { background: var(--surface-low); border-radius: 16px; padding: 16px; }
+
+        /* Source (song) bar */
+        .source {
+            display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px;
+            padding: 12px 16px 12px 12px; background: var(--surface-low); border-radius: 16px;
+        }
+        .source-lead { display: flex; align-items: center; gap: 16px; flex: 1 1 280px; min-width: 0; }
+        .avatar {
+            display: grid; place-items: center; flex: none; width: 48px; height: 48px; border-radius: 50%;
+            background: var(--secondary-container); color: var(--on-secondary-container);
+        }
+        .source-text { display: flex; flex-direction: column; min-width: 0; }
+        .source-title { display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .source-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; }
+        .mv-opacity {
+            display: flex; align-items: center; gap: 12px; height: 40px; padding: 0 16px 0 12px;
+            border-radius: 20px; background: var(--surface-high); color: var(--on-surface-variant);
+        }
+        .mv-opacity .ms { font-size: 20px; }
+        .mv-opacity .slider { width: 104px; }
+        .mv-opacity output { min-width: 36px; text-align: right; color: var(--primary); font: 500 14px/20px var(--font); font-variant-numeric: tabular-nums; }
+
+        /* Play layout */
+        .play { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; flex: 1; min-height: 0; }
+        .editor { display: flex; flex-direction: column; gap: 16px; flex: 1; min-height: 0; }
+        @media (min-width: 900px) {
+            .app { padding: 16px 24px 24px; }
+            .play {
+                grid-template-columns: 320px minmax(0, 1fr); grid-template-rows: auto 1fr;
+                grid-template-areas: "score stage" "ctrl stage";
+            }
+            .score-card { grid-area: score; }
+            .play > .stage { grid-area: stage; }
+            .ctrl-card { grid-area: ctrl; align-self: end; }
+        }
+
+        /* Score card */
+        .score-card { display: flex; flex-direction: column; gap: 16px; }
+        .score-main { display: flex; flex-direction: column; gap: 4px; padding: 4px 4px 0; }
+        .score-num {
+            font: 500 48px/56px var(--font); letter-spacing: 0; color: var(--primary);
+            font-variant-numeric: tabular-nums;
+        }
+        .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .tile { display: flex; flex-direction: column; gap: 2px; padding: 12px 16px; border-radius: 12px; background: var(--surface-high); }
+        .tile-num { font: 500 24px/32px var(--font); letter-spacing: 0; font-variant-numeric: tabular-nums; }
+        .judges { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 8px; }
+        .judges li {
+            display: grid; grid-template-columns: 10px 1fr auto; align-items: center; gap: 10px;
+            padding: 8px 12px; border-radius: 12px;
+        }
+        .judges .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--c); }
+        .judges li span { font: 500 12px/16px var(--font); letter-spacing: .5px; color: var(--on-surface-variant); }
+        .judges li b { font: 500 16px/24px var(--font); font-variant-numeric: tabular-nums; }
+        @media (min-width: 900px) {
+            .judges { grid-template-columns: 1fr; gap: 0; }
+            .judges li { padding: 8px 4px; }
+        }
+
+        /* Control card */
+        .ctrl-card { display: flex; flex-direction: column; gap: 12px; }
+        .slider-block { display: flex; flex-direction: column; padding: 4px 4px 0; }
+        .slider-head { display: flex; align-items: center; justify-content: space-between; }
+        .slider-head .t-label-l { display: inline-flex; align-items: center; gap: 8px; color: var(--on-surface-variant); }
+        .slider-head .ms { font-size: 20px; }
+        .slider-head output { color: var(--primary); font: 500 16px/24px var(--font); font-variant-numeric: tabular-nums; }
+
+        /* Stage (canvas surface) */
+        .stage {
+            position: relative; overflow: hidden; isolation: isolate; min-height: 460px;
+            background: var(--surface-lowest); border-radius: 28px;
+            border: 1px solid color-mix(in srgb, var(--outline-variant) 60%, transparent);
+        }
+        .stage canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+        #game-canvas { cursor: default; }
+        #editor-canvas { cursor: crosshair; }
+        .stage-progress { position: absolute; top: 0; left: 0; right: 0; height: 4px; z-index: 3; background: color-mix(in srgb, var(--on-surface) 8%, transparent); }
+        .stage-progress i { display: block; height: 100%; background: var(--primary); border-radius: 0 2px 2px 0; transform-origin: left; transform: scaleX(0); }
+
+        .hud {
+            position: absolute; top: 14px; left: 16px; right: 16px; z-index: 2; display: none;
+            justify-content: space-between; pointer-events: none;
+            font: 500 11px/16px var(--font); letter-spacing: .5px; color: var(--on-surface-variant);
+        }
+        .hud b { display: block; font: 500 20px/24px var(--font); letter-spacing: 0; color: var(--on-surface); font-variant-numeric: tabular-nums; }
+        .hud > span:last-child { text-align: right; }
+        .judge-wrap { position: absolute; left: 0; right: 0; top: 26%; display: flex; justify-content: center; pointer-events: none; z-index: 2; }
+        .judge-text {
+            font: 700 40px/48px var(--font); letter-spacing: .08em; opacity: 0;
+            text-shadow: 0 0 20px color-mix(in srgb, currentColor 45%, transparent);
+        }
+        .judge-text.show { animation: judge .55s var(--ease) forwards; }
+        .judge-text[data-judge="perfect"] { color: var(--lane-0); }
+        .judge-text[data-judge="great"] { color: var(--lane-3); }
+        .judge-text[data-judge="good"] { color: var(--lane-2); }
+        .judge-text[data-judge="miss"] { color: var(--error); }
+        @keyframes judge {
+            0% { opacity: 0; transform: scale(.7); }
+            18% { opacity: 1; transform: scale(1.08); }
+            30% { transform: scale(1); }
+            100% { opacity: 0; transform: scale(1) translateY(-6px); }
+        }
+        @keyframes judge-rm { 0%, 85% { opacity: 1; } 100% { opacity: 0; } }
+
+        /* Empty / ready hints */
+        .hint { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 24px 24px calc(var(--pad-h, 64px) + 36px); pointer-events: none; }
+        .editor-stage .hint { padding-bottom: 24px; }
+        .hint-card {
+            display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
+            width: min(100%, 380px); max-height: 100%; overflow-y: auto; pointer-events: auto; padding: 24px 28px; border-radius: 28px;
+            background: color-mix(in srgb, var(--surface-high) 94%, transparent); box-shadow: var(--elev-2);
+        }
+        .hint-icon { display: grid; place-items: center; width: 64px; height: 64px; border-radius: 50%; background: var(--primary-container); color: var(--on-primary-container); }
+        .hint-icon .ms { font-size: 32px; }
+        .hint-card h2 { font: 400 22px/28px var(--font); letter-spacing: 0; }
+        .hint-card p { color: var(--on-surface-variant); text-wrap: balance; }
+        .hint .btn { margin-top: 4px; }
+        .hint-card > * { flex-shrink: 0; }
+        .hint-card .speed-row { display: flex; flex-direction: column; width: 100%; text-align: left; }
+        .hint-card .slider-head .t-label-l { display: inline-flex; align-items: center; gap: 8px; color: var(--on-surface-variant); }
+        .hint-card .slider-head output { color: var(--primary); font: 500 16px/24px var(--font); font-variant-numeric: tabular-nums; }
+        .hint-card .slider-head { display: flex; align-items: center; justify-content: space-between; }
+
+        /* Result card (演奏後) */
+        .result { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; }
+        .result-score { font: 500 44px/52px var(--font); letter-spacing: 0; color: var(--primary); font-variant-numeric: tabular-nums; }
+        .result-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin-top: 8px; }
+        .rchip {
+            display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 8px;
+            background: var(--surface-highest); font: 500 12px/16px var(--font); letter-spacing: .5px; color: var(--on-surface-variant);
+        }
+        .rchip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--c); }
+        .rchip b { font-weight: 500; color: var(--on-surface); font-variant-numeric: tabular-nums; }
+
+        /* スマホ専用要素(デスクトップでは非表示) */
+        .m-only { display: none !important; }
+        .t-short { display: none; }
+        .stage-exit { display: none; }
+        .navbar { display: none; }
+        .navbar {
+            justify-content: space-around; align-items: flex-start; gap: 8px;
+            padding: 12px 8px calc(16px + env(safe-area-inset-bottom)); background: var(--surface-container);
+        }
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 0;
+            padding: 0; border: 0; background: none; color: var(--on-surface-variant);
+            font: 500 12px/16px var(--font); letter-spacing: .5px;
+        }
+        .nav-ind { display: grid; place-items: center; width: 64px; height: 32px; border-radius: 16px; transition: background-color .2s var(--ease); }
+        .nav-item:active .nav-ind { background: color-mix(in srgb, var(--on-surface) 12%, transparent); }
+        .nav-item[aria-current="page"] { color: var(--on-surface); }
+        .nav-item[aria-current="page"] .nav-ind { background: var(--secondary-container); color: var(--on-secondary-container); }
+        .nav-item[aria-current="page"] .ms { font-variation-settings: "FILL" 1, "wght" 400, "GRAD" 0, "opsz" 24; }
+
+        /* Lane pads */
+        .pads { position: absolute; left: 0; right: 0; bottom: 0; z-index: 3; display: grid; grid-template-columns: repeat(4, 1fr); }
+        .pad {
+            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+            height: var(--pad-h, 64px); margin: 0 8px 10px; padding: 0; border: 0; border-radius: 16px;
+            background: color-mix(in srgb, var(--lane) 14%, var(--surface-high)); color: var(--on-surface);
+            touch-action: none; outline: none; transition: background-color .06s, transform .06s;
+        }
+        .pad::before { content: ""; width: 24px; height: 4px; border-radius: 2px; background: var(--lane); }
+        .pad.pressed { background: var(--lane); color: var(--on-lane); transform: scale(.97); }
+        .pad.pressed::before { background: var(--on-lane); opacity: .55; }
+        .pad-key { font: 500 14px/20px var(--font); letter-spacing: .1px; }
+
+        /* Editor toolbar */
+        .toolbar { display: flex; flex-direction: column; gap: 12px; padding: 12px 16px; background: var(--surface-low); border-radius: 16px; }
+        .tb-row { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+        .tb-group { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        .tb-label { display: inline-flex; align-items: center; gap: 6px; font: 500 12px/16px var(--font); letter-spacing: .5px; color: var(--on-surface-variant); }
+        .tb-label .ms { font-size: 18px; }
+        .timer { min-width: 118px; font: 500 24px/32px var(--font); letter-spacing: 0; color: var(--primary); font-variant-numeric: tabular-nums; }
+        .seek { flex: 1 1 200px; min-width: 120px; width: auto; }
+        .stepper { display: inline-flex; align-items: center; gap: 4px; }
+        .stepper-val { min-width: 48px; text-align: center; font: 500 14px/20px var(--font); font-variant-numeric: tabular-nums; color: var(--primary); }
+
+        /* Snackbar */
+        .snackbars {
+            position: fixed; left: 24px; bottom: calc(24px + env(safe-area-inset-bottom)); z-index: 200;
+            display: flex; flex-direction: column; align-items: stretch; gap: 8px;
+            width: min(320px, calc(100vw - 48px)); pointer-events: none;
+        }
+        .snackbar {
+            display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 10px 16px;
+            border-radius: 4px; background: var(--inverse-surface); color: var(--inverse-on-surface);
+            box-shadow: var(--elev-3); font: 400 14px/20px var(--font); letter-spacing: .25px;
+            opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .25s var(--ease);
+        }
+        .snackbar.show { opacity: 1; transform: none; }
+        .snackbar .ms { font-size: 20px; }
+        .snackbar[data-type="success"] .ms { color: var(--sb-success); }
+        .snackbar[data-type="warning"] .ms { color: var(--sb-warning); }
+        .snackbar[data-type="error"] .ms { color: var(--sb-error); }
+        .snackbar[data-type="info"] .ms { color: var(--sb-info); }
+
+        /* Dialog */
+        .scrim {
+            position: fixed; inset: 0; z-index: 100; display: flex; align-items: center; justify-content: center;
+            padding: 24px; background: rgb(0 0 0 / .4); opacity: 0; transition: opacity .2s;
+        }
+        .scrim.open { opacity: 1; }
+        .dialog {
+            display: flex; flex-direction: column; width: 100%; max-width: 560px; max-height: calc(100dvh - 48px);
+            background: var(--surface-high); border-radius: 28px; box-shadow: var(--elev-3); outline: none;
+            transform: translateY(12px) scale(.96); transition: transform .25s var(--ease);
+        }
+        .scrim.open .dialog { transform: none; }
+        .dialog.sm { max-width: 400px; }
+        .dlg-head { display: flex; align-items: center; gap: 12px; padding: 24px 24px 0; }
+        .dlg-head .ms { color: var(--secondary); }
+        .dlg-head.danger .ms { color: var(--error); }
+        .dlg-title { font: 400 24px/32px var(--font); letter-spacing: 0; }
+        .dlg-body { display: flex; flex-direction: column; gap: 16px; padding: 16px 24px; overflow-y: auto; }
+        .dlg-body > p { color: var(--on-surface-variant); }
+        .dlg-foot { display: flex; align-items: center; justify-content: flex-end; gap: 8px; padding: 16px 24px 24px; }
+        .dlg-section { display: flex; flex-direction: column; gap: 12px; padding: 16px; border-radius: 16px; background: var(--surface-highest); }
+        .dlg-section h4 { display: flex; align-items: center; gap: 8px; font: 500 14px/20px var(--font); letter-spacing: .1px; }
+        .dlg-section h4 .ms { font-size: 20px; color: var(--secondary); }
+        .dlg-section p, .dlg-section li { font: 400 12px/18px var(--font); letter-spacing: .4px; color: var(--on-surface-variant); }
+        .dlg-section ol, .dlg-section ul.bul { display: flex; flex-direction: column; gap: 8px; padding-left: 20px; }
+        .dlg-section ul.bul { list-style: disc; }
+        .dlg-section ol { list-style: decimal; }
+        .dlg-section li b { color: var(--on-surface); font-weight: 500; }
+        .lane-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+        .lane-cell {
+            display: flex; flex-direction: column; gap: 2px; padding: 8px 12px; border-radius: 12px;
+            background: var(--surface-high); border-left: 4px solid var(--lane); font: 400 12px/16px var(--font); color: var(--on-surface-variant);
+        }
+        .lane-cell b { font-weight: 500; color: var(--on-surface); }
+        .kbd {
+            display: inline-flex; align-items: center; justify-content: center; min-width: 24px; height: 24px; padding: 0 6px;
+            border-radius: 6px; background: var(--surface-high); box-shadow: inset 0 -2px 0 var(--outline-variant);
+            font: 500 12px/16px var(--font); color: var(--on-surface); vertical-align: middle;
+        }
+        .divider { height: 1px; background: var(--outline-variant); border: 0; margin: 0; }
+        .meta-box { display: flex; flex-direction: column; gap: 4px; padding: 12px 16px; border-radius: 12px; background: var(--surface-highest); font: 400 12px/18px var(--font); color: var(--on-surface-variant); }
+        .meta-box .meta-title { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+        .meta-box .meta-title b { font: 500 14px/20px var(--font); color: var(--on-surface); overflow-wrap: anywhere; }
+        .diff-tag { font: 500 12px/16px var(--font); letter-spacing: .5px; color: var(--c); flex: none; }
+        [data-k="easy"] { --c: var(--lane-3); }
+        [data-k="normal"] { --c: var(--lane-0); }
+        [data-k="hard"] { --c: var(--error); }
+        [data-k="plus"] { --c: var(--tertiary); }
+        .diff-row { display: flex; flex-wrap: wrap; gap: 8px; }
+        .dist-diff-btn[aria-pressed="true"] {
+            background: color-mix(in srgb, var(--c) 22%, var(--surface-high));
+            color: var(--c); box-shadow: inset 0 0 0 1px var(--c);
+        }
+        .field-title { font: 500 12px/16px var(--font); letter-spacing: .5px; color: var(--on-surface-variant); margin-bottom: 8px; display: block; }
+
+        /* Key config rows */
+        .keyrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 16px; border-radius: 16px; background: var(--surface-highest); }
+        .keyrow-name { display: flex; align-items: center; gap: 12px; font: 500 14px/20px var(--font); }
+        .lane-dot { width: 12px; height: 12px; border-radius: 50%; background: var(--lane); flex: none; }
+        .keyrow-binds { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; }
+        .chip.bind { min-width: 96px; justify-content: center; }
+        .chip.bind .ms { font-size: 18px; }
+        .chip.bind.listening { background: var(--primary); color: var(--on-primary); box-shadow: none; animation: pulse 1.1s ease-in-out infinite; }
+
+        /* Scrollbars */
+        * { scrollbar-width: thin; scrollbar-color: var(--outline-variant) transparent; }
+
+        /* =========================================================
+           Responsive
+           ========================================================= */
+        @media (max-width: 1199px) { .brand p { display: none; } }
+        @media (max-width: 899px) {
+            .hud { display: flex; }
+            .play > .stage { order: 1; height: clamp(400px, 64dvh, 680px); }
+            .play > .ctrl-card { order: 2; }
+            .play > .score-card { order: 3; }
+            .editor-stage { height: clamp(360px, 60dvh, 640px); flex: none; }
+            .source-actions { width: 100%; }
+            .source-actions > .btn { flex: 1 1 0; padding: 0 12px; }
+            .source-actions > .btn.has-icon { padding: 0 12px 0 10px; }
+            .mv-opacity { width: 100%; }
+            .mv-opacity .slider { flex: 1; width: auto; }
+        }
+        @media (max-width: 999px) {
+            .status-chip span:not(.ms) { display: none; }
+            .status-chip { padding: 0 7px; }
+            .actions .btn .lbl { display: none; }
+            .actions .btn.has-icon { padding: 0; width: 40px; border-radius: 50%; }
+        }
+        @media (max-width: 759px) {
+            .appbar {
+                grid-template-columns: 1fr auto; grid-template-areas: "brand actions" "tabs tabs";
+                padding: 0 8px 0 16px;
+            }
+            .brand { grid-area: brand; }
+            .actions { grid-area: actions; }
+            .tabs { grid-area: tabs; height: 48px; margin: 0 -8px 0 -16px; }
+            .tab { flex: 1; justify-content: center; }
+            .app { padding: 12px; gap: 12px; }
+            /* モバイルは下端にレーンパッドが来るので、通知はアプリバーの下に出す */
+            .snackbars { left: 12px; right: 12px; width: auto; top: 120px; bottom: auto; }
+            .snackbar { transform: translateY(-8px); }
+            .score-num { font-size: 40px; line-height: 48px; }
+            .dialog { border-radius: 28px; }
+            .scrim { padding: 16px; }
+        }
+        @media (max-width: 479px) {
+            .pad { margin: 0 4px 8px; }
+            .lane-grid { grid-template-columns: 1fr; }
+            .keyrow { flex-direction: column; align-items: stretch; padding: 12px; }
+            .keyrow-binds { justify-content: flex-start; }
+        }
+
+        /* =========================================================
+           Phone-optimized UI — html[data-device="mobile"]
+           ・画面いっぱいのレイアウト(ページスクロールなし)
+           ・下部ナビゲーションバー
+           ・プレイ中は画面全体をゲーム画面に(没入)
+           ・大きなレーンパッド、タッチでのタイムライン操作
+           ========================================================= */
+        [data-device="mobile"] body {
+            height: 100dvh; overflow: hidden; overscroll-behavior: none;
+            touch-action: manipulation; -webkit-touch-callout: none;
+        }
+        [data-device="mobile"] .m-only { display: flex !important; }
+        [data-device="mobile"] .t-full { display: none; }
+        [data-device="mobile"] .t-short { display: inline; }
+        [data-device="mobile"] canvas, [data-device="mobile"] .pad { touch-action: none; }
+
+        /* App bar */
+        [data-device="mobile"] .appbar {
+            position: static; grid-template-columns: 1fr auto; grid-template-areas: none; column-gap: 8px;
+            min-height: calc(56px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 4px 0 16px;
+        }
+        [data-device="mobile"] .brand, [data-device="mobile"] .actions { grid-area: auto; height: 56px; }
+        [data-device="mobile"] .tabs, [data-device="mobile"] .brand p { display: none; }
+        [data-device="mobile"] .actions .status-chip { display: none; }
+        [data-device="mobile"] .actions .status-chip[data-connected="true"] { display: inline-flex; }
+        [data-device="mobile"] .navbar { display: flex; }
+        [data-device="mobile"] .app { width: auto; max-width: none; margin: 0; padding: 8px 12px; gap: 8px; overflow: hidden; }
+
+        /* Source bar: 1行にコンパクト化 */
+        [data-device="mobile"] .source { padding: 8px 8px 8px 12px; gap: 8px; }
+        [data-device="mobile"] .source-lead { flex: 1 1 0; gap: 12px; }
+        [data-device="mobile"] .avatar { width: 40px; height: 40px; }
+        [data-device="mobile"] .source-actions { width: auto; flex: none; flex-wrap: nowrap; gap: 8px; }
+        [data-device="mobile"] .source-actions > .btn { flex: none; padding: 0 16px 0 12px; }
+        [data-device="mobile"] .btn.icon-only-m { width: 40px; padding: 0; border-radius: 50%; }
+        [data-device="mobile"] .mv-opacity { order: 3; flex: 1 1 100%; width: 100%; }
+        [data-device="mobile"] .mv-opacity .slider { flex: 1; width: auto; }
+
+        /* Play: ステージが主役。スコア/操作はステージ内(HUD・準備カード・リザルト)に集約 */
+        [data-device="mobile"] .play { display: flex; flex-direction: column; gap: 0; flex: 1; min-height: 0; }
+        [data-device="mobile"] .play > .stage { order: 0; flex: 1; height: auto; min-height: 0; --pad-h: clamp(84px, 14dvh, 120px); }
+        [data-device="mobile"] .score-card, [data-device="mobile"] .ctrl-card { display: none; }
+        [data-device="mobile"] .pads { padding-bottom: env(safe-area-inset-bottom); }
+        [data-device="mobile"] .pad { margin: 0 3px 8px; border-radius: 20px; }
+        [data-device="mobile"] .pad::before { width: 36px; height: 5px; border-radius: 3px; }
+        [data-device="mobile"] .pad-key { display: none; }
+        [data-device="mobile"] .hint { padding: 16px 16px calc(var(--pad-h, 64px) + 36px + env(safe-area-inset-bottom)); }
+        [data-device="mobile"] .hud { display: none; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 60px; right: 16px; }
+        [data-device="mobile"] .stage-exit {
+            position: absolute; z-index: 4; top: calc(env(safe-area-inset-top, 0px) + 8px); left: 8px;
+            background: color-mix(in srgb, var(--surface-high) 70%, transparent); color: var(--on-surface);
+        }
+
+        /* 演奏中は没入表示(バー類を隠してステージを全画面に) */
+        [data-device="mobile"][data-playing="true"] :is(.appbar, .navbar, .source) { display: none; }
+        [data-device="mobile"][data-playing="true"] .app { padding: 0; gap: 0; margin-left: 0; }
+        [data-device="mobile"][data-playing="true"] .stage { border-radius: 0; border: 0; }
+        [data-device="mobile"][data-playing="true"] .hud { display: flex; }
+        [data-device="mobile"][data-playing="true"] .stage-exit { display: inline-grid; }
+        [data-device="mobile"][data-playing="true"] .stage-progress { top: env(safe-area-inset-top, 0px); }
+        /* 没入中は通知でノーツを隠さない(終了時のトーストは通常どおり出る) */
+        [data-device="mobile"][data-playing="true"] .snackbars { display: none; }
+
+        /* Editor: ツールバーを詰め、ツールは横スクロールのストリップに */
+        [data-device="mobile"] .editor { gap: 8px; }
+        [data-device="mobile"] .editor-stage { flex: 1; height: auto; min-height: 0; }
+        [data-device="mobile"] .toolbar { padding: 8px 12px; gap: 8px; }
+        [data-device="mobile"] .toolbar .fab { width: 48px; height: 48px; border-radius: 14px; }
+        [data-device="mobile"] .timer { min-width: 96px; font-size: 20px; line-height: 28px; }
+        [data-device="mobile"] .tb-row { flex-wrap: nowrap; gap: 8px 12px; }
+        [data-device="mobile"] .tb-row.strip { overflow-x: auto; scrollbar-width: none; margin: 0 -12px; padding: 0 12px; }
+        [data-device="mobile"] .tb-row.strip::-webkit-scrollbar { display: none; }
+        [data-device="mobile"] .tb-row.strip > * { flex: none; }
+        [data-device="mobile"] .tb-group { flex-wrap: nowrap; }
+        [data-device="mobile"] .seek { flex: 1 1 0; min-width: 80px; }
+        [data-device="mobile"] .chip { height: 36px; }
+        [data-device="mobile"] .toolbar .btn.has-icon { padding: 0 16px 0 12px; }
+        [data-device="mobile"] .toolbar .btn.icon-only-m { padding: 0; }
+        [data-device="mobile"] .editor-stage .hint { padding: 16px; }
+
+        /* Snackbar は上に(下端はレーンパッドと重なるため) */
+        [data-device="mobile"] .snackbars { top: calc(env(safe-area-inset-top, 0px) + 64px); bottom: auto; left: 12px; right: 12px; width: auto; }
+        [data-device="mobile"] .snackbar { transform: translateY(-8px); }
+        [data-device="mobile"] .snackbar.show { transform: none; }
+        [data-device="mobile"] .scrim { padding: 12px; }
+        [data-device="mobile"] .dialog { max-height: calc(100dvh - 24px); }
+
+        /* 横向きスマホ: ナビはレール(左端)、バーは薄く */
+        @media (orientation: landscape) and (max-height: 520px) {
+            [data-device="mobile"] .appbar { min-height: calc(48px + env(safe-area-inset-top)); }
+            [data-device="mobile"] .brand, [data-device="mobile"] .actions { height: 48px; }
+            [data-device="mobile"] .navbar {
+                position: fixed; z-index: 30; left: 0; top: calc(48px + env(safe-area-inset-top)); bottom: 0;
+                width: calc(88px + env(safe-area-inset-left)); flex-direction: column; justify-content: flex-start;
+                align-items: stretch; gap: 12px; padding: 12px 4px;
+            }
+            [data-device="mobile"] .nav-item { flex: none; font-size: 11px; letter-spacing: .2px; white-space: nowrap; }
+            [data-device="mobile"] .app { margin-left: calc(88px + env(safe-area-inset-left)); padding: 8px 12px 8px 4px; }
+            [data-device="mobile"] .play > .stage { --pad-h: 72px; }
+            /* 準備カードはパッドの上に重ねて、低い画面でも収まるようにする */
+            [data-device="mobile"] .hint { z-index: 4; padding: 12px; }
+            [data-device="mobile"] .hint-card { padding: 12px 16px; gap: 8px; background: var(--surface-high); }
+            [data-device="mobile"] .hint-icon, [data-device="mobile"] #ready-text { display: none; }
+            [data-device="mobile"] .result-score { font-size: 36px; line-height: 40px; }
+            [data-device="mobile"] .result-chips { margin-top: 4px; }
+            [data-device="mobile"] .snackbars { top: calc(env(safe-area-inset-top, 0px) + 56px); left: calc(88px + 12px + env(safe-area-inset-left)); }
+            /* エディタは狭いので、ページ全体をスクロールできるようにする */
+            [data-device="mobile"] .app { overflow-y: auto; }
+            [data-device="mobile"] .editor { flex: none; }
+            [data-device="mobile"] .editor-stage { flex: none; height: 300px; }
+            [data-device="mobile"] .editor-stage .hint { z-index: 2; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            .ripple { display: none; }
+            .scrim, .dialog, .snackbar, .tab::after { transition-duration: .01ms; }
+            .judge-text.show { animation: judge-rm .5s linear forwards; }
+            .btn-rec[aria-pressed="true"] .ms, .chip.bind.listening { animation: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header class="appbar">
+        <div class="brand">
+            <img class="logo" src="data:image/png;base64,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" width="62" height="32" alt="BeatPulse ロゴ">
+            <div>
+                <h1>BeatPulse</h1>
+                <p>PS4 DualShock &amp; Long-Note Rhythm Game</p>
+            </div>
+        </div>
+
+        
+        <div class="tabs" role="tablist" aria-label="モード切替">
+            <button id="btn-mode-play" class="tab" role="tab" aria-selected="true" onclick="switchMode('play')">
+                <span class="ms">sports_esports</span>プレイ
+            </button>
+            <button id="btn-mode-editor" class="tab" role="tab" aria-selected="false" onclick="switchMode('editor')">
+                <span class="ms">edit_note</span>譜面エディタ
+            </button>
+        </div>
+
+        <div class="actions">
+            <div id="gamepad-status-badge" class="status-chip" data-connected="false" role="status" title="コントローラーの接続状態">
+                <span class="ms">sports_esports</span>
+                <span id="gamepad-status-text">コントローラー未接続</span>
+            </div>
+            <button class="btn btn-text has-icon" onclick="openModal('key-config-modal')" title="キーコンフィグ" aria-label="キー設定">
+                <span class="ms">keyboard</span><span class="lbl">キー設定</span>
+            </button>
+            <button class="icon-btn" onclick="openModal('help-modal')" title="操作方法・ヘルプ" aria-label="操作方法・ヘルプ">
+                <span class="ms">help</span>
+            </button>
+            <button class="icon-btn" onclick="toggleTheme()" title="ライト / ダークを切り替え" aria-label="テーマ切替">
+                <span class="ms" id="theme-icon">light_mode</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="app">
+
+        
+        <section class="source" aria-label="楽曲">
+            <div class="source-lead">
+                <div class="avatar" aria-hidden="true"><span class="ms">library_music</span></div>
+                <div class="source-text">
+                    <div class="source-title">
+                        <span id="audio-filename" class="t-title-m truncate">楽曲・動画が選択されていません</span>
+                        <span id="mv-badge" class="badge hidden"><span class="ms">movie</span>MV対応</span>
+                    </div>
+                    <span id="audio-duration" class="t-body-s muted">デモ曲ですぐに試せます</span>
+                </div>
+            </div>
+
+            <div class="source-actions">
+                <div id="mv-opacity-container" class="mv-opacity hidden">
+                    <span class="ms" aria-hidden="true">opacity</span>
+                    <span class="t-label-m">MV不透明度</span>
+                    <input type="range" id="mv-opacity-slider" class="slider" min="0.1" max="1.0" step="0.05" value="0.45" oninput="updateMVOpacity(this.value)" aria-label="MV不透明度">
+                    <output id="mv-opacity-text">45%</output>
+                </div>
+                <button class="btn btn-outlined has-icon icon-only-m" onclick="loadDemoAudio()" aria-label="デモ曲をロード" title="デモ曲をロード">
+                    <span class="ms">auto_awesome</span><span class="t-full">デモ曲をロード</span>
+                </button>
+                <input type="file" id="audio-file-input" class="sr-only" accept="audio/*,video/*,.mp4,.webm,.m4v,.mov" onchange="handleAudioSelect(event)">
+                <label for="audio-file-input" class="btn btn-filled has-icon">
+                    <span class="ms">folder_open</span><span class="t-full">MP3 / MP4(MV) 選択</span><span class="t-short">曲を選択</span>
+                </label>
+            </div>
+        </section>
+        <video id="mv-player" playsinline muted preload="auto" style="position:fixed;left:-9999px;top:0;width:2px;height:2px;opacity:0;pointer-events:none;"></video>
+
+        
+        <div id="play-mode-container" class="play">
+
+            <section class="card score-card" aria-label="スコア情報">
+                <div class="score-main">
+                    <span class="t-label-m muted">スコア</span>
+                    <span id="play-score" class="score-num">0000000</span>
+                </div>
+                <div class="tiles">
+                    <div class="tile">
+                        <span class="t-label-m muted">コンボ</span>
+                        <span id="play-combo" class="tile-num">0</span>
+                    </div>
+                    <div class="tile">
+                        <span class="t-label-m muted">最大コンボ</span>
+                        <span id="play-max-combo" class="tile-num">0</span>
+                    </div>
+                </div>
+                <ul class="judges" aria-label="判定の内訳">
+                    <li style="--c: var(--lane-0)"><i class="dot"></i><span>PERFECT</span><b id="count-perfect">0</b></li>
+                    <li style="--c: var(--lane-3)"><i class="dot"></i><span>GREAT</span><b id="count-great">0</b></li>
+                    <li style="--c: var(--lane-2)"><i class="dot"></i><span>GOOD</span><b id="count-good">0</b></li>
+                    <li style="--c: var(--error)"><i class="dot"></i><span>MISS</span><b id="count-miss">0</b></li>
+                </ul>
+            </section>
+
+            
+            <div class="stage" id="play-stage">
+                <div class="stage-progress" aria-hidden="true"><i id="play-progress"></i></div>
+                <button type="button" class="icon-btn stage-exit" onclick="exitPlay()" aria-label="プレイを中断" title="プレイを中断"><span class="ms">close</span></button>
+                <canvas id="game-canvas" role="img" aria-label="ノーツが流れるプレイ画面"></canvas>
+                <div class="hud" aria-hidden="true">
+                    <span>スコア<b id="hud-score">0000000</b></span>
+                    <span>コンボ<b id="hud-combo">0</b></span>
+                </div>
+
+                <div id="judgment-overlay" class="judge-wrap" aria-hidden="true">
+                    <span id="judgment-text" class="judge-text" data-judge="perfect">PERFECT</span>
+                </div>
+
+                <div id="play-hint-empty" class="hint">
+                    <div class="hint-card">
+                        <div class="hint-icon"><span class="ms">library_music</span></div>
+                        <h2>曲を読み込みましょう</h2>
+                        <p>MP3 / MP4 を選ぶか、デモ曲ですぐに遊べます。</p>
+                        <button class="btn btn-tonal has-icon" onclick="loadDemoAudio()"><span class="ms">auto_awesome</span>デモ曲をロード</button>
+                    </div>
+                </div>
+                <div id="play-hint-ready" class="hint hidden">
+                    <div class="hint-card">
+                        <div class="hint-icon"><span id="ready-icon" class="ms fill">play_arrow</span></div>
+                        <h2 id="ready-title">準備OK</h2>
+                        <div id="result-block" class="result hidden">
+                            <span class="t-label-m muted">スコア</span>
+                            <span id="result-score" class="result-score">0000000</span>
+                            <div class="result-chips">
+                                <span class="rchip" style="--c: var(--primary)"><i class="dot"></i>MAX COMBO <b id="result-maxcombo">0</b></span>
+                                <span class="rchip" style="--c: var(--lane-0)"><i class="dot"></i>PERFECT <b id="result-perfect">0</b></span>
+                                <span class="rchip" style="--c: var(--lane-3)"><i class="dot"></i>GREAT <b id="result-great">0</b></span>
+                                <span class="rchip" style="--c: var(--lane-2)"><i class="dot"></i>GOOD <b id="result-good">0</b></span>
+                                <span class="rchip" style="--c: var(--error)"><i class="dot"></i>MISS <b id="result-miss">0</b></span>
+                            </div>
+                        </div>
+                        <p id="ready-text">準備ができたらスタートしましょう。</p>
+                        <div class="speed-row m-only">
+                            <div class="slider-head">
+                                <span class="t-label-l"><span class="ms">keyboard_double_arrow_down</span>スクロール速度</span>
+                                <output class="speed-text">1.0x</output>
+                            </div>
+                            <input type="range" class="slider speed-slider" min="0.5" max="3" step="0.1" value="1" oninput="updateScrollSpeed(this.value)" onchange="this.blur()" aria-label="スクロール速度">
+                        </div>
+                        <button class="btn btn-filled has-icon" onclick="togglePlayGame()"><span class="ms fill">play_arrow</span><span id="ready-start-label">ゲーム開始</span></button>
+                        <button class="btn btn-text has-icon m-only" onclick="openModal('chart-import-export-modal')"><span class="ms">upload_file</span>譜面データの読込 / 出力</button>
+                    </div>
+                </div>
+
+                
+                <div class="pads">
+                    <button type="button" class="pad" tabindex="-1" style="--lane: var(--lane-0)" aria-label="レーン1" onpointerdown="padDown(event, 0)" onpointerup="padUp(event, 0)" onpointercancel="padUp(event, 0)" oncontextmenu="return false"><span id="lane-key-label-0" class="pad-key">D / 🠔</span></button>
+                    <button type="button" class="pad" tabindex="-1" style="--lane: var(--lane-1)" aria-label="レーン2" onpointerdown="padDown(event, 1)" onpointerup="padUp(event, 1)" onpointercancel="padUp(event, 1)" oncontextmenu="return false"><span id="lane-key-label-1" class="pad-key">F / 🠖</span></button>
+                    <button type="button" class="pad" tabindex="-1" style="--lane: var(--lane-2)" aria-label="レーン3" onpointerdown="padDown(event, 2)" onpointerup="padUp(event, 2)" onpointercancel="padUp(event, 2)" oncontextmenu="return false"><span id="lane-key-label-2" class="pad-key">J / ▢</span></button>
+                    <button type="button" class="pad" tabindex="-1" style="--lane: var(--lane-3)" aria-label="レーン4" onpointerdown="padDown(event, 3)" onpointerup="padUp(event, 3)" onpointercancel="padUp(event, 3)" oncontextmenu="return false"><span id="lane-key-label-3" class="pad-key">K / ◯</span></button>
+                </div>
+            </div>
+
+            <section class="card ctrl-card" aria-label="プレイ操作">
+                <div class="slider-block">
+                    <div class="slider-head">
+                        <span class="t-label-l"><span class="ms">keyboard_double_arrow_down</span>スクロール速度</span>
+                        <output id="scroll-speed-text" class="speed-text">1.0x</output>
+                    </div>
+                    <input type="range" id="scroll-speed-slider" class="slider speed-slider" min="0.5" max="3" step="0.1" value="1" oninput="updateScrollSpeed(this.value)" onchange="this.blur()" aria-label="スクロール速度">
+                </div>
+                <button id="btn-play-start" class="fab-ext" onclick="togglePlayGame()">
+                    <span class="ms fill">play_arrow</span><span>ゲーム開始</span>
+                </button>
+                <button class="btn btn-tonal has-icon" style="width:100%" onclick="openModal('chart-import-export-modal')">
+                    <span class="ms">upload_file</span>譜面データの読込 / 出力
+                </button>
+            </section>
+        </div>
+
+        
+        <div id="editor-mode-container" class="editor hidden">
+            <section class="toolbar" aria-label="エディタツール">
+                
+                <div class="tb-row">
+                    <button id="btn-editor-play" class="fab" onclick="toggleEditorPlayback()" aria-label="再生 / 一時停止" title="再生 / 一時停止">
+                        <span class="ms fill">play_arrow</span>
+                    </button>
+                    <span id="editor-timer" class="timer">00:00.000</span>
+                    <input type="range" id="editor-seek-bar" class="slider seek" min="0" max="100" value="0" step="0.1" oninput="handleEditorSeek(this.value)" aria-label="再生位置">
+                    <div class="tb-group" id="speed-group">
+                        <span class="tb-label"><span class="ms">speed</span>再生速度</span>
+                        <div class="seg" role="group" aria-label="再生速度">
+                            <button type="button" onclick="setEditorSpeed(0.25)" data-speed="0.25" class="seg-btn editor-speed-btn" aria-pressed="false"><span class="ms">check</span>0.25x</button>
+                            <button type="button" onclick="setEditorSpeed(0.5)" data-speed="0.5" class="seg-btn editor-speed-btn" aria-pressed="false"><span class="ms">check</span>0.5x</button>
+                            <button type="button" onclick="setEditorSpeed(0.75)" data-speed="0.75" class="seg-btn editor-speed-btn" aria-pressed="false"><span class="ms">check</span>0.75x</button>
+                            <button type="button" onclick="setEditorSpeed(1.0)" data-speed="1" class="seg-btn editor-speed-btn" aria-pressed="true"><span class="ms">check</span>1.0x</button>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="tb-row strip" id="tool-strip">
+                    <div class="seg" role="group" aria-label="ノーツの種類">
+                        <button type="button" id="btn-note-type-tap" onclick="setEditorNoteType('tap')" class="seg-btn" aria-pressed="true"><span class="ms">check</span>タップ</button>
+                        <button type="button" id="btn-note-type-hold" onclick="setEditorNoteType('hold')" class="seg-btn" aria-pressed="false"><span class="ms">check</span>長押し(Hold)</button>
+                    </div>
+
+                    <div class="tb-group" role="group" aria-label="音符間隔">
+                        <span class="tb-label"><span class="ms">grid_on</span>音符間隔</span>
+                        <button type="button" id="snap-btn-4" onclick="setEditorSnap(4)" class="chip snap-btn" aria-pressed="true" title="4分音符 (キー: 1)"><span class="ms chip-check">check</span>1/4</button>
+                        <button type="button" id="snap-btn-8" onclick="setEditorSnap(8)" class="chip snap-btn" aria-pressed="false" title="8分音符 (キー: 2)"><span class="ms chip-check">check</span>1/8</button>
+                        <button type="button" id="snap-btn-16" onclick="setEditorSnap(16)" class="chip snap-btn" aria-pressed="false" title="16分音符 (キー: 3)"><span class="ms chip-check">check</span>1/16</button>
+                        <button type="button" id="snap-btn-32" onclick="setEditorSnap(32)" class="chip snap-btn" aria-pressed="false" title="32分音符 (キー: 4)"><span class="ms chip-check">check</span>1/32</button>
+                        <button type="button" id="snap-btn-12" onclick="setEditorSnap(12)" class="chip snap-btn" aria-pressed="false" title="3連符 (キー: 5)"><span class="ms chip-check">check</span>3連符</button>
+                        <button type="button" id="snap-btn-0" onclick="setEditorSnap(0)" class="chip snap-btn" aria-pressed="false" title="スナップなし (キー: 6)"><span class="ms chip-check">check</span>Free</button>
+                    </div>
+
+                    <label class="num-field">
+                        <span>BPM</span>
+                        <input type="number" id="editor-bpm" value="120" min="40" max="300" onchange="updateEditorBPM()">
+                    </label>
+
+                    <div class="stepper">
+                        <span class="tb-label"><span class="ms">zoom_in</span>ズーム</span>
+                        <button type="button" class="icon-btn sm" onclick="changeEditorZoom(-15)" aria-label="ノーツ間隔を縮小" title="ノーツ間隔を縮小"><span class="ms">remove</span></button>
+                        <span id="zoom-level-text" class="stepper-val">100%</span>
+                        <button type="button" class="icon-btn sm" onclick="changeEditorZoom(15)" aria-label="ノーツ間隔を拡大" title="ノーツ間隔を拡大"><span class="ms">add</span></button>
+                    </div>
+
+                    <button type="button" id="btn-toggle-waveform" onclick="toggleWaveformDisplay()" class="chip" aria-pressed="true" title="背景に音声波形を表示 / 非表示">
+                        <span class="ms chip-check">check</span>波形表示
+                    </button>
+                </div>
+
+                
+                <div class="tb-row">
+                    <button type="button" id="btn-record-mode" onclick="toggleRecordMode()" class="btn btn-rec has-icon" aria-pressed="false" title="再生しながらレーンキーを押してノーツを録音">
+                        <span class="ms fill">fiber_manual_record</span><span class="t-full">リアルタイム入力録音</span><span class="t-short">録音</span>
+                    </button>
+                    <div class="spacer"></div>
+                    <button type="button" onclick="autoQuantizeChart()" class="btn btn-tonal has-icon icon-only-m" aria-label="リズム自動調整" title="全てのノーツを選択中の音符間隔(1/4, 1/8等)に自動調整">
+                        <span class="ms">auto_fix_high</span><span class="t-full">リズム自動調整</span>
+                    </button>
+                    <button type="button" onclick="openModal('clear-confirm-modal')" class="btn btn-text btn-danger has-icon icon-only-m" aria-label="譜面全消し" title="譜面全消し">
+                        <span class="ms">delete</span><span class="t-full">譜面全消し</span>
+                    </button>
+                    <button type="button" onclick="openModal('chart-import-export-modal')" class="btn btn-filled has-icon">
+                        <span class="ms">download</span><span class="t-full">保存 / 出力</span><span class="t-short">保存</span>
+                    </button>
+                </div>
+            </section>
+
+            <div class="stage editor-stage">
+                <canvas id="editor-canvas" role="img" aria-label="譜面エディタのタイムライン"></canvas>
+                <div id="editor-hint" class="hint">
+                    <div class="hint-card">
+                        <div class="hint-icon"><span class="ms">edit_note</span></div>
+                        <h2>曲を読み込むと編集できます</h2>
+                        <p>MP3 / MP4 を選ぶか、デモ曲で使い方を試せます。</p>
+                        <button class="btn btn-tonal has-icon" onclick="loadDemoAudio()"><span class="ms">auto_awesome</span>デモ曲をロード</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    
+    <nav class="navbar" aria-label="モード切替">
+        <button id="nav-play" class="nav-item" aria-current="page" onclick="switchMode('play')">
+            <span class="nav-ind"><span class="ms">sports_esports</span></span>プレイ
+        </button>
+        <button id="nav-editor" class="nav-item" aria-current="false" onclick="switchMode('editor')">
+            <span class="nav-ind"><span class="ms">edit_note</span></span>譜面エディタ
+        </button>
+    </nav>
+
+    
+    <div id="help-modal" class="scrim hidden" onclick="if (event.target === this) closeModal(this.id)">
+        <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="help-title" tabindex="-1">
+            <div class="dlg-head">
+                <span class="ms">info</span>
+                <h2 id="help-title" class="dlg-title">BeatPulse 操作マニュアル</h2>
+            </div>
+            <div class="dlg-body">
+                <section class="dlg-section">
+                    <h4><span class="ms">sports_esports</span>PS4 DualShock コントローラー初期設定</h4>
+                    <p>USBまたはBluetoothでPS4コントローラーをPCに接続してボタンを押すと自動認識されます。ヘッダーの「キー設定」から自由に変更可能です。</p>
+                    <div class="lane-grid">
+                        <div class="lane-cell" style="--lane: var(--lane-0)"><b>LANE 1 (左)</b>方向キー 🠔 (D-Pad Left)</div>
+                        <div class="lane-cell" style="--lane: var(--lane-1)"><b>LANE 2 (中左)</b>方向キー 🠖 (D-Pad Right)</div>
+                        <div class="lane-cell" style="--lane: var(--lane-2)"><b>LANE 3 (中右)</b>▢ (Square) ボタン</div>
+                        <div class="lane-cell" style="--lane: var(--lane-3)"><b>LANE 4 (右)</b>◯ (Circle) ボタン</div>
+                    </div>
+                </section>
+
+                <section class="dlg-section">
+                    <h4><span class="ms">keyboard</span>キーボード操作</h4>
+                    <ul class="bul">
+                        <li><b>レーンキー:</b> <span class="kbd">D</span> <span class="kbd">F</span> <span class="kbd">J</span> <span class="kbd">K</span> (または矢印キー Left, Up, Down, Right)</li>
+                        <li><b>長押し音符 (Hold Note):</b> 音符の長さに合わせてキーを押し続けてください。終点に達すると自動で判定され、押し続けていてもミスにはなりません。</li>
+                        <li><b>エディタの音符間隔:</b> <span class="kbd">1</span>〜<span class="kbd">6</span> キーで 1/4・1/8・1/16・1/32・3連符・Free を切り替えられます。</li>
+                    </ul>
+                </section>
+
+                <section class="dlg-section">
+                    <h4><span class="ms">edit_note</span>譜面エディタの使い方</h4>
+                    <ol>
+                        <li>お好みのMP3ファイルを読み込みます。</li>
+                        <li>「リアルタイム入力録音」を有効にして再生しながらキーを押すと、自動的にノーツが打ち込まれます（長押しも判定）。</li>
+                        <li>エディタ画面を直接クリックしてノーツの配置ができます。すでにあるノーツをクリックすると削除されます。</li>
+                        <li>完成した譜面はJSON形式でダウンロード/読み込みができます。</li>
+                    </ol>
+                </section>
+            </div>
+            <div class="dlg-foot">
+                <button class="btn btn-text" onclick="closeModal('help-modal')" data-autofocus>閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="chart-import-export-modal" class="scrim hidden" onclick="if (event.target === this) closeModal(this.id)">
+        <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="chart-io-title" tabindex="-1">
+            <div class="dlg-head">
+                <span class="ms">data_object</span>
+                <h2 id="chart-io-title" class="dlg-title">譜面データ (JSON) 入出力</h2>
+            </div>
+            <div class="dlg-body">
+                <p>譜面データのJSONファイルを選択すると、そのまま読み込まれます。</p>
+                <input type="file" id="chart-json-file-input" class="sr-only" accept=".json,application/json" onchange="handleChartJSONSelect(event)">
+                <label for="chart-json-file-input" class="btn btn-filled has-icon" style="width:100%">
+                    <span class="ms">upload_file</span>JSONファイルを選択して読み込み
+                </label>
+                <div id="chart-meta-info" class="meta-box hidden"></div>
+
+                <div class="tb-group">
+                    <button class="btn btn-tonal has-icon" onclick="downloadChartJSON()"><span class="ms">download</span>JSON保存</button>
+                    <button class="btn btn-outlined has-icon" onclick="copyChartJSON()"><span class="ms">content_copy</span>クリップボードにコピー</button>
+                </div>
+
+                <hr class="divider">
+
+                <section style="display:flex;flex-direction:column;gap:16px">
+                    <h4 class="t-title-s" style="display:flex;align-items:center;gap:8px"><span class="ms" style="font-size:20px;color:var(--secondary)">inventory_2</span>配布用ダウンロード (曲 + JSON)</h4>
+                    <p class="t-body-s muted">以下をすべて入力すると、読み込み中の曲と譜面JSONをまとめてダウンロードできます。</p>
+                    <div class="tf">
+                        <input type="text" id="dist-title" maxlength="100" placeholder=" ">
+                        <label for="dist-title">曲名</label>
+                    </div>
+                    <div class="tf">
+                        <input type="text" id="dist-author" maxlength="100" placeholder=" ">
+                        <label for="dist-author">作者</label>
+                    </div>
+                    <div class="tf">
+                        <textarea id="dist-detail" rows="3" maxlength="1000" placeholder=" "></textarea>
+                        <label for="dist-detail">詳細</label>
+                    </div>
+                    <div>
+                        <span class="field-title">難易度</span>
+                        <div class="diff-row" role="group" aria-label="難易度">
+                            <button type="button" id="dist-diff-easy" data-k="easy" onclick="setDistDifficulty('easy')" class="chip dist-diff-btn" aria-pressed="false"><span class="ms chip-check">check</span>EASY</button>
+                            <button type="button" id="dist-diff-normal" data-k="normal" onclick="setDistDifficulty('normal')" class="chip dist-diff-btn" aria-pressed="false"><span class="ms chip-check">check</span>NORMAL</button>
+                            <button type="button" id="dist-diff-hard" data-k="hard" onclick="setDistDifficulty('hard')" class="chip dist-diff-btn" aria-pressed="false"><span class="ms chip-check">check</span>HARD</button>
+                            <button type="button" id="dist-diff-plus" data-k="plus" onclick="setDistDifficulty('plus')" class="chip dist-diff-btn" aria-pressed="false"><span class="ms chip-check">check</span>PLUS!</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-filled has-icon" style="width:100%" onclick="downloadDistribution()"><span class="ms">archive</span>曲とJSONをダウンロード</button>
+                </section>
+            </div>
+            <div class="dlg-foot">
+                <button class="btn btn-text" onclick="closeModal('chart-import-export-modal')">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="clear-confirm-modal" class="scrim hidden" onclick="if (event.target === this) closeModal(this.id)">
+        <div class="dialog sm" role="alertdialog" aria-modal="true" aria-labelledby="clear-title" aria-describedby="clear-desc" tabindex="-1">
+            <div class="dlg-head danger">
+                <span class="ms">warning</span>
+                <h2 id="clear-title" class="dlg-title">譜面を全消去しますか?</h2>
+            </div>
+            <div class="dlg-body">
+                <p id="clear-desc">現在編集中のすべてのノーツを消去します。この操作は取り消せません。</p>
+            </div>
+            <div class="dlg-foot">
+                <button class="btn btn-text" onclick="closeModal('clear-confirm-modal')" data-autofocus>キャンセル</button>
+                <button class="btn btn-danger-filled" onclick="confirmClearChart()">消去する</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="key-config-modal" class="scrim hidden" onclick="if (event.target === this) closeModal(this.id)">
+        <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="key-title" tabindex="-1" style="max-width:480px">
+            <div class="dlg-head">
+                <span class="ms">keyboard</span>
+                <h2 id="key-title" class="dlg-title">キー＆コントローラー設定</h2>
+            </div>
+            <div class="dlg-body">
+                <p>各レーンのキーボードキーおよびPS4/Gamepadボタンの割り当てを変更できます。ボタンをクリック後、割り当てたいキーまたはコントローラーボタンを押してください。Esc で取り消せます。</p>
+                <div id="key-config-rows-container" style="display:flex;flex-direction:column;gap:8px"></div>
+            </div>
+            <div class="dlg-foot" style="justify-content:space-between">
+                <button class="btn btn-text btn-danger has-icon" onclick="resetKeyBindings()"><span class="ms">restart_alt</span>初期設定に戻す</button>
+                <button class="btn btn-filled" onclick="closeModal('key-config-modal')" data-autofocus>完了</button>
+            </div>
+        </div>
+    </div>
+
+    
+    <div id="toast-container" class="snackbars" role="status" aria-live="polite"></div>
+
+    <script>
+        // Global Game & Audio States
+        let audioCtx = null;
+        let audioBuffer = null;
+        let loadedAudioFile = null; // 選択された元の曲ファイル (配布用ダウンロードで使用)
+        let audioSource = null;
+        let audioStartTime = 0;
+        let audioPauseOffset = 0;
+        let isAudioPlaying = false;
+        let audioPlaybackRate = 1.0;
+        let editorSpeed = 1.0; // 譜面制作時の再生速度 (プレイモードは常に1.0x)
+
+        // Motion Video (MV) Background States
+        let mvVideo = null;
+        let hasMV = false;
+        let mvOpacity = 0.45;
+        let mvLastSeekAt = 0;      // 直近の再同期シーク時刻(ms)
+        let mvSeekStartedAt = 0;   // シーク開始時刻(ms)
+        let mvSeekLatency = 0.15;  // シークにかかる時間(秒)。実測して次のシーク先に上乗せする
+
+        // 音声の再生位置にMV動画を合わせる
+        function syncMvVideo() {
+            if (!hasMV || !mvVideo || !isAudioPlaying) return;
+            if (mvVideo.ended) return;
+            if (mvVideo.paused) {
+                mvVideo.play().catch(e => {});
+                return;
+            }
+            if (mvVideo.seeking) return;
+
+            const audioT = getCurrentAudioTime();
+            if (mvVideo.duration && audioT >= mvVideo.duration) return;
+
+            const now = performance.now();
+            if (Math.abs(mvVideo.currentTime - audioT) > 0.3 && now - mvLastSeekAt > 1000) {
+                mvLastSeekAt = now;
+                mvSeekStartedAt = now;
+                // シーク完了までに音声が進む分を見込んで、少し先へ飛ぶ
+                const target = audioT + mvSeekLatency * audioPlaybackRate;
+                mvVideo.currentTime = mvVideo.duration ? Math.min(target, mvVideo.duration - 0.05) : target;
+            }
+        }
+
+        // 譜面のスクロール速度 (ノーツが落ちてくる速さ)。1.0x = 600px/秒
+        const BASE_NOTE_SPEED = 600;
+        let scrollSpeed = 1.0;
+
+        function updateScrollSpeed(val, save = true) {
+            scrollSpeed = Math.max(0.5, Math.min(3, parseFloat(val) || 1));
+            document.querySelectorAll('.speed-text').forEach(el => { el.textContent = `${scrollSpeed.toFixed(1)}x`; });
+            document.querySelectorAll('.speed-slider').forEach(sl => { sl.value = scrollSpeed; syncRange(sl); });
+            if (save) {
+                try { localStorage.setItem('beatpulse_scroll_speed', String(scrollSpeed)); } catch (e) {}
+            }
+        }
+
+        function loadScrollSpeed() {
+            try {
+                const saved = localStorage.getItem('beatpulse_scroll_speed');
+                if (saved !== null) updateScrollSpeed(saved, false);
+            } catch (e) {}
+        }
+
+        function updateMVOpacity(val) {
+            mvOpacity = parseFloat(val);
+            const textElem = document.getElementById('mv-opacity-text');
+            if (textElem) {
+                textElem.textContent = `${Math.round(mvOpacity * 100)}%`;
+            }
+        }
+
+        // Mode: 'play' | 'editor'
+        let currentMode = 'play';
+
+        function switchMode(mode) {
+            currentMode = mode;
+            const playContainer = document.getElementById('play-mode-container');
+            const editorContainer = document.getElementById('editor-mode-container');
+            const btnPlay = document.getElementById('btn-mode-play');
+            const btnEditor = document.getElementById('btn-mode-editor');
+
+            const isPlay = mode === 'play';
+            if (playContainer) playContainer.classList.toggle('hidden', !isPlay);
+            if (editorContainer) editorContainer.classList.toggle('hidden', isPlay);
+            if (btnPlay) btnPlay.setAttribute('aria-selected', String(isPlay));
+            if (btnEditor) btnEditor.setAttribute('aria-selected', String(!isPlay));
+            const navPlay = document.getElementById('nav-play');
+            const navEditor = document.getElementById('nav-editor');
+            if (navPlay) navPlay.setAttribute('aria-current', isPlay ? 'page' : 'false');
+            if (navEditor) navEditor.setAttribute('aria-current', isPlay ? 'false' : 'page');
+            setEditorPlayIcon(false);
+
+            stopAudioBuffer();
+            audioPauseOffset = 0;
+
+            // プレイモードは常に等倍。エディタに戻ったら制作時の速度に戻す
+            audioPlaybackRate = (mode === 'play') ? 1.0 : editorSpeed;
+            if (hasMV && mvVideo) {
+                mvVideo.playbackRate = audioPlaybackRate;
+            }
+            updateEditorSpeedButtons();
+            resizeCanvases();
+        }
+
+        function togglePlayGame() {
+            if (!audioBuffer) {
+                showToast('楽曲ファイルがロードされていません。「デモ曲をロード」またはMP3を選択してください。', 'warning');
+                return;
+            }
+
+            currentChart.notes.forEach(n => {
+                n.judged = false;
+                n.holdJudged = false;
+            });
+
+            playState = {
+                isPlaying: true,
+                score: 0,
+                combo: 0,
+                maxCombo: 0,
+                perfectCount: 0,
+                greatCount: 0,
+                goodCount: 0,
+                missCount: 0
+            };
+
+            updateScoreUI();
+            audioPauseOffset = 0;
+            audioPlaybackRate = 1.0;
+            playAudioBuffer(0);
+
+            const startBtn = document.getElementById('btn-play-start');
+            if (startBtn) {
+                startBtn.innerHTML = '<span class="ms fill">restart_alt</span><span>リセット / 再スタート</span>';
+            }
+
+            showToast('ゲームスタート！', 'success');
+            lastResult = null;
+            updateStageHints();
+        }
+
+        function endPlayGame() {
+            playState.isPlaying = false;
+            stopAudioBuffer();
+            const startBtn = document.getElementById('btn-play-start');
+            if (startBtn) {
+                startBtn.innerHTML = '<span class="ms fill">play_arrow</span><span>ゲーム開始</span>';
+            }
+            showToast(`演奏終了！ SCORE: ${playState.score} | MAX COMBO: ${playState.maxCombo}`, 'info');
+            lastResult = { score: playState.score, maxCombo: playState.maxCombo, perfect: playState.perfectCount, great: playState.greatCount, good: playState.goodCount, miss: playState.missCount };
+            updateStageHints();
+        }
+
+        function updateScoreUI() {
+            const scoreElem = document.getElementById('play-score');
+            const comboElem = document.getElementById('play-combo');
+            const maxComboElem = document.getElementById('play-max-combo');
+            const perfElem = document.getElementById('count-perfect');
+            const greatElem = document.getElementById('count-great');
+            const goodElem = document.getElementById('count-good');
+            const missElem = document.getElementById('count-miss');
+
+            if (scoreElem) scoreElem.textContent = String(playState.score).padStart(7, '0');
+            if (comboElem) comboElem.textContent = playState.combo;
+            if (maxComboElem) maxComboElem.textContent = playState.maxCombo;
+            if (perfElem) perfElem.textContent = playState.perfectCount;
+            if (greatElem) greatElem.textContent = playState.greatCount;
+            if (goodElem) goodElem.textContent = playState.goodCount;
+            if (missElem) missElem.textContent = playState.missCount;
+            const hudScore = document.getElementById('hud-score');
+            const hudCombo = document.getElementById('hud-combo');
+            if (hudScore) hudScore.textContent = String(playState.score).padStart(7, '0');
+            if (hudCombo) hudCombo.textContent = playState.combo;
+        }
+
+        function showJudgmentEffect(text, judgeKey) {
+            const textElem = document.getElementById('judgment-text');
+            if (!textElem) return;
+
+            textElem.textContent = text;
+            textElem.dataset.judge = judgeKey;
+            // アニメーションを毎回最初から再生する
+            textElem.classList.remove('show');
+            void textElem.offsetWidth;
+            textElem.classList.add('show');
+        }
+
+        function registerJudgment(type, diff, note, isHoldEnd = false) {
+            if (isHoldEnd) {
+                note.holdJudged = true;
+            } else {
+                note.judged = true;
+            }
+
+            if (type === 'PERFECT') {
+                playState.score += 1000;
+                playState.combo++;
+                playState.perfectCount++;
+                showJudgmentEffect('PERFECT', 'perfect');
+            } else if (type === 'GREAT') {
+                playState.score += 700;
+                playState.combo++;
+                playState.greatCount++;
+                showJudgmentEffect('GREAT', 'great');
+            } else if (type === 'GOOD') {
+                playState.score += 400;
+                playState.combo++;
+                playState.goodCount++;
+                showJudgmentEffect('GOOD', 'good');
+            } else if (type === 'MISS') {
+                playState.combo = 0;
+                playState.missCount++;
+                showJudgmentEffect('MISS', 'miss');
+            }
+
+            if (playState.combo > playState.maxCombo) {
+                playState.maxCombo = playState.combo;
+            }
+
+            updateScoreUI();
+        }
+
+        function triggerLanePress(lane) {
+            if (lane < 0 || lane >= LANE_COUNT) return;
+            lanePressedState[lane] = true;
+            laneHeldStartTimes[lane] = getCurrentAudioTime();
+            playHitSound(600 + lane * 150);
+
+            if (currentMode === 'editor') {
+                if (editorState.isRecording && isAudioPlaying) {
+                    recordNoteInEditor(lane, 'start');
+                }
+                return;
+            }
+
+            if (!playState.isPlaying) return;
+
+            const currentTime = getCurrentAudioTime();
+            const w = gameSize.w || 800;
+            const laneWidth = w / LANE_COUNT;
+            const hitX = (lane * laneWidth) + (laneWidth / 2);
+            const targetY = (gameSize.h || 600) - judgeOffset;
+
+            const candidate = currentChart.notes
+                .filter(n => n.lane === lane && !n.judged)
+                .sort((a, b) => Math.abs(a.time - currentTime) - Math.abs(b.time - currentTime))[0];
+
+            if (candidate) {
+                const diff = Math.abs(candidate.time - currentTime);
+                if (diff <= 0.05) {
+                    registerJudgment('PERFECT', diff, candidate);
+                    spawnHitEffect(lane, hitX, targetY);
+                } else if (diff <= 0.10) {
+                    registerJudgment('GREAT', diff, candidate);
+                    spawnHitEffect(lane, hitX, targetY);
+                } else if (diff <= 0.16) {
+                    registerJudgment('GOOD', diff, candidate);
+                    spawnHitEffect(lane, hitX, targetY);
+                }
+            }
+        }
+
+        function triggerLaneRelease(lane) {
+            if (lane < 0 || lane >= LANE_COUNT) return;
+            lanePressedState[lane] = false;
+
+            if (currentMode === 'editor') {
+                if (editorState.isRecording && isAudioPlaying) {
+                    recordNoteInEditor(lane, 'end');
+                }
+                laneHeldStartTimes[lane] = null;
+                return;
+            }
+
+            if (!playState.isPlaying) {
+                laneHeldStartTimes[lane] = null;
+                return;
+            }
+
+            const currentTime = getCurrentAudioTime();
+            const activeHoldNote = currentChart.notes.find(n => n.lane === lane && n.type === 'hold' && n.judged && !n.holdJudged);
+
+            if (activeHoldNote) {
+                const holdEndTime = activeHoldNote.time + activeHoldNote.duration;
+
+                if (currentTime >= holdEndTime - 0.12) {
+                    registerJudgment('PERFECT', Math.abs(holdEndTime - currentTime), activeHoldNote, true);
+                } else {
+                    registerJudgment('MISS', Math.abs(holdEndTime - currentTime), activeHoldNote, true);
+                }
+            }
+
+            laneHeldStartTimes[lane] = null;
+        }
+
+        function handleTouchLaneStart(lane) {
+            triggerLanePress(lane);
+        }
+
+        function handleTouchLaneEnd(lane) {
+            triggerLaneRelease(lane);
+        }
+
+        function toggleEditorPlayback() {
+            if (!audioBuffer) {
+                showToast('楽曲ファイルがロードされていません。「デモ曲をロード」またはMP3を選択してください。', 'warning');
+                return;
+            }
+
+            const playBtn = document.getElementById('btn-editor-play');
+
+            if (isAudioPlaying) {
+                audioPauseOffset = getCurrentAudioTime();
+                stopAudioBuffer();
+                setEditorPlayIcon(false);
+            } else {
+                if (audioPauseOffset >= audioBuffer.duration) audioPauseOffset = 0;
+                playAudioBuffer(audioPauseOffset);
+                setEditorPlayIcon(true);
+            }
+        }
+
+        let previousGamepadButtons = {};
+
+        function pollGamepadInputs() {
+            let gamepads = [];
+            try {
+                gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            } catch (e) {
+                // iframe内などでGamepad APIが禁止されている場合は未接続として扱う
+                gamepads = [];
+            }
+            let activeGamepad = null;
+
+            for (let i = 0; i < gamepads.length; i++) {
+                if (gamepads[i] && gamepads[i].connected) {
+                    activeGamepad = gamepads[i];
+                    connectedGamepadIndex = i;
+                    break;
+                }
+            }
+
+            const statusBadge = document.getElementById('gamepad-status-badge');
+            const statusText = document.getElementById('gamepad-status-text');
+
+            if (activeGamepad) {
+                if (statusBadge) statusBadge.dataset.connected = 'true';
+                if (statusText) statusText.textContent = activeGamepad.id.split('(')[0].trim() || 'Gamepad 接続中';
+
+                if (rebindState && rebindState.target === 'gamepad') {
+                    for (let b = 0; b < activeGamepad.buttons.length; b++) {
+                        if (activeGamepad.buttons[b].pressed) {
+                            const lane = rebindState.lane;
+                            GAMEPAD_LANE_MAPPINGS[lane] = [b];
+                            const btnName = GAMEPAD_BUTTON_NAMES[b] || `Button ${b}`;
+                            showToast(`LANE ${lane + 1} にコントローラーボタン [${btnName}] を割り当てました！`, 'success');
+                            rebindState = null;
+                            renderKeyConfigUI();
+                            break;
+                        }
+                    }
+                    return;
+                }
+
+                for (let l = 0; l < LANE_COUNT; l++) {
+                    const mappedBtns = GAMEPAD_LANE_MAPPINGS[l] || [];
+                    let isPressed = false;
+
+                    for (const btnIndex of mappedBtns) {
+                        if (activeGamepad.buttons[btnIndex] && activeGamepad.buttons[btnIndex].pressed) {
+                            isPressed = true;
+                            break;
+                        }
+                    }
+
+                    const prevPressed = previousGamepadButtons[l] || false;
+
+                    if (isPressed && !prevPressed) {
+                        triggerLanePress(l);
+                    } else if (!isPressed && prevPressed) {
+                        triggerLaneRelease(l);
+                    }
+
+                    previousGamepadButtons[l] = isPressed;
+                }
+            } else {
+                if (statusBadge) statusBadge.dataset.connected = 'false';
+                if (statusText) statusText.textContent = "コントローラー未接続";
+            }
+        }
+
+        // Lanes setup
+        const LANE_COUNT = 4;
+        let LANE_COLORS = ['#4FE3F7', '#FF7BAF', '#FFD95A', '#62F0A5']; // readTheme() が CSS の --lane-0..3 で上書きする
+        let LANE_KEYS = ['KeyD', 'KeyF', 'KeyJ', 'KeyK'];
+        let LANE_KEYS_ALT = ['ArrowLeft', 'ArrowUp', 'ArrowDown', 'ArrowRight'];
+
+        // Visual Effects Engine Array
+        let activeEffects = [];
+
+        // DualShock Gamepad polling setup
+        let connectedGamepadIndex = null;
+        let GAMEPAD_LANE_MAPPINGS = {
+            0: [14], // Lane 1: D-pad Left
+            1: [15], // Lane 2: D-pad Right
+            2: [2],  // Lane 3: Square (▢)
+            3: [1],  // Lane 4: Circle (◯)
+        };
+
+        const GAMEPAD_BUTTON_NAMES = {
+            0: '✖ (Cross)',
+            1: '◯ (Circle)',
+            2: '▢ (Square)',
+            3: '▲ (Triangle)',
+            4: 'L1',
+            5: 'R1',
+            6: 'L2',
+            7: 'R2',
+            8: 'SHARE',
+            9: 'OPTIONS',
+            10: 'L3',
+            11: 'R3',
+            12: '🠕 (D-Up)',
+            13: '🠗 (D-Down)',
+            14: '🠔 (D-Left)',
+            15: '🠖 (D-Right)'
+        };
+
+        let rebindState = null;
+
+        // Core Chart Data
+        let currentChart = {
+            bpm: 120,
+            notes: []
+        };
+
+        // Gameplay Scores & Judgment
+        let playState = {
+            isPlaying: false,
+            score: 0,
+            combo: 0,
+            maxCombo: 0,
+            perfectCount: 0,
+            greatCount: 0,
+            goodCount: 0,
+            missCount: 0
+        };
+
+        let lanePressedState = [false, false, false, false];
+        let laneHeldStartTimes = [null, null, null, null];
+
+        // Editor States
+        let editorState = {
+            zoomPxPerSec: 100,
+            snapBeat: 4,
+            isRecording: false,
+            noteType: 'tap',
+            hoverLane: -1,
+            hoverTime: null,
+            showWaveform: true
+        };
+
+        function toggleWaveformDisplay() {
+            editorState.showWaveform = !editorState.showWaveform;
+            const btn = document.getElementById('btn-toggle-waveform');
+            if (btn) btn.setAttribute('aria-pressed', String(editorState.showWaveform));
+            showToast(`波形表示を ${editorState.showWaveform ? 'ON' : 'OFF'} に切り替えました`, 'info');
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const icons = { success: 'check_circle', error: 'error', warning: 'warning', info: 'info' };
+            const toast = document.createElement('div');
+            toast.className = 'snackbar';
+            toast.dataset.type = icons[type] ? type : 'info';
+            const icon = document.createElement('span');
+            icon.className = 'ms fill';
+            icon.textContent = icons[type] || icons.info;
+            const text = document.createElement('span');
+            text.textContent = message;
+            toast.append(icon, text);
+            container.appendChild(toast);
+            // 溜まりすぎないよう古いものから消す
+            while (container.children.length > (IS_MOBILE_UI ? 2 : 4)) container.firstElementChild.remove();
+            // タップで閉じられる
+            toast.addEventListener('click', () => toast.remove());
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        let lastFocusedEl = null;
+
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            clearTimeout(modal._closeTimer);
+            lastFocusedEl = document.activeElement;
+            modal.classList.remove('hidden');
+            requestAnimationFrame(() => {
+                modal.classList.add('open');
+                const target = modal.querySelector('[data-autofocus]') || modal.querySelector('.dialog');
+                if (target) target.focus({ preventScroll: true });
+            });
+            if (modalId === 'chart-import-export-modal') {
+                refreshChartModal();
+            }
+            if (modalId === 'key-config-modal') {
+                renderKeyConfigUI();
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (!modal) return;
+            modal.classList.remove('open');
+            clearTimeout(modal._closeTimer);
+            modal._closeTimer = setTimeout(() => modal.classList.add('hidden'), 200);
+            if (modalId === 'key-config-modal') rebindState = null;
+            if (lastFocusedEl && lastFocusedEl.focus) {
+                try { lastFocusedEl.focus({ preventScroll: true }); } catch (e) {}
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            const ms = Math.floor((seconds % 1) * 1000);
+            return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}.${ms.toString().padStart(3, '0')}`;
+        }
+
+        function initAudioContext() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function getCurrentAudioTime() {
+            if (!isAudioPlaying) return audioPauseOffset;
+            return Math.max(0, (audioCtx.currentTime - audioStartTime) * audioPlaybackRate);
+        }
+
+        function playAudioBuffer(startOffset = 0) {
+            if (!audioBuffer) return;
+            initAudioContext();
+            stopAudioBuffer();
+
+            audioSource = audioCtx.createBufferSource();
+            audioSource.buffer = audioBuffer;
+            audioSource.playbackRate.value = audioPlaybackRate;
+            audioSource.connect(audioCtx.destination);
+
+            audioStartTime = audioCtx.currentTime - (startOffset / audioPlaybackRate);
+            audioSource.start(0, startOffset);
+            isAudioPlaying = true;
+
+            if (hasMV && mvVideo) {
+                mvVideo.currentTime = startOffset;
+                mvVideo.playbackRate = audioPlaybackRate;
+                mvLastSeekAt = performance.now();
+                mvSeekStartedAt = 0;
+                mvVideo.play().catch(e => console.log("MV video play sync:", e));
+            }
+
+            audioSource.onended = () => {
+                if (isAudioPlaying && getCurrentAudioTime() >= audioBuffer.duration - 0.1) {
+                    isAudioPlaying = false;
+                    audioPauseOffset = 0;
+                    if (currentMode === 'play') endPlayGame(); else setEditorPlayIcon(false);
+                }
+            };
+        }
+
+        function stopAudioBuffer() {
+            if (audioSource) {
+                try {
+                    audioSource.stop();
+                    audioSource.disconnect();
+                } catch (e) {}
+                audioSource = null;
+            }
+            if (hasMV && mvVideo) {
+                mvVideo.pause();
+            }
+            isAudioPlaying = false;
+        }
+
+        function playHitSound(pitch = 800) {
+            if (!audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(pitch, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(150, audioCtx.currentTime + 0.05);
+
+                gain.gain.setValueAtTime(1.0, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch (e) {}
+        }
+
+        function spawnHitEffect(lane, x, y, isHoldEffect = false) {
+            const color = LANE_COLORS[lane];
+            const particleCount = isHoldEffect ? 3 : 16;
+            const particles = [];
+
+            for (let i = 0; i < particleCount; i++) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = (isHoldEffect ? 2 : 4) + Math.random() * (isHoldEffect ? 4 : 8);
+                particles.push({
+                    x: x,
+                    y: y,
+                    vx: Math.cos(angle) * speed,
+                    vy: Math.sin(angle) * speed - (isHoldEffect ? 2 : 1),
+                    radius: (isHoldEffect ? 2 : 3) + Math.random() * 4,
+                    alpha: 1.0,
+                    decay: 0.03 + Math.random() * 0.04
+                });
+            }
+
+            activeEffects.push({
+                lane: lane,
+                x: x,
+                y: y,
+                color: color,
+                radius: 10,
+                maxRadius: isHoldEffect ? 30 : 60,
+                alpha: 1.0,
+                isHoldEffect: isHoldEffect,
+                particles: particles
+            });
+        }
+
+        function loadDemoAudio() {
+            initAudioContext();
+            
+            if (mvVideo) {
+                mvVideo.pause();
+                mvVideo.src = '';
+            }
+            hasMV = false;
+            const mvBadge = document.getElementById('mv-badge');
+            if (mvBadge) mvBadge.classList.add('hidden');
+            const mvOpacityContainer = document.getElementById('mv-opacity-container');
+            if (mvOpacityContainer) mvOpacityContainer.classList.add('hidden');
+
+            const sampleRate = audioCtx.sampleRate;
+            const duration = 24.0;
+            const buffer = audioCtx.createBuffer(2, sampleRate * duration, sampleRate);
+            const left = buffer.getChannelData(0);
+            const right = buffer.getChannelData(1);
+
+            const bpm = 120;
+            const beatSec = 60 / bpm;
+
+            for (let i = 0; i < buffer.length; i++) {
+                const t = i / sampleRate;
+                const beat = t / beatSec;
+                let sample = 0;
+
+                const kickPhase = beat % 1;
+                if (kickPhase < 0.2) {
+                    const kickFreq = 120 * Math.exp(-kickPhase * 25);
+                    sample += Math.sin(2 * Math.PI * kickFreq * t) * (1 - kickPhase * 5);
+                }
+
+                const hatPhase = (beat * 2) % 1;
+                if (hatPhase < 0.08) {
+                    sample += (Math.random() * 2 - 1) * (1 - hatPhase * 12) * 0.3;
+                }
+
+                if (t > 2.0) {
+                    const noteFreq = 110 * [1, 1.25, 1.5, 1.33][Math.floor(beat) % 4];
+                    sample += Math.sin(2 * Math.PI * noteFreq * t) * 0.2;
+                }
+
+                left[i] = sample * 0.4;
+                right[i] = sample * 0.4;
+            }
+
+            audioBuffer = buffer;
+            loadedAudioFile = null;
+            document.getElementById('audio-filename').textContent = "BEATPULSE Synth Demo Track (120 BPM)";
+            document.getElementById('audio-duration').textContent = `長さ: 0:24`;
+
+            currentChart = {
+                bpm: 120,
+                notes: []
+            };
+
+            let idCounter = 1;
+            for (let b = 4; b < 44; b += 2) {
+                const lane = Math.floor(b / 2) % 4;
+                const time = b * beatSec;
+                if (b % 8 === 0) {
+                    currentChart.notes.push({
+                        id: String(idCounter++),
+                        lane: lane,
+                        time: time,
+                        duration: beatSec * 1.5,
+                        type: 'hold'
+                    });
+                } else {
+                    currentChart.notes.push({
+                        id: String(idCounter++),
+                        lane: lane,
+                        time: time,
+                        duration: 0,
+                        type: 'tap'
+                    });
+                }
+            }
+
+            showToast('デモ曲とサンプル譜面を生成・ロードしました！', 'success');
+            updateStageHints();
+        }
+
+        function handleAudioSelect(event) {
+            const file = event && event.target && event.target.files ? event.target.files[0] : null;
+            if (!file) return;
+
+            if (mvVideo) {
+                mvVideo.pause();
+                mvVideo.src = '';
+            }
+            hasMV = false;
+            document.getElementById('mv-badge').classList.add('hidden');
+            document.getElementById('mv-opacity-container').classList.add('hidden');
+
+            document.getElementById('audio-filename').textContent = file.name;
+            initAudioContext();
+
+            const isVideo = file.type.startsWith('video/') || /\.(mp4|webm|m4v|mov)$/i.test(file.name);
+
+            if (isVideo) {
+                if (!mvVideo) {
+                    mvVideo = document.getElementById('mv-player');
+                    mvVideo.addEventListener('seeked', () => {
+                        if (mvSeekStartedAt) {
+                            const latency = (performance.now() - mvSeekStartedAt) / 1000;
+                            mvSeekLatency = Math.max(0, Math.min(1.5, latency));
+                            mvSeekStartedAt = 0;
+                        }
+                    });
+                }
+                const videoUrl = URL.createObjectURL(file);
+                mvVideo.src = videoUrl;
+                mvVideo.muted = true;
+                mvVideo.playsInline = true;
+                mvVideo.load();
+                hasMV = true;
+                document.getElementById('mv-badge').classList.remove('hidden');
+                document.getElementById('mv-opacity-container').classList.remove('hidden');
+                showToast('MV動画ファイルを検出しました！レーン背景に表示します', 'info');
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                audioCtx.decodeAudioData(e.target.result, function(buffer) {
+                    audioBuffer = buffer;
+                    loadedAudioFile = file;
+                    const durationStr = `${Math.floor(buffer.duration / 60)}:${Math.floor(buffer.duration % 60).toString().padStart(2, '0')}`;
+                    document.getElementById('audio-duration').textContent = `長さ: ${durationStr}`;
+                    showToast(`${isVideo ? 'MP4(MV)' : '音声'}ファイルを読み込みました！`, 'success');
+                    updateStageHints();
+                }, function(err) {
+                    showToast('音声/動画データの解析に失敗しました', 'error');
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function handleEditorSeek(value) {
+            if (!audioBuffer) return;
+            const targetTime = (value / 100) * audioBuffer.duration;
+            audioPauseOffset = targetTime;
+            if (hasMV && mvVideo) {
+                mvVideo.currentTime = targetTime;
+            }
+            if (isAudioPlaying) {
+                playAudioBuffer(targetTime);
+            }
+        }
+
+        function updateEditorSpeedButtons() {
+            document.querySelectorAll('.editor-speed-btn').forEach(btn => {
+                const isActive = Math.abs(parseFloat(btn.dataset.speed) - editorSpeed) < 0.001;
+                btn.setAttribute('aria-pressed', String(isActive));
+            });
+        }
+
+        // 再生速度を変える。譜面の時刻は常に「曲の時間」なので、遅くして作った譜面は等倍で再生すると速くなる
+        function setEditorSpeed(speed) {
+            // 速度を変える前に、現在の曲の位置を取得しておく
+            const wasPlaying = isAudioPlaying;
+            const currentSongTime = getCurrentAudioTime();
+
+            editorSpeed = speed;
+            audioPlaybackRate = speed;
+            if (hasMV && mvVideo) {
+                mvVideo.playbackRate = speed;
+            }
+            updateEditorSpeedButtons();
+
+            if (wasPlaying) {
+                playAudioBuffer(currentSongTime);
+            }
+        }
+
+        function changeEditorZoom(delta) {
+            editorState.zoomPxPerSec = Math.max(40, Math.min(300, editorState.zoomPxPerSec + delta));
+            const zoomPercent = Math.round((editorState.zoomPxPerSec / 100) * 100);
+            document.getElementById('zoom-level-text').textContent = `${zoomPercent}%`;
+        }
+
+        function setEditorSnap(snapValue) {
+            editorState.snapBeat = snapValue;
+            
+            document.querySelectorAll('.snap-btn').forEach(btn => {
+                btn.setAttribute('aria-pressed', 'false');
+            });
+            const activeBtn = document.getElementById(`snap-btn-${snapValue}`);
+            if (activeBtn) activeBtn.setAttribute('aria-pressed', 'true');
+
+            const labelMap = { 4: '4分音符 (1/4)', 8: '8分音符 (1/8)', 16: '16分音符 (1/16)', 32: '32分音符 (1/32)', 12: '3連音符 (1/12)', 0: 'スナップなし (Free)' };
+            showToast(`配置音符間隔: ${labelMap[snapValue]}`, 'info');
+        }
+
+        function calculateSnappedTime(rawTime) {
+            if (editorState.snapBeat === 0) return Math.max(0, rawTime);
+            
+            const bpm = currentChart.bpm || 120;
+            const beatSec = 60 / bpm;
+            
+            let intervalSec = beatSec;
+            if (editorState.snapBeat === 8) intervalSec = beatSec / 2;
+            else if (editorState.snapBeat === 16) intervalSec = beatSec / 4;
+            else if (editorState.snapBeat === 32) intervalSec = beatSec / 8;
+            else if (editorState.snapBeat === 12) intervalSec = beatSec / 3;
+            
+            return Math.max(0, Math.round(rawTime / intervalSec) * intervalSec);
+        }
+
+        function toggleRecordMode() {
+            editorState.isRecording = !editorState.isRecording;
+            const btn = document.getElementById('btn-record-mode');
+            if (editorState.isRecording) {
+                btn.setAttribute('aria-pressed', 'true');
+                showToast('リアルタイム録音モードが有効になりました', 'warning');
+            } else {
+                btn.setAttribute('aria-pressed', 'false');
+            }
+        }
+
+        function recordNoteInEditor(lane, phase) {
+            const currentTime = getCurrentAudioTime();
+            if (phase === 'start') {
+                const newNote = {
+                    id: String(Date.now()),
+                    lane: lane,
+                    time: currentTime,
+                    duration: 0,
+                    type: 'tap'
+                };
+                currentChart.notes.push(newNote);
+            } else if (phase === 'end') {
+                const lastNote = currentChart.notes
+                    .filter(n => n.lane === lane)
+                    .sort((a, b) => b.time - a.time)[0];
+
+                if (lastNote && (currentTime - lastNote.time) > 0.15) {
+                    lastNote.duration = currentTime - lastNote.time;
+                    lastNote.type = 'hold';
+                }
+            }
+        }
+
+        function updateEditorBPM() {
+            currentChart.bpm = parseInt(document.getElementById('editor-bpm').value) || 120;
+        }
+
+        function setEditorNoteType(type) {
+            editorState.noteType = type;
+            document.getElementById('btn-note-type-tap').setAttribute('aria-pressed', String(type === 'tap'));
+            document.getElementById('btn-note-type-hold').setAttribute('aria-pressed', String(type === 'hold'));
+        }
+
+        function autoQuantizeChart() {
+            if (!currentChart.notes || currentChart.notes.length === 0) {
+                showToast('調整対象のノーツがありません', 'warning');
+                return;
+            }
+
+            if (editorState.snapBeat === 0) {
+                showToast('スナップがFreeに設定されています。音符間隔(1/4, 1/8等)を選択してから自動調整を実行してください。', 'warning');
+                return;
+            }
+
+            let adjustedCount = 0;
+            currentChart.notes.forEach(note => {
+                const newTime = calculateSnappedTime(note.time);
+                if (Math.abs(newTime - note.time) > 0.0001) {
+                    adjustedCount++;
+                }
+                note.time = newTime;
+
+                if (note.type === 'hold' && note.duration > 0) {
+                    const originalEndTime = note.time + note.duration;
+                    const newEndTime = calculateSnappedTime(originalEndTime);
+                    note.duration = Math.max(0.05, newEndTime - note.time);
+                }
+            });
+
+            currentChart.notes.sort((a, b) => a.time - b.time);
+
+            const snapName = {
+                4: '1/4 (4分)',
+                8: '1/8 (8分)',
+                16: '1/16 (16分)',
+                32: '1/32 (32分)',
+                12: '1/12 (3連)'
+            }[editorState.snapBeat] || '選択グリッド';
+
+            showToast(`${currentChart.notes.length}件中 ${adjustedCount}件のノーツを【${snapName}】に自動調整しました！`, 'success');
+        }
+
+        function confirmClearChart() {
+            currentChart.notes = [];
+            closeModal('clear-confirm-modal');
+            showToast('譜面のすべてのノーツを全消去しました', 'info');
+        }
+
+        function downloadChartJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(currentChart, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", "beatpulse_chart.json");
+            dlAnchorElem.click();
+            showToast('JSONファイルを保存しました', 'success');
+        }
+
+        function copyChartJSON() {
+            const text = JSON.stringify(currentChart, null, 2);
+            const fallbackCopy = () => {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                ta.remove();
+                showToast('JSONをクリップボードにコピーしました', 'success');
+            };
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(text)
+                    .then(() => showToast('JSONをクリップボードにコピーしました', 'success'))
+                    .catch(fallbackCopy);
+            } else {
+                fallbackCopy();
+            }
+        }
+
+        function escapeHtml(value) {
+            return String(value === undefined || value === null ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // JSONファイルを選択したら、そのまま読み込む
+        function handleChartJSONSelect(event) {
+            const input = event.target;
+            const file = input && input.files ? input.files[0] : null;
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    if (parsed && Array.isArray(parsed.notes)) {
+                        parsed.notes = parsed.notes
+                            .filter(n => n && Number.isInteger(n.lane) && n.lane >= 0 && n.lane < LANE_COUNT && Number.isFinite(n.time))
+                            .map((n, i) => ({
+                                id: String(n.id !== undefined && n.id !== null ? n.id : `${Date.now()}_${i}`),
+                                lane: n.lane,
+                                time: n.time,
+                                duration: Number.isFinite(n.duration) ? n.duration : 0,
+                                type: n.type === 'hold' ? 'hold' : 'tap'
+                            }))
+                            .sort((x, y) => x.time - y.time);
+                        currentChart = parsed;
+                        if (parsed.bpm) document.getElementById('editor-bpm').value = parsed.bpm;
+                        closeModal('chart-import-export-modal');
+                        const meta = parsed.meta;
+                        if (meta && meta.title) {
+                            const diff = DIFFICULTIES[meta.difficulty];
+                            showToast(`「${meta.title}」${diff ? ' [' + diff.label + ']' : ''} の譜面データを読み込みました！`, 'success');
+                        } else {
+                            showToast('譜面データを読み込みました！', 'success');
+                        }
+                    } else {
+                        showToast('無効なJSONフォーマットです', 'error');
+                    }
+                } catch (err) {
+                    showToast('JSONの解析に失敗しました', 'error');
+                }
+            };
+            reader.onerror = function() {
+                showToast('ファイルの読み込みに失敗しました', 'error');
+            };
+            reader.readAsText(file);
+            input.value = '';
+        }
+
+        // ---------- 配布用ダウンロード (曲 + JSON) ----------
+        const DIFFICULTIES = {
+            easy:   { label: 'EASY' },
+            normal: { label: 'NORMAL' },
+            hard:   { label: 'HARD' },
+            plus:   { label: 'PLUS!' }
+        };
+        let distDifficulty = null;
+
+        function setDistDifficulty(key) {
+            distDifficulty = DIFFICULTIES[key] ? key : null;
+            Object.keys(DIFFICULTIES).forEach(k => {
+                const btn = document.getElementById(`dist-diff-${k}`);
+                if (btn) btn.setAttribute('aria-pressed', String(k === distDifficulty));
+            });
+        }
+
+        // モーダルを開いたとき、読み込み済み譜面の情報を表示し、配布用フォームへ引き継ぐ
+        function refreshChartModal() {
+            const box = document.getElementById('chart-meta-info');
+            const meta = currentChart && currentChart.meta && typeof currentChart.meta === 'object' ? currentChart.meta : null;
+            if (!box) return;
+
+            if (!meta) {
+                box.classList.add('hidden');
+                box.innerHTML = '';
+                return;
+            }
+
+            const diff = DIFFICULTIES[meta.difficulty];
+            box.innerHTML = `
+                <div class="meta-title">
+                    <b>${escapeHtml(meta.title)}</b>
+                    ${diff ? `<span class="diff-tag" data-k="${escapeHtml(meta.difficulty)}">${diff.label}</span>` : ''}
+                </div>
+                <div>作者: ${escapeHtml(meta.author)}</div>
+                ${meta.detail ? `<div style="white-space:pre-wrap;overflow-wrap:anywhere">${escapeHtml(meta.detail)}</div>` : ''}
+                ${meta.audioFile ? `<div>対応する曲ファイル: ${escapeHtml(meta.audioFile)}</div>` : ''}
+            `;
+            box.classList.remove('hidden');
+
+            document.getElementById('dist-title').value = meta.title ? String(meta.title) : '';
+            document.getElementById('dist-author').value = meta.author ? String(meta.author) : '';
+            document.getElementById('dist-detail').value = meta.detail ? String(meta.detail) : '';
+            setDistDifficulty(meta.difficulty);
+        }
+
+        function sanitizeFileName(name) {
+            return String(name).replace(/[\\/:*?"<>|]/g, '_').replace(/\s+/g, ' ').trim() || 'beatpulse';
+        }
+
+        function triggerFileDownload(blob, fileName) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 10000);
+        }
+
+        // デモ曲など、元ファイルが無い場合にWAVへ書き出す
+        function audioBufferToWavBlob(buffer) {
+            const numCh = buffer.numberOfChannels;
+            const sampleRate = buffer.sampleRate;
+            const length = buffer.length;
+            const dataSize = length * numCh * 2;
+            const ab = new ArrayBuffer(44 + dataSize);
+            const view = new DataView(ab);
+            const writeStr = (offset, str) => {
+                for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+            };
+
+            writeStr(0, 'RIFF');
+            view.setUint32(4, 36 + dataSize, true);
+            writeStr(8, 'WAVE');
+            writeStr(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, numCh, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * numCh * 2, true);
+            view.setUint16(32, numCh * 2, true);
+            view.setUint16(34, 16, true);
+            writeStr(36, 'data');
+            view.setUint32(40, dataSize, true);
+
+            const channels = [];
+            for (let c = 0; c < numCh; c++) channels.push(buffer.getChannelData(c));
+
+            let offset = 44;
+            for (let i = 0; i < length; i++) {
+                for (let c = 0; c < numCh; c++) {
+                    const v = Math.max(-1, Math.min(1, channels[c][i]));
+                    view.setInt16(offset, v < 0 ? v * 0x8000 : v * 0x7FFF, true);
+                    offset += 2;
+                }
+            }
+            return new Blob([ab], { type: 'audio/wav' });
+        }
+
+        function downloadDistribution() {
+            const title = document.getElementById('dist-title').value.trim();
+            const author = document.getElementById('dist-author').value.trim();
+            const detail = document.getElementById('dist-detail').value.trim();
+
+            if (!audioBuffer) {
+                showToast('楽曲ファイルがロードされていません。「デモ曲をロード」またはMP3を選択してください。', 'warning');
+                return;
+            }
+            if (!title || !author || !detail || !distDifficulty) {
+                showToast('曲名・作者・詳細・難易度をすべて入力してください', 'warning');
+                return;
+            }
+
+            const baseName = sanitizeFileName(title);
+            let audioBlob, audioName;
+            if (loadedAudioFile) {
+                const extMatch = loadedAudioFile.name.match(/\.[^.]+$/);
+                audioBlob = loadedAudioFile;
+                audioName = baseName + (extMatch ? extMatch[0].toLowerCase() : '');
+            } else {
+                audioBlob = audioBufferToWavBlob(audioBuffer);
+                audioName = baseName + '.wav';
+            }
+
+            const meta = { title, author, detail, difficulty: distDifficulty, audioFile: audioName };
+            currentChart.meta = meta;
+
+            const chartOut = {
+                format: 'beatpulse-chart',
+                bpm: currentChart.bpm || 120,
+                notes: currentChart.notes.map(n => ({
+                    id: n.id,
+                    lane: n.lane,
+                    time: n.time,
+                    duration: n.duration || 0,
+                    type: n.type
+                })),
+                meta: meta
+            };
+            const jsonBlob = new Blob([JSON.stringify(chartOut, null, 2)], { type: 'application/json' });
+
+            triggerFileDownload(audioBlob, audioName);
+            setTimeout(() => triggerFileDownload(jsonBlob, `${baseName}_${distDifficulty}.json`), 400);
+            showToast('曲とJSONをダウンロードしました', 'success');
+            refreshChartModal();
+        }
+
+        // ---------- Canvas / theme ----------
+        const gameCanvas = document.getElementById('game-canvas');
+        const gameCtx = gameCanvas.getContext('2d');
+        const editorCanvas = document.getElementById('editor-canvas');
+        const editorCtx = editorCanvas.getContext('2d');
+
+        // 描画・判定計算で使う論理サイズ(CSSピクセル)。実ピクセルは devicePixelRatio 倍で高精細に描く
+        const IS_MOBILE_UI = document.documentElement.dataset.device === 'mobile';
+        // 判定ラインの下端からの距離。レーンパッドの実寸から算出する(PC=90px、スマホは大きなパッドに合わせて可変)
+        let judgeOffset = 90;
+        // エディタ左端の目盛り幅(スマホは狭くしてレーンを広く取る)
+        const editorRulerWidth = IS_MOBILE_UI ? 60 : 80;
+        // タッチのドラッグ(シーク)直後の click を、ノーツ配置として扱わないためのフラグ
+        let editorSuppressClick = false;
+        const gameSize = { w: 800, h: 600 };
+        const editorSize = { w: 800, h: 600 };
+        const CANVAS_FONT = '"Roboto", "Noto Sans JP", sans-serif';
+        const padEls = Array.from(document.querySelectorAll('.pad'));
+        const playProgressEl = document.getElementById('play-progress');
+        const editorTimerEl = document.getElementById('editor-timer');
+        const editorSeekEl = document.getElementById('editor-seek-bar');
+
+        // CSSのMD3トークンをキャンバス用に読み出す(テーマ切替時にも再実行)
+        let theme = {};
+        function readTheme() {
+            const cs = getComputedStyle(document.documentElement);
+            const g = (name) => cs.getPropertyValue(name).trim();
+            theme = {
+                lanes: [g('--lane-0'), g('--lane-1'), g('--lane-2'), g('--lane-3')],
+                primary: g('--primary'),
+                tertiary: g('--tertiary'),
+                onSurface: g('--on-surface'),
+                muted: g('--on-surface-variant'),
+                line: g('--outline-variant'),
+                stage: g('--surface-lowest'),
+                low: g('--surface-low'),
+                container: g('--surface-container')
+            };
+            LANE_COLORS = theme.lanes;
+        }
+        readTheme();
+
+        function withAlpha(hex, alpha) {
+            const m = /^#?([0-9a-f]{6})$/i.exec(String(hex).trim());
+            if (!m) return hex;
+            const n = parseInt(m[1], 16);
+            return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${alpha})`;
+        }
+
+        function fitCanvas(canvas, ctx, size) {
+            const parent = canvas.parentElement;
+            if (!parent || parent.clientWidth === 0 || parent.clientHeight === 0) return; // 非表示中は何もしない
+            const dpr = Math.min(window.devicePixelRatio || 1, 2);
+            const w = parent.clientWidth;
+            const h = parent.clientHeight;
+            const pw = Math.round(w * dpr);
+            const ph = Math.round(h * dpr);
+            if (canvas.width !== pw || canvas.height !== ph) {
+                canvas.width = pw;
+                canvas.height = ph;
+            }
+            ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+            size.w = w;
+            size.h = h;
+        }
+
+        function resizeCanvases() {
+            fitCanvas(gameCanvas, gameCtx, gameSize);
+            fitCanvas(editorCanvas, editorCtx, editorSize);
+            const pads = document.querySelector('.pads');
+            if (pads && pads.offsetHeight > 0) judgeOffset = pads.offsetHeight + 16;
+        }
+
+        // MV動画を背景に「カバー」表示
+        function drawMvBackdrop(ctx, w, h, alpha) {
+            if (!(hasMV && mvVideo && mvVideo.readyState >= 2)) return;
+            ctx.save();
+            ctx.globalAlpha = alpha;
+            const vRatio = (mvVideo.videoWidth && mvVideo.videoHeight) ? (mvVideo.videoWidth / mvVideo.videoHeight) : (w / h);
+            const cRatio = w / h;
+            let dw, dh, dx, dy;
+            if (cRatio > vRatio) {
+                dw = w;
+                dh = w / vRatio;
+                dx = 0;
+                dy = (h - dh) / 2;
+            } else {
+                dh = h;
+                dw = h * vRatio;
+                dx = (w - dw) / 2;
+                dy = 0;
+            }
+            ctx.drawImage(mvVideo, dx, dy, dw, dh);
+            ctx.restore();
+        }
+
+        function renderPlayCanvas() {
+            const w = gameSize.w;
+            const h = gameSize.h;
+
+            gameCtx.clearRect(0, 0, w, h);
+
+            // Synchronize MV Video smoothly with Audio playback
+            syncMvVideo();
+            drawMvBackdrop(gameCtx, w, h, mvOpacity);
+
+            // 画面下のパッドにキー/コントローラー入力も反映する
+            for (let l = 0; l < LANE_COUNT; l++) {
+                if (padEls[l]) padEls[l].classList.toggle('pressed', !!lanePressedState[l]);
+            }
+
+            const laneWidth = w / LANE_COUNT;
+            const targetY = h - judgeOffset;
+            const currentTime = getCurrentAudioTime();
+            const noteSpeed = BASE_NOTE_SPEED * scrollSpeed;
+
+            // 曲の進行(ステージ上端のプログレスバー)
+            if (playProgressEl) {
+                const p = (playState.isPlaying && audioBuffer) ? Math.min(1, currentTime / audioBuffer.duration) : 0;
+                playProgressEl.style.transform = `scaleX(${p.toFixed(4)})`;
+            }
+
+            // Render Highway & Lane Backgrounds
+            for (let l = 0; l < LANE_COUNT; l++) {
+                const x = l * laneWidth;
+
+                const laneGrad = gameCtx.createLinearGradient(0, 0, 0, h);
+                laneGrad.addColorStop(0, withAlpha(theme.stage, 0.10));
+                laneGrad.addColorStop(1, lanePressedState[l] ? withAlpha(LANE_COLORS[l], 0.28) : withAlpha(theme.stage, 0.55));
+                gameCtx.fillStyle = laneGrad;
+                gameCtx.fillRect(x, 0, laneWidth, h);
+
+                if (l > 0) {
+                    gameCtx.fillStyle = withAlpha(theme.onSurface, 0.10);
+                    gameCtx.fillRect(x - 0.5, 0, 1, h);
+                }
+
+                // Continuous Hold Sparks & Continuous Lighting Effect
+                if (lanePressedState[l] && playState.isPlaying) {
+                    gameCtx.fillStyle = LANE_COLORS[l];
+                    gameCtx.globalAlpha = 0.3;
+                    gameCtx.fillRect(x, targetY, laneWidth, h - targetY);
+                    gameCtx.globalAlpha = 1.0;
+
+                    // Spawn Hold Particles on Active Lane Press
+                    const centerX = x + laneWidth / 2;
+                    spawnHitEffect(l, centerX, targetY, true);
+                }
+            }
+
+            // Judgment line
+            gameCtx.save();
+            gameCtx.shadowColor = withAlpha(theme.primary, 0.55);
+            gameCtx.shadowBlur = 10;
+            gameCtx.strokeStyle = theme.primary;
+            gameCtx.lineWidth = 3;
+            gameCtx.beginPath();
+            gameCtx.moveTo(0, targetY);
+            gameCtx.lineTo(w, targetY);
+            gameCtx.stroke();
+            gameCtx.restore();
+
+            // Lane receptors (打つ位置の目印)
+            gameCtx.lineWidth = 2;
+            for (let l = 0; l < LANE_COUNT; l++) {
+                gameCtx.strokeStyle = withAlpha(LANE_COLORS[l], lanePressedState[l] ? 0.95 : 0.5);
+                gameCtx.beginPath();
+                gameCtx.roundRect(l * laneWidth + 8, targetY - 12, laneWidth - 16, 24, 12);
+                gameCtx.stroke();
+            }
+
+            if (!playState.isPlaying) return;
+
+            // Combo (ノーツの背面にうっすら表示)
+            if (playState.combo >= 2) {
+                const size = Math.min(96, w * 0.16);
+                gameCtx.save();
+                gameCtx.textAlign = 'center';
+                gameCtx.textBaseline = 'middle';
+                gameCtx.fillStyle = withAlpha(theme.onSurface, 0.16);
+                gameCtx.font = `500 ${size}px ${CANVAS_FONT}`;
+                gameCtx.fillText(String(playState.combo), w / 2, h * 0.48);
+                gameCtx.font = `500 14px ${CANVAS_FONT}`;
+                gameCtx.fillText('COMBO', w / 2, h * 0.48 + size * 0.62);
+                gameCtx.restore();
+            }
+
+            // Render Notes
+            currentChart.notes.forEach(note => {
+                if (note.judged && note.holdJudged) return;
+                if (note.judged && note.type === 'tap') return;
+
+                const laneX = note.lane * laneWidth;
+                const headTimeDiff = note.time - currentTime;
+                let headY = targetY - (headTimeDiff * noteSpeed);
+
+                // Check auto-miss for overdue tap note
+                if (headTimeDiff < -0.20 && !note.judged) {
+                    registerJudgment('MISS', 0, note);
+                    if (note.type === 'hold') {
+                        note.holdJudged = true;
+                    }
+                    return;
+                }
+
+                // Render Long Hold Note with Progress Consumption Effect
+                if (note.type === 'hold') {
+                    const holdEndTime = note.time + note.duration;
+                    const tailTimeDiff = holdEndTime - currentTime;
+                    const tailY = targetY - (tailTimeDiff * noteSpeed);
+
+                    if (note.judged && !note.holdJudged) {
+                        if (currentTime >= holdEndTime && lanePressedState[note.lane]) {
+                            registerJudgment('PERFECT', 0, note, true);
+                            const hitX = laneX + laneWidth / 2;
+                            spawnHitEffect(note.lane, hitX, targetY);
+                        }
+                        else if (currentTime > holdEndTime + 0.12 && !lanePressedState[note.lane]) {
+                            registerJudgment('MISS', 0, note, true);
+                        }
+                    }
+
+                    if (note.judged && note.holdJudged) return;
+
+                    let effectiveHeadY = headY;
+                    if (currentTime >= note.time && lanePressedState[note.lane]) {
+                        effectiveHeadY = targetY;
+                    }
+
+                    const topY = tailY;
+                    const bottomY = Math.max(tailY, effectiveHeadY);
+
+                    if (topY < h && bottomY > 0 && bottomY > topY) {
+                        const bodyGradient = gameCtx.createLinearGradient(0, topY, 0, bottomY);
+                        bodyGradient.addColorStop(0, withAlpha(LANE_COLORS[note.lane], 0.55));
+                        bodyGradient.addColorStop(1, withAlpha(LANE_COLORS[note.lane], 0.85));
+
+                        gameCtx.fillStyle = bodyGradient;
+                        gameCtx.beginPath();
+                        gameCtx.roundRect(laneX + 16, topY, laneWidth - 32, bottomY - topY, 8);
+                        gameCtx.fill();
+
+                        gameCtx.fillStyle = 'rgba(255, 255, 255, 0.75)';
+                        gameCtx.fillRect(laneX + (laneWidth / 2) - 3, topY, 6, bottomY - topY);
+                    }
+
+                    if (tailY > -20 && tailY < h + 20) {
+                        gameCtx.fillStyle = '#ffffff';
+                        gameCtx.beginPath();
+                        gameCtx.roundRect(laneX + 10, tailY - 4, laneWidth - 20, 8, 4);
+                        gameCtx.fill();
+                    }
+                }
+
+                // Render Tap / Hold Head Note Bar
+                if (headY > -20 && headY < h + 20 && (!note.judged || (note.type === 'hold' && currentTime < note.time))) {
+                    gameCtx.shadowColor = LANE_COLORS[note.lane];
+                    gameCtx.shadowBlur = 10;
+                    gameCtx.fillStyle = LANE_COLORS[note.lane];
+                    gameCtx.beginPath();
+                    gameCtx.roundRect(laneX + 8, headY - 12, laneWidth - 16, 24, 12);
+                    gameCtx.fill();
+                    gameCtx.shadowBlur = 0;
+
+                    gameCtx.fillStyle = 'rgba(255, 255, 255, 0.92)';
+                    gameCtx.beginPath();
+                    gameCtx.roundRect(laneX + 20, headY - 3, laneWidth - 40, 6, 3);
+                    gameCtx.fill();
+                }
+            });
+
+            // Update & Render Active Visual Particles and Hit Ring Effects
+            for (let i = activeEffects.length - 1; i >= 0; i--) {
+                const fx = activeEffects[i];
+                fx.radius += fx.isHoldEffect ? 2 : 4;
+                fx.alpha -= fx.isHoldEffect ? 0.08 : 0.04;
+
+                if (fx.alpha > 0) {
+                    gameCtx.save();
+                    gameCtx.strokeStyle = fx.color;
+                    gameCtx.lineWidth = fx.isHoldEffect ? 2 : 4;
+                    gameCtx.globalAlpha = Math.max(0, fx.alpha);
+                    gameCtx.beginPath();
+                    gameCtx.arc(fx.x, fx.y, fx.radius, 0, Math.PI * 2);
+                    gameCtx.stroke();
+                    gameCtx.restore();
+
+                    fx.particles.forEach(p => {
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.alpha -= p.decay;
+
+                        if (p.alpha > 0) {
+                            gameCtx.save();
+                            gameCtx.fillStyle = fx.color;
+                            gameCtx.globalAlpha = Math.max(0, p.alpha);
+                            gameCtx.beginPath();
+                            gameCtx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+                            gameCtx.fill();
+                            gameCtx.restore();
+                        }
+                    });
+                } else {
+                    activeEffects.splice(i, 1);
+                }
+            }
+        }
+
+        function renderEditorCanvas() {
+            const w = editorSize.w;
+            const h = editorSize.h;
+
+            editorCtx.clearRect(0, 0, w, h);
+
+            syncMvVideo();
+
+            const rulerWidth = editorRulerWidth;
+            const laneWidth = (w - rulerWidth) / LANE_COUNT;
+            const currentTime = getCurrentAudioTime();
+            const pxPerSec = editorState.zoomPxPerSec;
+
+            editorCtx.fillStyle = theme.container;
+            editorCtx.fillRect(0, 0, rulerWidth, h);
+
+            for (let l = 0; l < LANE_COUNT; l++) {
+                const x = rulerWidth + (l * laneWidth);
+
+                editorCtx.fillStyle = l % 2 === 0 ? theme.stage : theme.low;
+                editorCtx.fillRect(x, 0, laneWidth, h);
+
+                editorCtx.fillStyle = theme.line;
+                editorCtx.fillRect(x, 0, 1, h);
+            }
+            editorCtx.fillStyle = theme.line;
+            editorCtx.fillRect(w - 1, 0, 1, h);
+
+            drawMvBackdrop(editorCtx, w, h, mvOpacity * 0.7);
+
+            // Render Audio Waveform on Editor Background
+            if (editorState.showWaveform && audioBuffer) {
+                const pcmData = audioBuffer.getChannelData(0);
+                const sampleRate = audioBuffer.sampleRate;
+                const totalSamples = pcmData.length;
+                const trackWidth = w - rulerWidth;
+                const centerX = rulerWidth + (trackWidth / 2);
+                const maxHalfWidth = trackWidth * 0.42;
+
+                const playheadY = h / 2;
+                const rightPoints = [];
+                const leftPoints = [];
+                const stepY = 2;
+
+                for (let y = 0; y <= h; y += stepY) {
+                    const timeAtY = currentTime + ((playheadY - y) / pxPerSec);
+
+                    if (timeAtY >= 0 && timeAtY <= audioBuffer.duration) {
+                        const sampleIdx = Math.floor(timeAtY * sampleRate);
+                        const windowSize = Math.max(1, Math.floor((1 / pxPerSec) * sampleRate * stepY));
+
+                        let maxVal = 0;
+                        const start = Math.max(0, sampleIdx);
+                        const end = Math.min(totalSamples, sampleIdx + windowSize);
+
+                        for (let s = start; s < end; s += Math.max(1, Math.floor((end - start) / 8))) {
+                            const absVal = Math.abs(pcmData[s]);
+                            if (absVal > maxVal) maxVal = absVal;
+                        }
+
+                        const halfWidth = maxVal * maxHalfWidth;
+                        rightPoints.push({ x: centerX + halfWidth, y });
+                        leftPoints.push({ x: centerX - halfWidth, y });
+                    }
+                }
+
+                if (rightPoints.length > 0) {
+                    editorCtx.save();
+                    editorCtx.beginPath();
+                    editorCtx.moveTo(rightPoints[0].x, rightPoints[0].y);
+                    for (let i = 1; i < rightPoints.length; i++) {
+                        editorCtx.lineTo(rightPoints[i].x, rightPoints[i].y);
+                    }
+                    for (let i = leftPoints.length - 1; i >= 0; i--) {
+                        editorCtx.lineTo(leftPoints[i].x, leftPoints[i].y);
+                    }
+                    editorCtx.closePath();
+
+                    const waveGrad = editorCtx.createLinearGradient(rulerWidth, 0, w, 0);
+                    waveGrad.addColorStop(0, withAlpha(theme.primary, 0.03));
+                    waveGrad.addColorStop(0.5, withAlpha(theme.primary, 0.26));
+                    waveGrad.addColorStop(1, withAlpha(theme.primary, 0.03));
+                    editorCtx.fillStyle = waveGrad;
+                    editorCtx.fill();
+
+                    editorCtx.strokeStyle = withAlpha(theme.primary, 0.5);
+                    editorCtx.lineWidth = 1.2;
+                    editorCtx.stroke();
+                    editorCtx.restore();
+                }
+            }
+
+            const playheadY = h / 2;
+
+            const bpm = currentChart.bpm;
+            const beatSec = 60 / bpm;
+            const visibleSecs = h / pxPerSec;
+            const startTime = currentTime - (visibleSecs / 2);
+            const endTime = currentTime + (visibleSecs / 2);
+
+            let gridStepSec = beatSec;
+            if (editorState.snapBeat === 8) gridStepSec = beatSec / 2;
+            else if (editorState.snapBeat === 16) gridStepSec = beatSec / 4;
+            else if (editorState.snapBeat === 32) gridStepSec = beatSec / 8;
+            else if (editorState.snapBeat === 12) gridStepSec = beatSec / 3;
+
+            const startGridIdx = Math.floor(startTime / gridStepSec);
+            const endGridIdx = Math.ceil(endTime / gridStepSec);
+
+            for (let idx = startGridIdx; idx <= endGridIdx; idx++) {
+                const gridTime = idx * gridStepSec;
+                if (gridTime < -0.0001) continue; // 曲の開始より前は描かない
+                const timeDiff = gridTime - currentTime;
+                const y = playheadY - (timeDiff * pxPerSec);
+
+                if (y >= 0 && y <= h) {
+                    const isQuarterBeat = Math.abs((gridTime / beatSec) - Math.round(gridTime / beatSec)) < 0.001;
+                    const isMeasure = isQuarterBeat && (Math.round(gridTime / beatSec) % 4 === 0);
+
+                    if (isMeasure) {
+                        editorCtx.strokeStyle = withAlpha(theme.primary, 0.7);
+                        editorCtx.lineWidth = 2;
+                    } else if (isQuarterBeat) {
+                        editorCtx.strokeStyle = withAlpha(theme.onSurface, 0.3);
+                        editorCtx.lineWidth = 1.5;
+                    } else {
+                        editorCtx.strokeStyle = withAlpha(theme.onSurface, 0.12);
+                        editorCtx.lineWidth = 1;
+                        editorCtx.setLineDash([3, 3]);
+                    }
+
+                    editorCtx.beginPath();
+                    editorCtx.moveTo(rulerWidth, y);
+                    editorCtx.lineTo(w, y);
+                    editorCtx.stroke();
+                    editorCtx.setLineDash([]);
+
+                    if (isQuarterBeat) {
+                        const beatNum = Math.round(gridTime / beatSec);
+                        if (beatNum % 4 === 0) {
+                            editorCtx.fillStyle = theme.primary;
+                            editorCtx.font = `500 11px ${CANVAS_FONT}`;
+                            editorCtx.fillText(`#${(beatNum / 4) + 1}`, 8, y + 4);
+                        }
+                        editorCtx.fillStyle = theme.muted;
+                        editorCtx.font = `400 10px ${CANVAS_FONT}`;
+                        editorCtx.textAlign = 'right';
+                        editorCtx.fillText(`${gridTime.toFixed(2)}s`, rulerWidth - 8, y + 4);
+                        editorCtx.textAlign = 'left';
+                    }
+                }
+            }
+
+            if (editorState.hoverLane >= 0 && editorState.hoverTime !== null) {
+                const snappedTime = calculateSnappedTime(editorState.hoverTime);
+                const timeDiff = snappedTime - currentTime;
+                const ghostY = playheadY - (timeDiff * pxPerSec);
+                const ghostX = rulerWidth + (editorState.hoverLane * laneWidth);
+
+                editorCtx.fillStyle = withAlpha(LANE_COLORS[editorState.hoverLane], 0.4);
+                editorCtx.beginPath();
+                editorCtx.roundRect(ghostX + 5, ghostY - 8, laneWidth - 10, 16, 6);
+                editorCtx.fill();
+                editorCtx.strokeStyle = withAlpha(theme.onSurface, 0.8);
+                editorCtx.lineWidth = 2;
+                editorCtx.stroke();
+            }
+
+            currentChart.notes.forEach(note => {
+                const timeDiff = note.time - currentTime;
+                const y = playheadY - (timeDiff * pxPerSec);
+                const x = rulerWidth + (note.lane * laneWidth);
+
+                if (note.type === 'hold') {
+                    const holdHeight = note.duration * pxPerSec;
+                    const tailY = y - holdHeight;
+
+                    editorCtx.fillStyle = withAlpha(LANE_COLORS[note.lane], 0.4);
+                    editorCtx.beginPath();
+                    editorCtx.roundRect(x + 10, tailY, laneWidth - 20, holdHeight, 6);
+                    editorCtx.fill();
+
+                    editorCtx.fillStyle = '#ffffff';
+                    editorCtx.beginPath();
+                    editorCtx.roundRect(x + 5, tailY - 3, laneWidth - 10, 6, 3);
+                    editorCtx.fill();
+                }
+
+                editorCtx.fillStyle = LANE_COLORS[note.lane];
+                editorCtx.beginPath();
+                editorCtx.roundRect(x + 5, y - 8, laneWidth - 10, 16, 6);
+                editorCtx.fill();
+
+                editorCtx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                editorCtx.lineWidth = 1;
+                editorCtx.stroke();
+            });
+
+            // Playhead (ノーツより手前に描く)
+            editorCtx.strokeStyle = theme.tertiary;
+            editorCtx.lineWidth = 2;
+            editorCtx.beginPath();
+            editorCtx.moveTo(0, playheadY);
+            editorCtx.lineTo(w, playheadY);
+            editorCtx.stroke();
+            editorCtx.fillStyle = theme.tertiary;
+            editorCtx.beginPath();
+            editorCtx.moveTo(rulerWidth - 12, playheadY - 7);
+            editorCtx.lineTo(rulerWidth, playheadY);
+            editorCtx.lineTo(rulerWidth - 12, playheadY + 7);
+            editorCtx.closePath();
+            editorCtx.fill();
+
+            editorTimerEl.textContent = formatTime(currentTime);
+            if (audioBuffer) {
+                editorSeekEl.value = (currentTime / audioBuffer.duration) * 100;
+                syncRange(editorSeekEl);
+            }
+        }
+
+        editorCanvas.addEventListener('mousemove', (e) => {
+            updateEditorHover(e.clientX, e.clientY);
+        });
+
+        editorCanvas.addEventListener('mouseleave', () => {
+            editorState.hoverLane = -1;
+            editorState.hoverTime = null;
+        });
+
+        editorCanvas.addEventListener('click', () => {
+            if (editorSuppressClick) { editorSuppressClick = false; return; }
+            if (editorState.hoverLane < 0 || editorState.hoverTime === null) return;
+            const lane = editorState.hoverLane;
+            const snappedTime = calculateSnappedTime(editorState.hoverTime);
+
+            const existingIndex = currentChart.notes.findIndex(n => n.lane === lane && Math.abs(n.time - snappedTime) < 0.05);
+
+            if (existingIndex !== -1) {
+                currentChart.notes.splice(existingIndex, 1);
+                playHitSound(300);
+                showToast(`LANE ${lane + 1} のノーツを削除しました`, 'info');
+            } else {
+                const bpm = currentChart.bpm || 120;
+                const beatSec = 60 / bpm;
+                const noteDuration = editorState.noteType === 'hold' ? beatSec : 0;
+                const newNote = {
+                    id: String(Date.now()),
+                    lane: lane,
+                    time: snappedTime,
+                    duration: noteDuration,
+                    type: editorState.noteType
+                };
+                currentChart.notes.push(newNote);
+                currentChart.notes.sort((a, b) => a.time - b.time);
+                playHitSound(800 + lane * 150);
+                showToast(`LANE ${lane + 1} に ${editorState.noteType === 'hold' ? 'ホールド' : 'タップ'}ノーツを配置しました`, 'success');
+            }
+        });
+
+        function getKeyDisplayName(code) {
+            if (!code) return '未設定';
+            if (code.startsWith('Key')) return code.replace('Key', '');
+            if (code.startsWith('Digit')) return code.replace('Digit', '');
+            if (code.startsWith('Arrow')) {
+                const dirMap = { 'ArrowLeft': '🠔', 'ArrowUp': '🠕', 'ArrowDown': '🠗', 'ArrowRight': '🠖' };
+                return dirMap[code] || code;
+            }
+            return code;
+        }
+
+        function renderKeyConfigUI() {
+            const container = document.getElementById('key-config-rows-container');
+            if (!container) return;
+
+            let html = '';
+            for (let l = 0; l < LANE_COUNT; l++) {
+                const keyName = getKeyDisplayName(LANE_KEYS[l]);
+                const gpBtnIndex = GAMEPAD_LANE_MAPPINGS[l] ? GAMEPAD_LANE_MAPPINGS[l][0] : null;
+                const gpName = gpBtnIndex !== null && gpBtnIndex !== undefined ? (GAMEPAD_BUTTON_NAMES[gpBtnIndex] || `Btn ${gpBtnIndex}`) : '未設定';
+
+                const isListeningKb = rebindState && rebindState.lane === l && rebindState.target === 'keyboard';
+                const isListeningGp = rebindState && rebindState.lane === l && rebindState.target === 'gamepad';
+
+                html += `
+                    <div class="keyrow" style="--lane: var(--lane-${l})">
+                        <div class="keyrow-name">
+                            <i class="lane-dot"></i>
+                            <span>レーン ${l + 1}</span>
+                        </div>
+                        <div class="keyrow-binds">
+                            <button type="button" onclick="startRebind(${l}, 'keyboard')" class="chip bind${isListeningKb ? ' listening' : ''}">
+                                <span class="ms">keyboard</span><span>${isListeningKb ? 'キー入力中' : keyName}</span>
+                            </button>
+                            <button type="button" onclick="startRebind(${l}, 'gamepad')" class="chip bind${isListeningGp ? ' listening' : ''}">
+                                <span class="ms">sports_esports</span><span>${isListeningGp ? 'ボタン入力中' : gpName}</span>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+
+            for (let l = 0; l < LANE_COUNT; l++) {
+                const labelElem = document.getElementById(`lane-key-label-${l}`);
+                if (labelElem) {
+                    const keyStr = getKeyDisplayName(LANE_KEYS[l]);
+                    const gpBtnIndex = GAMEPAD_LANE_MAPPINGS[l] ? GAMEPAD_LANE_MAPPINGS[l][0] : null;
+                    const gpStr = gpBtnIndex !== null && gpBtnIndex !== undefined ? (GAMEPAD_BUTTON_NAMES[gpBtnIndex] || `B${gpBtnIndex}`).split(' ')[0] : '';
+                    labelElem.textContent = `${keyStr} / ${gpStr}`;
+                }
+            }
+        }
+
+        function startRebind(lane, target) {
+            rebindState = { lane, target };
+            renderKeyConfigUI();
+            showToast(`LANE ${lane + 1} の${target === 'keyboard' ? 'キーボードキー' : 'コントローラーボタン'}を押してください`, 'info');
+        }
+
+        function resetKeyBindings() {
+            LANE_KEYS = ['KeyD', 'KeyF', 'KeyJ', 'KeyK'];
+            GAMEPAD_LANE_MAPPINGS = {
+                0: [14],
+                1: [15],
+                2: [2],
+                3: [1],
+            };
+            rebindState = null;
+            renderKeyConfigUI();
+            showToast('キー割り当てを初期設定に戻しました', 'success');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.repeat) return;
+
+            if (rebindState && rebindState.target === 'keyboard') {
+                e.preventDefault();
+                if (e.code === 'Escape') {
+                    rebindState = null;
+                    renderKeyConfigUI();
+                    showToast('割り当てをキャンセルしました', 'info');
+                    return;
+                }
+                const lane = rebindState.lane;
+                LANE_KEYS[lane] = e.code;
+                const keyName = getKeyDisplayName(e.code);
+                showToast(`LANE ${lane + 1} にキー [${keyName}] を割り当てました！`, 'success');
+                rebindState = null;
+                renderKeyConfigUI();
+                return;
+            }
+
+            if (e.code === 'Escape') {
+                if (rebindState) {
+                    rebindState = null;
+                    renderKeyConfigUI();
+                    showToast('割り当てをキャンセルしました', 'info');
+                    return;
+                }
+                closeTopModal();
+                return;
+            }
+
+            // 曲名などの入力中や、ダイアログ表示中はゲーム用キーを無視する
+            const t = e.target;
+            if (t && t.matches && t.matches('input[type="text"], input[type="number"], textarea')) return;
+            if (document.querySelector('.scrim.open')) return;
+
+            if (currentMode === 'editor' && !e.ctrlKey && !e.altKey && ['1', '2', '3', '4', '5', '6'].includes(e.key)) {
+                const snapMap = { '1': 4, '2': 8, '3': 16, '4': 32, '5': 12, '6': 0 };
+                setEditorSnap(snapMap[e.key]);
+                return;
+            }
+
+            for (let l = 0; l < LANE_COUNT; l++) {
+                if (e.code === LANE_KEYS[l] || e.code === LANE_KEYS_ALT[l]) {
+                    // 矢印キーでページがスクロールしたり、スライダーが動いたりしないようにする
+                    if (!e.ctrlKey && !e.metaKey && !e.altKey) e.preventDefault();
+                    triggerLanePress(l);
+                    break;
+                }
+            }
+        });
+
+        window.addEventListener('keyup', (e) => {
+            for (let l = 0; l < LANE_COUNT; l++) {
+                if (e.code === LANE_KEYS[l] || e.code === LANE_KEYS_ALT[l]) {
+                    triggerLaneRelease(l);
+                    break;
+                }
+            }
+        });
+
+        function gameLoop() {
+            pollGamepadInputs();
+            if (currentMode === 'play') {
+                renderPlayCanvas();
+            } else {
+                renderEditorCanvas();
+            }
+            requestAnimationFrame(gameLoop);
+        }
+
+        // ---------- Material Design 3 helpers ----------
+
+        // Material Symbols の読み込みが終わるまでアイコンを隠す(ligature 名の文字が見えるのを防ぐ)
+        (function initIconFont() {
+            const ready = () => document.documentElement.classList.add('icons-ready');
+            if (document.fonts && document.fonts.load) {
+                document.fonts.load('24px "Material Symbols Outlined"', 'play_arrow')
+                    .then(faces => { if (faces && faces.length) ready(); })
+                    .catch(() => {});
+            } else {
+                ready();
+            }
+        })();
+
+        // スライダーの「済み」部分の塗りをCSS変数に反映
+        function syncRange(el) {
+            if (!el) return;
+            const min = parseFloat(el.min) || 0;
+            const max = parseFloat(el.max) || 100;
+            const pct = ((parseFloat(el.value) - min) / (max - min)) * 100;
+            el.style.setProperty('--pct', `${Math.max(0, Math.min(100, pct))}%`);
+        }
+        document.addEventListener('input', (e) => {
+            if (e.target && e.target.type === 'range') syncRange(e.target);
+        });
+
+        // リップル(ボタンを押した位置から広がる波紋)
+        document.addEventListener('pointerdown', (e) => {
+            const host = e.target.closest && e.target.closest('.btn, .icon-btn, .fab, .fab-ext, .chip, .seg-btn, .tab');
+            if (!host || host.disabled) return;
+            const rect = host.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height) * 2;
+            const wave = document.createElement('span');
+            wave.className = 'ripple';
+            wave.style.width = wave.style.height = `${size}px`;
+            wave.style.left = `${e.clientX - rect.left - size / 2}px`;
+            wave.style.top = `${e.clientY - rect.top - size / 2}px`;
+            host.appendChild(wave);
+            wave.addEventListener('animationend', () => wave.remove());
+        });
+
+
+        const padHeld = [false, false, false, false];
+        function padDown(e, lane) {
+            e.preventDefault();
+            if (padHeld[lane]) return;
+            padHeld[lane] = true;
+            try { e.currentTarget.setPointerCapture(e.pointerId); } catch (err) {}
+            if (IS_MOBILE_UI && playState && playState.isPlaying && navigator.vibrate) navigator.vibrate(8);
+            handleTouchLaneStart(lane);
+        }
+        function padUp(e, lane) {
+            if (!padHeld[lane]) return;
+            padHeld[lane] = false;
+            handleTouchLaneEnd(lane);
+        }
+
+
+        let lastResult = null;
+        let _wasPlaying = false;
+
+
+        function updateStageHints() {
+            const hasAudio = !!audioBuffer;
+            const playing = !!(playState && playState.isPlaying);
+            const showResult = hasAudio && !playing && !!lastResult;
+            const toggle = (id, show) => {
+                const el = document.getElementById(id);
+                if (el) el.classList.toggle('hidden', !show);
+            };
+            const setText = (id, text) => {
+                const el = document.getElementById(id);
+                if (el) el.textContent = text;
+            };
+            toggle('play-hint-empty', !hasAudio);
+            toggle('play-hint-ready', hasAudio && !playing);
+            toggle('editor-hint', !hasAudio);
+
+            toggle('result-block', showResult);
+            setText('ready-title', showResult ? 'リザルト' : '準備OK');
+            setText('ready-icon', showResult ? 'emoji_events' : 'play_arrow');
+            setText('ready-text', showResult ? 'もう一度チャレンジしますか?' : '準備ができたらスタートしましょう。');
+            setText('ready-start-label', showResult ? 'もう一度' : 'ゲーム開始');
+            if (showResult) {
+                setText('result-score', String(lastResult.score).padStart(7, '0'));
+                setText('result-maxcombo', lastResult.maxCombo);
+                setText('result-perfect', lastResult.perfect);
+                setText('result-great', lastResult.great);
+                setText('result-good', lastResult.good);
+                setText('result-miss', lastResult.miss);
+            }
+
+
+            document.documentElement.dataset.playing = String(playing);
+            if (playing !== _wasPlaying) {
+                _wasPlaying = playing;
+                setWakeLock(playing);
+                resizeCanvases();
+            }
+        }
+
+
+        let wakeLockSentinel = null;
+        async function setWakeLock(on) {
+            try {
+                if (on && 'wakeLock' in navigator && !wakeLockSentinel) {
+                    wakeLockSentinel = await navigator.wakeLock.request('screen');
+                    wakeLockSentinel.addEventListener('release', () => { wakeLockSentinel = null; });
+                } else if (!on && wakeLockSentinel) {
+                    await wakeLockSentinel.release();
+                    wakeLockSentinel = null;
+                }
+            } catch (e) { /* 非対応・拒否は無視 */ }
+        }
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && _wasPlaying) setWakeLock(true);
+        });
+
+
+        function exitPlay() {
+            if (!(playState && playState.isPlaying)) return;
+            endPlayGame();
+            lastResult = null;
+            updateStageHints();
+        }
+
+        function setEditorPlayIcon(playing) {
+            const btn = document.getElementById('btn-editor-play');
+            if (btn) btn.innerHTML = `<span class="ms fill">${playing ? 'pause' : 'play_arrow'}</span>`;
+        }
+
+        function closeTopModal() {
+            const open = document.querySelectorAll('.scrim.open');
+            if (open.length) closeModal(open[open.length - 1].id);
+        }
+
+
+        const THEME_KEY = 'beatpulse_theme';
+        function applyTheme(mode, save = true) {
+            document.documentElement.dataset.theme = mode;
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.textContent = mode === 'light' ? 'dark_mode' : 'light_mode';
+            readTheme();
+            const meta = document.querySelector('meta[name="theme-color"]');
+            if (meta) meta.setAttribute('content', getComputedStyle(document.documentElement).getPropertyValue('--surface-container').trim());
+            if (save) {
+                try { localStorage.setItem(THEME_KEY, mode); } catch (e) {}
+            }
+        }
+        function toggleTheme() {
+            applyTheme(document.documentElement.dataset.theme === 'light' ? 'dark' : 'light');
+        }
+
+
+        function updateEditorHover(clientX, clientY) {
+            const rect = editorCanvas.getBoundingClientRect();
+            const x = clientX - rect.left;
+            const y = clientY - rect.top;
+            const w = editorSize.w;
+            const h = editorSize.h;
+            const rulerWidth = editorRulerWidth;
+            const laneWidth = (w - rulerWidth) / LANE_COUNT;
+
+            if (x >= rulerWidth && x < w) {
+                editorState.hoverLane = Math.floor((x - rulerWidth) / laneWidth);
+                const playheadY = h / 2;
+                const timeDiff = (playheadY - y) / editorState.zoomPxPerSec;
+                editorState.hoverTime = Math.max(0, getCurrentAudioTime() + timeDiff);
+            } else {
+                editorState.hoverLane = -1;
+                editorState.hoverTime = null;
+            }
+        }
+
+
+        (function initEditorTouch() {
+            let pan = null;
+
+            editorCanvas.addEventListener('pointerdown', (e) => {
+                if (e.pointerType !== 'touch') return;
+                updateEditorHover(e.clientX, e.clientY);
+                pan = { id: e.pointerId, y: e.clientY, t: getCurrentAudioTime(), moved: false };
+                try { editorCanvas.setPointerCapture(e.pointerId); } catch (err) {}
+            });
+
+            editorCanvas.addEventListener('pointermove', (e) => {
+                if (!pan || e.pointerId !== pan.id || !audioBuffer) return;
+                const dy = e.clientY - pan.y;
+                if (!pan.moved) {
+                    if (Math.abs(dy) < 10) return;
+                    pan.moved = true;
+                    editorState.hoverLane = -1;
+                    editorState.hoverTime = null;
+                    if (isAudioPlaying) toggleEditorPlayback(); 
+                }
+                const t = Math.max(0, Math.min(audioBuffer.duration, pan.t + dy / editorState.zoomPxPerSec));
+                handleEditorSeek((t / audioBuffer.duration) * 100);
+            });
+
+            const end = (e) => {
+                if (!pan || e.pointerId !== pan.id) return;
+                if (pan.moved) {
+                    editorSuppressClick = true;
+                    setTimeout(() => { editorSuppressClick = false; }, 400);
+                }
+                pan = null;
+                setTimeout(() => { editorState.hoverLane = -1; editorState.hoverTime = null; }, 350);
+            };
+            editorCanvas.addEventListener('pointerup', end);
+            editorCanvas.addEventListener('pointercancel', end);
+        })();
+
+        if (IS_MOBILE_UI) {
+            const strip = document.getElementById('tool-strip');
+            const speedGroup = document.getElementById('speed-group');
+            if (strip && speedGroup) strip.appendChild(speedGroup);
+            ['play-stage'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('contextmenu', (e) => e.preventDefault());
+            });
+        }
+
+        window.addEventListener('resize', resizeCanvases);
+        if (window.ResizeObserver) {
+            const ro = new ResizeObserver(() => resizeCanvases());
+            ro.observe(gameCanvas.parentElement);
+            ro.observe(editorCanvas.parentElement);
+        }
+
+        window.onload = function() {
+            applyTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark', false);
+            resizeCanvases();
+            renderKeyConfigUI();
+            loadScrollSpeed();
+            document.querySelectorAll('input[type="range"]').forEach(syncRange);
+            updateStageHints();
+            requestAnimationFrame(gameLoop);
+        };
+    </script>
+</body>
+</html>
