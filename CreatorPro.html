@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>BeatPulse Chart Studio</title>
+<style>
+:root{--bg:#0b0e14;--panel:#111722;--panel2:#171e2b;--line:#283244;--text:#f5f7fb;--muted:#8e9aae;--accent:#61d8ff;--red:#ff6685;--green:#69e6a3;--lane0:#4fe3f7;--lane1:#ff7baf;--lane2:#ffd95a;--lane3:#62f0a5}
+*{box-sizing:border-box}html,body{margin:0;height:100%;overflow:hidden;background:radial-gradient(circle at 20% 0%,#142239 0,#0b0e14 42%);color:var(--text);font-family:Segoe UI,Yu Gothic UI,Meiryo,sans-serif}
+button,input,select{font:inherit;color:inherit}button{cursor:pointer;border:1px solid var(--line);background:#182131;border-radius:7px;padding:7px 11px}button:hover{background:#202b3d}button.active{background:var(--accent);color:#061018;border-color:var(--accent)}button.danger{color:#ff9aae}.app{height:100%;display:grid;grid-template-rows:56px 1fr 34px}
+.top{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--line);background:#0d121bde;backdrop-filter:blur(14px)}
+.logo{font-weight:800;font-size:18px;letter-spacing:.4px}.logo b{color:var(--accent)}.sep{width:1px;height:24px;background:var(--line)}.grow{flex:1}.status{font-size:12px;color:var(--muted)}
+.main{display:grid;grid-template-columns:270px minmax(500px,1fr) 290px;min-height:0}
+.sidebar,.inspector{background:#0e141e;border-right:1px solid var(--line);padding:12px;overflow:auto}.inspector{border-right:0;border-left:1px solid var(--line)}
+h3{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:8px 2px}.card{background:#121a26;border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px}
+.row{display:flex;gap:7px;align-items:center;flex-wrap:wrap}.field{display:grid;gap:5px;margin:8px 0}.field label{font-size:11px;color:var(--muted)}input,select{width:100%;background:#0b111a;border:1px solid var(--line);border-radius:7px;padding:7px 8px;outline:none}input:focus,select:focus{border-color:var(--accent)}
+.drop{border:1px dashed #3a465b;border-radius:9px;padding:18px 10px;text-align:center;color:var(--muted);transition:.15s}.drop.drag{border-color:var(--accent);background:#10283a;color:#fff}.drop strong{display:block;color:#fff;margin-bottom:5px}
+.workspace{min-width:0;display:grid;grid-template-rows:48px 1fr 42px;background:#080c12}
+.toolbar{display:flex;align-items:center;gap:6px;padding:7px 10px;border-bottom:1px solid var(--line);background:#0d131d;overflow:auto;white-space:nowrap}
+.editor-wrap{position:relative;min-height:0;overflow:hidden}.editor{position:absolute;inset:0;overflow:auto;background:#080b11}
+#canvas{display:block;min-width:900px;cursor:crosshair}.help{font-size:11px;color:var(--muted);line-height:1.6}.stat{display:flex;justify-content:space-between;font-size:12px;padding:5px 0}.stat b{font-variant-numeric:tabular-nums}
+.selection{border:1px solid var(--accent);background:#61d8ff16;border-radius:5px;pointer-events:none}
+.timeline{display:flex;align-items:center;gap:8px;padding:6px 10px;border-top:1px solid var(--line);background:#0e141e}.timeline input[type=range]{flex:1}.time{font-variant-numeric:tabular-nums;font-size:12px;min-width:90px}
+.note-list{max-height:230px;overflow:auto}.note-row{display:grid;grid-template-columns:32px 1fr 48px;gap:7px;align-items:center;padding:5px;border-bottom:1px solid #202938;font-size:11px}.dot{width:10px;height:10px;border-radius:50%}
+.footer{display:flex;align-items:center;gap:14px;padding:0 12px;border-top:1px solid var(--line);font-size:11px;color:var(--muted)}
+.kbd{display:inline-block;padding:2px 5px;border:1px solid #3a4658;border-radius:4px;background:#151d29;color:#dbe3ef}
+@media(max-width:1100px){.main{grid-template-columns:220px minmax(420px,1fr)}.inspector{display:none}}
+@media(max-width:760px){.main{grid-template-columns:1fr}.sidebar{display:none}.top .optional{display:none}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="top">
+  <div class="logo">BeatPulse <b>Chart Studio</b></div><div class="sep"></div>
+  <button id="newBtn">新規</button><button id="importBtn">JSON読込</button><button id="audioBtn">音源</button><button id="exportBtn" class="active">JSON書出</button>
+  <div class="grow"></div><span id="status" class="status">準備完了</span>
+</header>
+<main class="main">
+<aside class="sidebar">
+  <h3>プロジェクト</h3>
+  <div class="card">
+    <div class="field"><label>曲名</label><input id="title" placeholder="Untitled"></div>
+    <div class="field"><label>作者</label><input id="author" placeholder="Author"></div>
+    <div class="field"><label>BPM</label><input id="bpm" type="number" min="1" max="999" value="120"></div>
+    <div class="field"><label>難易度</label><select id="difficulty"><option value="">未設定</option><option value="easy">EASY</option><option value="normal">NORMAL</option><option value="hard">HARD</option><option value="pluse">PLUSE!</option></select></div>
+  </div>
+  <h3>ファイル</h3>
+  <div id="drop" class="drop"><strong>ここへ JSON / 音源をドロップ</strong>またはクリックして選択<div class="help">BeatPulse の beatpulse-chart JSON に対応</div></div>
+  <input id="jsonFile" type="file" accept=".json,application/json" hidden>
+  <input id="audioFile" type="file" accept="audio/*" hidden>
+  <h3>表示</h3>
+  <div class="card">
+    <div class="row"><button id="zoomOut">−</button><button id="zoomReset">100%</button><button id="zoomIn">＋</button></div>
+    <div class="field"><label>スナップ</label><select id="snap"><option value="0">Free</option><option value="4" selected>1/4</option><option value="8">1/8</option><option value="16">1/16</option><option value="32">1/32</option><option value="12">1/12 (3連)</option></select></div>
+    <label class="help"><input id="wave" type="checkbox" checked> 波形を表示</label>
+  </div>
+  <h3>統計</h3>
+  <div class="card"><div class="stat"><span>ノーツ</span><b id="count">0</b></div><div class="stat"><span>Tap</span><b id="tapCount">0</b></div><div class="stat"><span>Hold</span><b id="holdCount">0</b></div><div class="stat"><span>長さ</span><b id="duration">0:00</b></div></div>
+</aside>
+<section class="workspace">
+  <div class="toolbar">
+    <button id="tapBtn" class="active">● タップ</button><button id="holdBtn">▬ Hold</button>
+    <span class="sep"></span><button id="playBtn">▶ 再生</button><button id="stopBtn">■</button>
+    <span class="sep"></span><button id="quantBtn">自動クオンタイズ</button><button id="delBtn" class="danger">選択削除</button>
+    <span class="grow"></span><span class="help">クリック=配置 / ノーツをドラッグ=移動 / Shift+クリック=複数選択</span>
+  </div>
+  <div class="editor-wrap"><div id="editor" class="editor"><canvas id="canvas"></canvas></div></div>
+  <div class="timeline"><span id="time" class="time">0:00.000</span><input id="seek" type="range" min="0" max="1" step=".001" value="0"><span id="audioName" class="help">音源なし</span></div>
+</section>
+<aside class="inspector">
+  <h3>選択ノーツ</h3>
+  <div class="card">
+    <div class="field"><label>レーン</label><select id="noteLane"><option>1</option><option>2</option><option>3</option><option>4</option></select></div>
+    <div class="field"><label>時刻 (秒)</label><input id="noteTime" type="number" step=".001"></div>
+    <div class="field"><label>長さ (秒)</label><input id="noteDur" type="number" min="0" step=".001"></div>
+    <button id="applyNote">適用</button>
+  </div>
+  <h3>ノーツ一覧</h3><div id="noteList" class="card note-list"></div>
+  <h3>ショートカット</h3>
+  <div class="card help">
+    <div><span class="kbd">1</span> Tap　<span class="kbd">2</span> Hold</div>
+    <div><span class="kbd">Q/E</span> ズーム　<span class="kbd">Space</span> 再生</div>
+    <div><span class="kbd">Delete</span> 選択削除　<span class="kbd">Ctrl+Z</span> Undo</div>
+    <div><span class="kbd">Ctrl+Y</span> Redo</div>
+  </div>
+</aside>
+</main>
+<footer class="footer"><span>4レーン BeatPulse chart editor</span><span>JSON形式: beatpulse-chart</span><span class="grow"></span><span id="dirty">保存済み</span></footer>
+</div>
+<script>
+const LANES=['#4fe3f7','#ff7baf','#ffd95a','#62f0a5'];
+let chart={format:'beatpulse-chart',bpm:120,notes:[],speedZones:[],meta:{title:'Untitled',author:'',difficulty:''}};
+let audio=null,audioURL=null,playing=false,startWall=0,startTime=0,currentTime=0,zoom=100,snap=4,noteType='tap',selected=new Set(),drag=null,undo=[],redo=[],waveData=null;
+
+const $=id=>document.getElementById(id);
+function setStatus(s){$('status').textContent=s}
+function clone(){return JSON.parse(JSON.stringify(chart))}
+function pushUndo(){undo.push(clone());if(undo.length>60)undo.shift();redo=[];$('dirty').textContent='未保存の変更'}
+function restore(c){chart=c;selected.clear();syncMeta();render();updateStats();renderList();updateInspector()}
+function syncMeta(){ $('title').value=chart.meta?.title||'';$('author').value=chart.meta?.author||'';$('difficulty').value=chart.meta?.difficulty||'';$('bpm').value=chart.bpm||120}
+function sanitize(x){
+ if(!x||!Array.isArray(x.notes))throw Error('notes がありません');
+ return {format:'beatpulse-chart',bpm:Number(x.bpm)>0?Number(x.bpm):120,
+ notes:x.notes.filter(n=>Number.isInteger(n.lane)&&n.lane>=0&&n.lane<4&&Number.isFinite(Number(n.time))).map((n,i)=>({id:String(n.id??Date.now()+i),lane:n.lane,time:Number(n.time),duration:Math.max(0,Number(n.duration)||0),type:n.type==='hold'?'hold':'tap'})).sort((a,b)=>a.time-b.time),
+ speedZones:Array.isArray(x.speedZones)?x.speedZones:[],meta:typeof x.meta==='object'?x.meta:{}}
+}
+function snapTime(t){if(!snap)return Math.max(0,t);let step=(60/chart.bpm)*(4/snap);return Math.max(0,Math.round(t/step)*step)}
+function resize(){let w=Math.max(900,$('editor').clientWidth),h=Math.max(600,Math.max(900,(duration()+4)*zoom));$('canvas').width=w*devicePixelRatio;$('canvas').height=h*devicePixelRatio;$('canvas').style.width=w+'px';$('canvas').style.height=h+'px';render()}
+function duration(){return audio?.duration||Math.max(8,...chart.notes.map(n=>n.time+n.duration+2),8)}
+function y(t){return 42+t*zoom}
+function timeFromY(py){return Math.max(0,(py-42)/zoom)}
+function laneFromX(x){return Math.floor((x-80)/(( $('canvas').clientWidth-80)/4))}
+function render(){
+ const c=$('canvas'),ctx=c.getContext('2d');let W=c.clientWidth,H=c.clientHeight,D=devicePixelRatio;ctx.setTransform(D,0,0,D,0,0);ctx.clearRect(0,0,W,H);
+ ctx.fillStyle='#080b11';ctx.fillRect(0,0,W,H);let lw=(W-80)/4;
+ ctx.fillStyle='#101722';ctx.fillRect(0,0,80,H);
+ for(let l=0;l<4;l++){ctx.fillStyle=l%2?'#0b1119':'#0d141e';ctx.fillRect(80+l*lw,0,lw,H);ctx.strokeStyle='#263042';ctx.strokeRect(80+l*lw,0,lw,H)}
+ let step=(60/chart.bpm)*(4/snap||1);if(!snap)step=60/chart.bpm/4;
+ let max=duration()+2;
+ for(let t=0;t<=max;t+=step){
+  let yy=y(t), major=Math.abs((t/(60/chart.bpm))%4)<.001;
+  ctx.strokeStyle=major?'#61d8ff55':'#ffffff16';ctx.lineWidth=major?1.5:1;ctx.beginPath();ctx.moveTo(80,yy);ctx.lineTo(W,yy);ctx.stroke();
+  if(major){ctx.fillStyle='#8e9aae';ctx.font='11px Segoe UI';ctx.fillText(t.toFixed(2)+'s',8,yy+4)}
+ }
+ if(waveData){ctx.strokeStyle='#61d8ff22';ctx.beginPath();for(let i=0;i<waveData.length;i++){let xx=80+i/(waveData.length-1)*(W-80);let yy=42+(i?0:0);let amp=waveData[i]*35;ctx.moveTo(xx,yy+amp);ctx.lineTo(xx,yy-amp)}ctx.stroke()}
+ chart.notes.forEach(n=>{
+   let xx=80+n.lane*lw+7, yy=y(n.time), ww=lw-14;
+   if(n.type==='hold'&&n.duration>0){ctx.fillStyle=LANES[n.lane]+'66';ctx.fillRect(xx,yy,ww,n.duration*zoom);ctx.strokeStyle=LANES[n.lane];ctx.strokeRect(xx,yy,ww,n.duration*zoom)}
+   ctx.fillStyle=LANES[n.lane];ctx.beginPath();ctx.roundRect(xx,yy-8,ww,16,6);ctx.fill();
+   if(selected.has(n.id)){ctx.strokeStyle='#fff';ctx.lineWidth=2;ctx.stroke()}
+ });
+ ctx.strokeStyle='#ffffff';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(80, y(currentTime));ctx.lineTo(W,y(currentTime));ctx.stroke();
+}
+function updateStats(){let tap=chart.notes.filter(n=>n.type==='tap').length,hold=chart.notes.length-tap;$('count').textContent=chart.notes.length;$('tapCount').textContent=tap;$('holdCount').textContent=hold;$('duration').textContent=fmt(duration())}
+function fmt(s){let m=Math.floor(s/60),q=(s%60).toFixed(3).padStart(6,'0');return `${m}:${q}`}
+function renderList(){let a=[...chart.notes].sort((x,y)=>x.time-y.time);$('noteList').innerHTML=a.length?a.map(n=>`<div class="note-row" data-id="${n.id}"><span class="dot" style="background:${LANES[n.lane]}"></span><span>L${n.lane+1} ${n.type==='hold'?'HOLD':'TAP'}<br>${n.time.toFixed(3)}s${n.duration?` +${n.duration.toFixed(3)}s`:''}</span><button>選択</button></div>`).join(''):'<div class="help">まだノーツがありません。</div>'}
+function updateInspector(){let a=[...selected],n=chart.notes.find(x=>x.id===a[0]);if(!n)return;$('noteLane').value=n.lane+1;$('noteTime').value=n.time.toFixed(3);$('noteDur').value=n.duration.toFixed(3)}
+function addNote(lane,time,type=noteType){
+ if(lane<0||lane>3)return;time=snapTime(time);let existing=chart.notes.find(n=>n.lane===lane&&Math.abs(n.time-time)<.025);
+ if(existing){pushUndo();chart.notes=chart.notes.filter(n=>n!==existing);selected.delete(existing.id)}
+ else{pushUndo();let n={id:crypto.randomUUID(),lane,time,duration:type==='hold'?60/chart.bpm:0,type};chart.notes.push(n);selected.clear();selected.add(n.id)}
+ chart.notes.sort((a,b)=>a.time-b.time);render();updateStats();renderList();updateInspector()
+}
+function pick(x,y,shift){
+ let W=$('canvas').clientWidth,lw=(W-80)/4,l=laneFromX(x),t=timeFromY(y);
+ let hits=chart.notes.filter(n=>n.lane===l&&t>=n.time-.15&&t<=n.time+n.duration+.15).sort((a,b)=>Math.abs(a.time-t)-Math.abs(b.time-t));
+ if(!hits.length)return null;let n=hits[0];if(!shift)selected.clear();selected.add(n.id);updateInspector();render();return n
+}
+$('canvas').addEventListener('pointerdown',e=>{
+ let r=$('canvas').getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,n=pick(x,y,e.shiftKey);
+ if(n){drag={id:n.id,startX:x,startY:y,old:clone()};$('canvas').setPointerCapture(e.pointerId);return}
+ let l=laneFromX(x);if(l>=0&&l<4){addNote(l,timeFromY(y));}
+});
+$('canvas').addEventListener('pointermove',e=>{
+ if(!drag)return;let r=$('canvas').getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,n=chart.notes.find(n=>n.id===drag.id);if(!n)return;
+ let l=laneFromX(x);if(l>=0&&l<4)n.lane=l;n.time=snapTime(timeFromY(y));render();updateInspector()
+});
+$('canvas').addEventListener('pointerup',e=>{if(drag){pushUndo();drag=null;chart.notes.sort((a,b)=>a.time-b.time);renderList();updateStats()}});
+$('canvas').addEventListener('dblclick',e=>{let r=$('canvas').getBoundingClientRect(),n=pick(e.clientX-r.left,e.clientY-r.top,false);if(n&&n.type==='hold'){pushUndo();n.duration=Math.max(.05,n.duration+.25);render();updateStats();updateInspector()}});
+$('canvas').addEventListener('contextmenu',e=>e.preventDefault());
+$('snap').onchange=e=>{snap=Number(e.target.value);render()};$('wave').onchange=render;
+$('bpm').oninput=()=>{chart.bpm=Number($('bpm').value)||120;render()};$('title').oninput=()=>chart.meta.title=$('title').value;$('author').oninput=()=>chart.meta.author=$('author').value;$('difficulty').onchange=e=>chart.meta.difficulty=e.target.value;
+$('tapBtn').onclick=()=>{noteType='tap';$('tapBtn').classList.add('active');$('holdBtn').classList.remove('active')};$('holdBtn').onclick=()=>{noteType='hold';$('holdBtn').classList.add('active');$('tapBtn').classList.remove('active')};
+$('zoomIn').onclick=()=>{zoom=Math.min(300,zoom+20);$('zoomReset').textContent=zoom+'%';resize()};$('zoomOut').onclick=()=>{zoom=Math.max(40,zoom-20);$('zoomReset').textContent=zoom+'%';resize()};$('zoomReset').onclick=()=>{zoom=100;$('zoomReset').textContent='100%';resize()};
+$('delBtn').onclick=()=>{if(!selected.size)return;pushUndo();chart.notes=chart.notes.filter(n=>!selected.has(n.id));selected.clear();render();updateStats();renderList()};
+$('quantBtn').onclick=()=>{pushUndo();chart.notes.forEach(n=>{let e=n.time+n.duration;n.time=snapTime(n.time);if(n.type==='hold')n.duration=Math.max(.05,snapTime(e)-n.time)});chart.notes.sort((a,b)=>a.time-b.time);render();updateStats();renderList()};
+$('applyNote').onclick=()=>{let n=chart.notes.find(n=>selected.has(n.id));if(!n)return;pushUndo();n.lane=Number($('noteLane').value)-1;n.time=Math.max(0,Number($('noteTime').value)||0);n.duration=Math.max(0,Number($('noteDur').value)||0);chart.notes.sort((a,b)=>a.time-b.time);render();renderList();updateStats()};
+$('noteList').onclick=e=>{let row=e.target.closest('.note-row');if(!row)return;selected.clear();selected.add(row.dataset.id);let n=chart.notes.find(n=>n.id===row.dataset.id);if(n){currentTime=n.time;syncSeek();updateInspector();render()}};
+function download(){let out={format:'beatpulse-chart',bpm:chart.bpm,notes:chart.notes.map(n=>({id:n.id,lane:n.lane,time:n.time,duration:n.duration||0,type:n.type})),speedZones:chart.speedZones||[]};if(chart.meta)out.meta=chart.meta;let b=new Blob([JSON.stringify(out,null,2)],{type:'application/json'}),u=URL.createObjectURL(b),a=document.createElement('a');a.href=u;a.download=((chart.meta.title||'beatpulse_chart').replace(/[\\/:*?"<>|]/g,'_'))+'.json';a.click();URL.revokeObjectURL(u);$('dirty').textContent='保存済み';setStatus('JSONを書き出しました')}
+$('exportBtn').onclick=download;
+$('newBtn').onclick=()=>{if(!confirm('新規譜面を作成しますか？'))return;chart={format:'beatpulse-chart',bpm:120,notes:[],speedZones:[],meta:{title:'Untitled',author:'',difficulty:''}};currentTime=0;selected.clear();syncMeta();render();updateStats();renderList();setStatus('新規譜面')};
+$('importBtn').onclick=()=>$('jsonFile').click();$('audioBtn').onclick=()=>$('audioFile').click();
+$('jsonFile').onchange=async e=>{let f=e.target.files[0];if(!f)return;try{chart=sanitize(JSON.parse(await f.text()));syncMeta();currentTime=0;selected.clear();render();updateStats();renderList();setStatus('譜面を読み込みました')}catch(err){alert('JSONを読み込めません: '+err.message)}e.target.value=''};
+async function loadAudio(f){if(audioURL)URL.revokeObjectURL(audioURL);audioURL=URL.createObjectURL(f);audio=new Audio(audioURL);audio.preload='auto';$('audioName').textContent=f.name;audio.onloadedmetadata=()=>{syncSeek();resize();setStatus('音源を読み込みました')};audio.ontimeupdate=()=>{currentTime=audio.currentTime;syncSeek();render();$('time').textContent=fmt(currentTime)}}
+$('audioFile').onchange=e=>{if(e.target.files[0])loadAudio(e.target.files[0]);e.target.value=''};
+function syncSeek(){let d=duration();$('seek').max=d;$('seek').value=currentTime;$('time').textContent=fmt(currentTime)}
+$('seek').oninput=e=>{currentTime=Number(e.target.value);if(audio)audio.currentTime=currentTime;render()};
+$('playBtn').onclick=()=>{if(!audio){alert('先に音源を読み込んでください');return}if(playing){audio.pause();playing=false;$('playBtn').textContent='▶ 再生'}else{audio.currentTime=currentTime;audio.play();playing=true;$('playBtn').textContent='Ⅱ 一時停止'}};
+$('stopBtn').onclick=()=>{if(audio){audio.pause();audio.currentTime=0}playing=false;currentTime=0;syncSeek();render();$('playBtn').textContent='▶ 再生'};
+$('drop').onclick=()=>{if(confirm('OK=JSON / キャンセル=音源'))$('jsonFile').click();else $('audioFile').click()};
+['dragenter','dragover'].forEach(x=>$('drop').addEventListener(x,e=>{e.preventDefault();$('drop').classList.add('drag')}));['dragleave','drop'].forEach(x=>$('drop').addEventListener(x,e=>{e.preventDefault();$('drop').classList.remove('drag')}));
+$('drop').addEventListener('drop',e=>{let f=e.dataTransfer.files[0];if(!f)return;if(f.type.includes('audio'))loadAudio(f);else if(f.name.endsWith('.json')){let dt=new DataTransfer();dt.items.add(f);$('jsonFile').files=dt.files;$('jsonFile').dispatchEvent(new Event('change'))}});
+document.addEventListener('keydown',e=>{if(e.target.matches('input,select'))return;if(e.key==='1')$('tapBtn').click();if(e.key==='2')$('holdBtn').click();if(e.key.toLowerCase()==='q')$('zoomOut').click();if(e.key.toLowerCase()==='e')$('zoomIn').click();if(e.code==='Space'){e.preventDefault();$('playBtn').click()}if(e.key==='Delete')$('delBtn').click();if(e.ctrlKey&&e.key.toLowerCase()==='z'){e.preventDefault();let c=undo.pop();if(c){redo.push(clone());restore(c)}}if(e.ctrlKey&&e.key.toLowerCase()==='y'){e.preventDefault();let c=redo.pop();if(c){undo.push(clone());restore(c)}}});
+$('editor').addEventListener('scroll',()=>{});window.addEventListener('resize',resize);
+syncMeta();resize();updateStats();renderList();
+</script>
+</body>
+</html>
