@@ -28,7 +28,7 @@
         // 保存済みの表示設定(テーマ/アクセント)を描画前に適用してちらつきを防ぐ。未設定ならダーク
         (function () {
             var mode = 'dark', accent = 'blue', skin = 'default';
-            var SK = { sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light' };
+            var SK = { sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light', forest: 'dark', space: 'dark', cyber: 'dark', wafu: 'dark', snow: 'light', matcha: 'light', retro: 'dark', flame: 'dark' };
             try {
                 var d = JSON.parse(localStorage.getItem('beatpulsezq_prefs') || 'null');
                 if (d) { if (d.theme) mode = d.theme; if (d.accent) accent = d.accent; if (d.skin && SK[d.skin]) { skin = d.skin; mode = SK[d.skin]; } }
@@ -1180,6 +1180,224 @@
         .dim { opacity: .45; pointer-events: none; }
         [data-device="mobile"] .terms-tabs { flex-wrap: wrap; }
 
+        /* ===== デザインテーマ(追加分) ===== */
+        :root[data-skin="forest"][data-theme] {
+            --accent: #A3E048;
+            --primary: #A3E048;
+            --accent-text: #C7F27F;
+            --on-accent: #0B2000;
+            --accent-hover: color-mix(in srgb, #A3E048 90%, transparent);
+            --accent-pressed: color-mix(in srgb, #A3E048 80%, transparent);
+            --tertiary: #F2C46B;
+            --lane-0: #6FE3D0;
+            --lane-1: #FF8F70;
+            --lane-2: #F4D35E;
+            --lane-3: #A3E048;
+            --on-lane: #0A1A0E;
+            --surface-lowest: #07120C;
+            --surface-low: #0D1A13;
+            --surface-container: #12241A;
+            --outline-variant: #244033;
+            --bg-base: #0B1A12;
+            --bg-mica: radial-gradient(90% 60% at 15% 0%, rgba(90,190,120,.30), transparent 60%), radial-gradient(80% 70% at 100% 100%, rgba(30,110,80,.36), transparent 60%), linear-gradient(180deg, #0B1A12, #0A130E);
+            --layer: rgba(10,30,20,.42);
+            --dialog-bg: #142219;
+            --dialog-foot: #0E1912;
+            --flyout-bg: rgba(18,34,25,.92);
+        }
+        :root[data-skin="space"][data-theme] {
+            --accent: #A78BFA;
+            --primary: #A78BFA;
+            --accent-text: #CDBFFF;
+            --on-accent: #140B33;
+            --accent-hover: color-mix(in srgb, #A78BFA 90%, transparent);
+            --accent-pressed: color-mix(in srgb, #A78BFA 80%, transparent);
+            --tertiary: #7DD3FC;
+            --lane-0: #7DD3FC;
+            --lane-1: #F0ABFC;
+            --lane-2: #FDE68A;
+            --lane-3: #86EFAC;
+            --on-lane: #0A0B18;
+            --surface-lowest: #03040B;
+            --surface-low: #0A0C1C;
+            --surface-container: #10132A;
+            --outline-variant: #262B52;
+            --bg-base: #05060F;
+            --bg-mica: radial-gradient(70% 55% at 82% 0%, rgba(120,90,255,.36), transparent 60%), radial-gradient(60% 50% at 8% 92%, rgba(60,140,255,.28), transparent 60%), #05060F;
+            --layer: rgba(14,16,40,.5);
+            --dialog-bg: #12142B;
+            --dialog-foot: #0B0D20;
+            --flyout-bg: rgba(16,18,42,.92);
+        }
+        :root[data-skin="cyber"][data-theme] {
+            --accent: #FCEE09;
+            --primary: #FCEE09;
+            --accent-text: #FFF48A;
+            --on-accent: #1A1700;
+            --accent-hover: color-mix(in srgb, #FCEE09 90%, transparent);
+            --accent-pressed: color-mix(in srgb, #FCEE09 80%, transparent);
+            --tertiary: #FF2A6D;
+            --lane-0: #05D9E8;
+            --lane-1: #FF2A6D;
+            --lane-2: #FCEE09;
+            --lane-3: #7CFF6B;
+            --on-lane: #0A0A12;
+            --surface-lowest: #06060C;
+            --surface-low: #0E0E1A;
+            --surface-container: #151526;
+            --outline-variant: #33334F;
+            --bg-base: #0A0A12;
+            --bg-mica: radial-gradient(60% 50% at 0% 0%, rgba(252,238,9,.16), transparent 60%), radial-gradient(70% 55% at 100% 100%, rgba(255,0,120,.30), transparent 60%), #0A0A12;
+            --layer: rgba(18,18,32,.5);
+            --dialog-bg: #14141F;
+            --dialog-foot: #0D0D16;
+            --flyout-bg: rgba(20,20,34,.92);
+            --card-stroke: rgba(252,238,9,.14);
+        }
+        :root[data-skin="wafu"][data-theme] {
+            --accent: #E8604C;
+            --primary: #E8604C;
+            --accent-text: #F4A092;
+            --on-accent: #240703;
+            --accent-hover: color-mix(in srgb, #E8604C 90%, transparent);
+            --accent-pressed: color-mix(in srgb, #E8604C 80%, transparent);
+            --tertiary: #D9B36C;
+            --lane-0: #6FB7D6;
+            --lane-1: #E8604C;
+            --lane-2: #E3C16F;
+            --lane-3: #8FBF8F;
+            --on-lane: #0A0E18;
+            --surface-lowest: #090D18;
+            --surface-low: #101627;
+            --surface-container: #161E34;
+            --outline-variant: #2A3557;
+            --bg-base: #0E1526;
+            --bg-mica: radial-gradient(80% 60% at 88% 0%, rgba(200,60,50,.32), transparent 60%), radial-gradient(90% 70% at 0% 100%, rgba(40,60,120,.46), transparent 60%), linear-gradient(180deg, #0E1526, #0A0F1C);
+            --layer: rgba(12,18,40,.45);
+            --dialog-bg: #161D30;
+            --dialog-foot: #0F1526;
+            --flyout-bg: rgba(22,29,48,.92);
+        }
+        :root[data-skin="snow"][data-theme] {
+            --accent: #2F7DD1;
+            --primary: #2F7DD1;
+            --accent-text: #1C518F;
+            --on-accent: #FFFFFF;
+            --accent-hover: color-mix(in srgb, #2F7DD1 90%, transparent);
+            --accent-pressed: color-mix(in srgb, #2F7DD1 80%, transparent);
+            --tertiary: #7C8CF0;
+            --lane-0: #1AA6C7;
+            --lane-1: #E0518F;
+            --lane-2: #E0A100;
+            --lane-3: #2BB673;
+            --on-lane: #FFFFFF;
+            --surface-lowest: #FFFFFF;
+            --surface-low: #F3F8FD;
+            --surface-container: #EAF2FB;
+            --outline-variant: #CFE0F2;
+            --bg-base: #F3F8FD;
+            --bg-mica: radial-gradient(80% 60% at 0% 0%, rgba(160,200,245,.65), transparent 60%), radial-gradient(70% 60% at 100% 0%, rgba(214,228,252,.95), transparent 60%), #F3F8FD;
+            --layer: rgba(255,255,255,.6);
+            --dialog-bg: #FAFCFF;
+            --dialog-foot: #EEF4FB;
+            --flyout-bg: rgba(250,252,255,.92);
+        }
+        :root[data-skin="matcha"][data-theme] {
+            --accent: #4F8A2B;
+            --primary: #4F8A2B;
+            --accent-text: #2F5A15;
+            --on-accent: #FFFFFF;
+            --accent-hover: color-mix(in srgb, #4F8A2B 90%, transparent);
+            --accent-pressed: color-mix(in srgb, #4F8A2B 80%, transparent);
+            --tertiary: #C2823B;
+            --lane-0: #1E9DB0;
+            --lane-1: #D9527A;
+            --lane-2: #D69A00;
+            --lane-3: #3E9E4A;
+            --on-lane: #FFFFFF;
+            --surface-lowest: #FCFDF8;
+            --surface-low: #F2F6E9;
+            --surface-container: #E8EFDB;
+            --outline-variant: #CFDDB8;
+            --bg-base: #F4F7EE;
+            --bg-mica: radial-gradient(80% 60% at 0% 0%, rgba(178,214,140,.65), transparent 60%), radial-gradient(70% 60% at 100% 100%, rgba(232,220,170,.65), transparent 60%), #F4F7EE;
+            --layer: rgba(255,255,255,.58);
+            --dialog-bg: #FAFCF5;
+            --dialog-foot: #EDF3E1;
+            --flyout-bg: rgba(250,252,245,.92);
+        }
+        :root[data-skin="retro"][data-theme] {
+            --accent: #9BBC0F;
+            --primary: #9BBC0F;
+            --accent-text: #CADC5A;
+            --on-accent: #0F1F0F;
+            --accent-hover: color-mix(in srgb, #9BBC0F 90%, transparent);
+            --accent-pressed: color-mix(in srgb, #9BBC0F 80%, transparent);
+            --tertiary: #8BAC0F;
+            --lane-0: #C6E23A;
+            --lane-1: #8BAC0F;
+            --lane-2: #E8F5A0;
+            --lane-3: #5E8A1E;
+            --on-lane: #0F1F0F;
+            --surface-lowest: #0A150A;
+            --surface-low: #101E10;
+            --surface-container: #162816;
+            --outline-variant: #2B4A2B;
+            --bg-base: #0F1F0F;
+            --bg-mica: linear-gradient(180deg, #132313, #0B160B);
+            --layer: rgba(10,26,10,.5);
+            --dialog-bg: #162816;
+            --dialog-foot: #0E1B0E;
+            --flyout-bg: rgba(20,38,20,.94);
+            --text: #E3F0C0;
+            --text-2: rgba(227,240,192,.78);
+            --text-3: rgba(227,240,192,.55);
+            --on-surface: #E3F0C0;
+            --on-surface-variant: #BFD08F;
+            --card-stroke: rgba(155,188,15,.2);
+        }
+        :root[data-skin="flame"][data-theme] {
+            --accent: #FF6B2C;
+            --primary: #FF6B2C;
+            --accent-text: #FFAE85;
+            --on-accent: #200800;
+            --accent-hover: color-mix(in srgb, #FF6B2C 90%, transparent);
+            --accent-pressed: color-mix(in srgb, #FF6B2C 80%, transparent);
+            --tertiary: #FFC24A;
+            --lane-0: #FFC93C;
+            --lane-1: #FF4D4D;
+            --lane-2: #FF9F1C;
+            --lane-3: #7EE0FF;
+            --on-lane: #140603;
+            --surface-lowest: #100503;
+            --surface-low: #1A0A07;
+            --surface-container: #24100B;
+            --outline-variant: #4A2417;
+            --bg-base: #160806;
+            --bg-mica: radial-gradient(90% 60% at 50% 115%, rgba(255,110,30,.55), rgba(255,50,30,.25) 40%, transparent 68%), linear-gradient(180deg, #160806, #2A0F0A);
+            --layer: rgba(30,8,4,.45);
+            --dialog-bg: #2A130E;
+            --dialog-foot: #1E0D09;
+            --flyout-bg: rgba(42,19,14,.92);
+        }
+
+        :root[data-skin="space"] body::before {
+            content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background: radial-gradient(1.5px 1.5px at 8% 18%, #fff, transparent 60%), radial-gradient(1px 1px at 22% 62%, #cfe, transparent 60%), radial-gradient(2px 2px at 36% 30%, #fff, transparent 60%), radial-gradient(1px 1px at 52% 84%, #fff, transparent 60%), radial-gradient(1.5px 1.5px at 68% 12%, #dcf, transparent 60%), radial-gradient(1px 1px at 81% 55%, #fff, transparent 60%), radial-gradient(2px 2px at 93% 78%, #fff, transparent 60%), radial-gradient(1px 1px at 14% 90%, #fff, transparent 60%);
+        }
+        :root[data-skin="cyber"] body::before {
+            content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background: repeating-linear-gradient(135deg, rgba(252,238,9,.04) 0 2px, transparent 2px 16px);
+        }
+        :root[data-skin="snow"] body::before {
+            content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background: radial-gradient(3px 3px at 10% 20%, rgba(255,255,255,.95), transparent 60%), radial-gradient(2px 2px at 30% 70%, rgba(255,255,255,.95), transparent 60%), radial-gradient(3px 3px at 55% 15%, rgba(255,255,255,.95), transparent 60%), radial-gradient(2px 2px at 78% 60%, rgba(255,255,255,.95), transparent 60%), radial-gradient(3px 3px at 90% 30%, rgba(255,255,255,.95), transparent 60%);
+        }
+        :root[data-skin="retro"] :is(body, .btn, .chip, .seg-btn, .nav-item, input, select) { font-family: "Consolas", "MS Gothic", "Courier New", monospace; }
+        :root[data-skin="cyber"] :is(.score-num, .result-score, .timer, .tile-num, .rk-score) { font-family: "Bahnschrift", "Consolas", monospace; letter-spacing: .04em; text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 45%, transparent); }
+        :root[data-skin="flame"] :is(.score-num, .result-score) { text-shadow: 0 0 16px color-mix(in srgb, var(--accent) 50%, transparent); }
+        .skin-grid { grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); }
+
     </style>
 </head>
 <body>
@@ -1738,7 +1956,7 @@
             <div class="dlg-body">
                 <section class="dlg-section">
                     <h4><span class="ms">palette</span>外観</h4>
-                    <div class="set-row col" style="gap:8px"><span>デザインテーマ</span><div class="skin-grid" role="group" aria-label="デザインテーマ"><button type="button" class="skin" data-pref-skin="default" aria-pressed="false" onclick="setPref('skin','default')"><i style="--p:linear-gradient(135deg,#202020,#2c3f5a)"></i>デフォルト</button><button type="button" class="skin" data-pref-skin="sunset" aria-pressed="false" onclick="setPref('skin','sunset')"><i style="--p:linear-gradient(160deg,#1b1230,#a2385a 60%,#ff9a62)"></i>夕焼け</button><button type="button" class="skin" data-pref-skin="dream" aria-pressed="false" onclick="setPref('skin','dream')"><i style="--p:linear-gradient(135deg,#ffbee6,#aac8ff 55%,#c8aaff)"></i>夢</button><button type="button" class="skin" data-pref-skin="arcade" aria-pressed="false" onclick="setPref('skin','arcade')"><i style="--p:linear-gradient(135deg,#08040f,#ff2e97 55%,#00e5ff)"></i>ゲームセンター</button><button type="button" class="skin" data-pref-skin="ocean" aria-pressed="false" onclick="setPref('skin','ocean')"><i style="--p:linear-gradient(160deg,#06202e,#1a6fa8 60%,#2de2c5)"></i>海</button><button type="button" class="skin" data-pref-skin="sakura" aria-pressed="false" onclick="setPref('skin','sakura')"><i style="--p:linear-gradient(135deg,#fff5f7,#ffb6cb 60%,#ffd6be)"></i>桜</button></div><p id="skin-note" class="t-body-s muted"></p></div>
+                    <div class="set-row col" style="gap:8px"><span>デザインテーマ</span><div class="skin-grid" role="group" aria-label="デザインテーマ"><button type="button" class="skin" data-pref-skin="default" aria-pressed="false" onclick="setPref('skin','default')"><i style="--p:linear-gradient(135deg,#202020,#2c3f5a)"></i>デフォルト</button><button type="button" class="skin" data-pref-skin="sunset" aria-pressed="false" onclick="setPref('skin','sunset')"><i style="--p:linear-gradient(160deg,#1b1230,#a2385a 60%,#ff9a62)"></i>夕焼け</button><button type="button" class="skin" data-pref-skin="dream" aria-pressed="false" onclick="setPref('skin','dream')"><i style="--p:linear-gradient(135deg,#ffbee6,#aac8ff 55%,#c8aaff)"></i>夢</button><button type="button" class="skin" data-pref-skin="arcade" aria-pressed="false" onclick="setPref('skin','arcade')"><i style="--p:linear-gradient(135deg,#08040f,#ff2e97 55%,#00e5ff)"></i>ゲームセンター</button><button type="button" class="skin" data-pref-skin="ocean" aria-pressed="false" onclick="setPref('skin','ocean')"><i style="--p:linear-gradient(160deg,#06202e,#1a6fa8 60%,#2de2c5)"></i>海</button><button type="button" class="skin" data-pref-skin="sakura" aria-pressed="false" onclick="setPref('skin','sakura')"><i style="--p:linear-gradient(135deg,#fff5f7,#ffb6cb 60%,#ffd6be)"></i>桜</button><button type="button" class="skin" data-pref-skin="forest" aria-pressed="false" onclick="setPref('skin','forest')"><i style="--p:linear-gradient(160deg,#0b1a12,#2f8f5a 70%,#a3e048)"></i>森</button><button type="button" class="skin" data-pref-skin="space" aria-pressed="false" onclick="setPref('skin','space')"><i style="--p:linear-gradient(135deg,#05060f,#4a3aa8 60%,#7dd3fc)"></i>宇宙</button><button type="button" class="skin" data-pref-skin="cyber" aria-pressed="false" onclick="setPref('skin','cyber')"><i style="--p:linear-gradient(135deg,#0a0a12,#ff2a6d 55%,#fcee09)"></i>サイバー</button><button type="button" class="skin" data-pref-skin="wafu" aria-pressed="false" onclick="setPref('skin','wafu')"><i style="--p:linear-gradient(135deg,#0e1526,#2a3c78 55%,#e8604c)"></i>和</button><button type="button" class="skin" data-pref-skin="snow" aria-pressed="false" onclick="setPref('skin','snow')"><i style="--p:linear-gradient(135deg,#f3f8fd,#a0c8f5 60%,#ffffff)"></i>雪</button><button type="button" class="skin" data-pref-skin="matcha" aria-pressed="false" onclick="setPref('skin','matcha')"><i style="--p:linear-gradient(135deg,#f4f7ee,#b2d68c 60%,#e8dcaa)"></i>抹茶</button><button type="button" class="skin" data-pref-skin="retro" aria-pressed="false" onclick="setPref('skin','retro')"><i style="--p:linear-gradient(135deg,#0f1f0f,#3c5f1a 60%,#9bbc0f)"></i>レトロ</button><button type="button" class="skin" data-pref-skin="flame" aria-pressed="false" onclick="setPref('skin','flame')"><i style="--p:linear-gradient(160deg,#160806,#a3260f 60%,#ffb03a)"></i>炎</button></div><p id="skin-note" class="t-body-s muted"></p></div>
                     <div class="set-row" id="row-theme"><span>ダーク / ライト</span>
                         <div class="seg" role="group" aria-label="テーマ">
                             <button type="button" class="seg-btn" data-pref-theme="dark" aria-pressed="true" onclick="setPref('theme','dark')">ダーク</button>
@@ -5352,7 +5570,7 @@
         const RIGHTS_VERSION = 'v1';
         const ACCENTS = ['blue', 'green', 'purple', 'pink', 'orange'];
         // デザインテーマ: mode は固定の明るさ(default はテーマ設定に従う)
-        const SKINS = { default: null, sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light' };
+        const SKINS = { default: null, sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light', forest: 'dark', space: 'dark', cyber: 'dark', wafu: 'dark', snow: 'light', matcha: 'light', retro: 'dark', flame: 'dark' };
 
         let account = null;                              // { uid, id, key, hash }
         let myRank = '';
