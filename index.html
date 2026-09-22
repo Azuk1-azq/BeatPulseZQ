@@ -940,7 +940,7 @@
         :root[data-theme="light"][data-accent="orange"] { --accent: #B85A00; --accent-text: #8A4200; --primary: #B85A00; --accent-hover: color-mix(in srgb, #B85A00 90%, transparent); --accent-pressed: color-mix(in srgb, #B85A00 80%, transparent); }
 
         .set-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; font: 400 14px/20px var(--font); }
-        .set-row.col { flex-direction: column; align-items: stretch; gap: 0; }
+        .set-row.col { flex-direction: column; align-items: stretch; gap: 0; flex-wrap: nowrap; }
         .swatches { display: flex; gap: 8px; }
         .swatch { width: 28px; height: 28px; padding: 0; border-radius: 50%; background: var(--sw); border: 2px solid transparent; box-shadow: inset 0 0 0 2px var(--card-2); cursor: pointer; }
         .swatch:hover { transform: scale(1.08); }
@@ -1565,6 +1565,14 @@
         #dojo-interlude-count { font: 700 84px/1 var(--font); color: var(--gold); font-variant-numeric: tabular-nums; }
         [data-device="mobile"] .dojo-hud { top: calc(env(safe-area-inset-top, 0px) + 58px); right: 8px; width: 176px; }
         [data-device="mobile"][data-playing="true"] .dojo-interlude { padding-top: calc(24px + env(safe-area-inset-top, 0px)); }
+        .dojo-spinner {
+            display: none; width: 44px; height: 44px; border-radius: 50%;
+            border: 4px solid color-mix(in srgb, var(--gold) 25%, transparent); border-top-color: var(--gold);
+            animation: dojo-spin .8s linear infinite;
+        }
+        .dojo-interlude.is-loading .dojo-spinner { display: block; }
+        .dojo-interlude.is-loading #dojo-interlude-count { display: none; }
+        @keyframes dojo-spin { to { transform: rotate(360deg); } }
         .dlg-body.tw input[type="datetime-local"] { color-scheme: inherit; }
 
     </style>
@@ -1687,7 +1695,7 @@
                 <canvas id="game-canvas" role="img" aria-label="ノーツが流れるプレイ画面"></canvas>
                 <div class="auto-flag" aria-hidden="true">AUTO ・ スコア×¼</div>
                 <div id="dojo-hud" class="dojo-hud tw hidden"><div class="dojo-hud-top"><div id="dojo-hud-title">段位道場</div><div id="dojo-hud-pips"></div></div><div id="dojo-hud-song">-</div><div id="dojo-hud-conds"></div></div>
-                <div id="dojo-interlude" class="dojo-interlude tw hidden"><div id="dojo-interlude-name"></div><div id="dojo-interlude-no"></div><div id="dojo-interlude-title"></div><div id="dojo-interlude-conds"></div><div id="dojo-interlude-count">5</div></div>
+                <div id="dojo-interlude" class="dojo-interlude tw hidden"><div id="dojo-interlude-name"></div><div id="dojo-interlude-no"></div><div id="dojo-interlude-title"></div><div id="dojo-interlude-conds"></div><div class="dojo-spinner"></div><div id="dojo-interlude-count">5</div></div>
                 <div class="hud" aria-hidden="true">
                     <span>スコア<b id="hud-score">0000000</b></span>
                     <span>コンボ<b id="hud-combo">0</b></span>
@@ -5054,6 +5062,11 @@
             document.querySelectorAll('.online-progress-wrap').forEach(wrap => wrap.classList.remove('hidden'));
             document.querySelectorAll('.online-progress-bar').forEach(bar => { bar.style.width = `${Math.max(0, Math.min(100, Math.round(fraction * 100)))}%`; });
             document.querySelectorAll('.online-progress-text').forEach(t => { t.textContent = text || ''; });
+            // 段位道場の準備中は、専用の読み込みオーバーレイにも進捗を出す
+            if (typeof dojoLoading !== 'undefined' && dojoLoading) {
+                const n = document.getElementById('dojo-interlude-no');
+                if (n) n.textContent = text || '';
+            }
         }
 
         function hideOnlineProgress() {
@@ -7692,6 +7705,7 @@
             updateScoreUI();
 
             const overlay = document.getElementById('dojo-interlude');
+            if (overlay) overlay.classList.remove('is-loading');
             const setText = (id, text) => { const n = document.getElementById(id); if (n) n.textContent = text; };
             setText('dojo-interlude-name', dojo.def.name);
             setText('dojo-interlude-no', `SONG ${i + 1} / ${DOJO_SONGS}`);
@@ -8148,6 +8162,7 @@
             audioBuffer = s.audioBuffer;
             loadedAudioFile = s.loadedAudioFile;
             currentChart = s.currentChart;
+            const needDemo = !audioBuffer;
             // MV: 挑戦前に読み込んでいた動画があれば戻す
             if (mvVideo) {
                 mvVideo.pause();
@@ -8161,6 +8176,9 @@
             hasMV = s.hasMV;
             dojo.active = false;
             dojo = null;
+            // 挑戦前に曲を読み込んでいなかった場合、「曲を読み込みましょう」のまま固まらないよう
+            // デモ曲を自動で用意しておく(段位道場自体はこの曲を使わない)
+            if (needDemo) { try { loadDemoAudio(); } catch (e) {} }
             playState = {
                 isPlaying: false, score: 0, combo: 0, maxCombo: 0,
                 perfectCount: 0, greatCount: 0, goodCount: 0, missCount: 0, holdTime: 0, autoUsed: false
@@ -8337,18 +8355,42 @@
             const needsOnline = def.songs.some((x, i) => !(def.localSongs && def.localSongs[i]));
             if (needsOnline && !(await ensureConsent())) return;
             dojoLoading = true;
+            closeModal('dojo-modal');
+            closeModal('dojo-result-modal');
+            if (currentMode !== 'play') switchMode('play');
+            dojoShowLoadingOverlay(def.name);
+            updateStageHints();
             try {
                 const songs = await dojoResolveSongs(def);
                 hideOnlineProgress();
-                closeModal('dojo-modal');
-                closeModal('dojo-result-modal');
                 dojoBegin(def, songs);
             } catch (err) {
+                dojoHideLoadingOverlay();
+                updateStageHints();
                 showToast(describeOnlineError(err), 'error');
             } finally {
                 hideOnlineProgress();
                 dojoLoading = false;
             }
+        }
+
+        // 段位道場: 曲のダウンロード・準備中に表示する「読み込み中」のオーバーレイ
+        function dojoShowLoadingOverlay(name) {
+            const overlay = document.getElementById('dojo-interlude');
+            if (!overlay) return;
+            const setText = (id, t) => { const n = document.getElementById(id); if (n) n.textContent = t; };
+            setText('dojo-interlude-name', name || '段位道場');
+            setText('dojo-interlude-no', '準備しています…');
+            setText('dojo-interlude-title', '読み込み中…');
+            const chipBox = document.getElementById('dojo-interlude-conds');
+            if (chipBox) chipBox.innerHTML = '';
+            setText('dojo-interlude-count', '');
+            overlay.classList.remove('hidden');
+            overlay.classList.add('is-loading');
+        }
+        function dojoHideLoadingOverlay() {
+            const overlay = document.getElementById('dojo-interlude');
+            if (overlay) overlay.classList.add('hidden');
         }
 
         function dojoStoreGet() {
@@ -8747,7 +8789,7 @@
                 card.appendChild(head);
 
                 if (slot.mode === 'online') {
-                    const sel = el('select', 'w-full bg-slate-900 border border-slate-700 text-slate-100 text-xs rounded-lg px-2 py-2 focus:outline-none focus:border-amber-500');
+                    const sel = el('select', 'fluent-input w-full text-xs');
                     sel.appendChild(Object.assign(document.createElement('option'), { value: '', textContent: '曲を選ぶ…' }));
                     dojoEntries.forEach(e => {
                         const diff = DIFFICULTIES[e.difficulty];
@@ -9146,8 +9188,12 @@
             checkEventsOnLogin(!!fromRestore).catch(() => {});
         }
 
+        // 管理者: ID が ADMIN_IDS にあるアカウント(azq)、またはプロフィールのロールが admin のアカウント
+        const ADMIN_IDS = ['azq'];
         function isAdmin() {
-            return !!account && String(myRank || '').toLowerCase() === 'admin';
+            if (!account) return false;
+            if (ADMIN_IDS.includes(String(account.key || account.id).toLowerCase())) return true;
+            return String(myRank || '').toLowerCase() === 'admin';
         }
 
         function updateAdminUI() {
@@ -9381,8 +9427,8 @@
         // ステージ上の案内(曲未読み込み / 準備OK / リザルト)と、演奏中フラグの反映
         function updateStageHints() {
             const hasAudio = !!audioBuffer;
-            const playing = !!(playState && playState.isPlaying) || (typeof dojoActive === 'function' && dojoActive()); // 段位道場の挑戦中も「プレイ中」
-            const showResult = hasAudio && !playing && !!lastResult;
+            const playing = !!(playState && playState.isPlaying) || (typeof dojoActive === 'function' && dojoActive()) || (typeof dojoLoading !== 'undefined' && dojoLoading); // 段位道場の挑戦中・準備中も「プレイ中」
+            const showResult = !playing && !!lastResult;
             const toggle = (id, show) => {
                 const el = document.getElementById(id);
                 if (el) el.classList.toggle('hidden', !show);
@@ -9391,8 +9437,8 @@
                 const el = document.getElementById(id);
                 if (el) el.textContent = text;
             };
-            toggle('play-hint-empty', !hasAudio);
-            toggle('play-hint-ready', hasAudio && !playing);
+            toggle('play-hint-empty', !hasAudio && !showResult && !playing);
+            toggle('play-hint-ready', (hasAudio || showResult) && !playing);
             toggle('editor-hint', !hasAudio);
 
             toggle('result-block', showResult);
