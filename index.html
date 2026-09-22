@@ -2183,8 +2183,11 @@
                             <button type="button" class="seg-btn" data-pref-font="pop" aria-pressed="false" onclick="setPref('font','pop')">ポップ</button>
                             <button type="button" class="seg-btn" data-pref-font="mono" aria-pressed="false" onclick="setPref('font','mono')">等幅</button>
                         </div>
-                        <div class="tf"><label for="pref-font-custom">フォント名を直接指定(任意)</label><input type="text" id="pref-font-custom" placeholder="例: Yu Gothic UI" maxlength="60" oninput="setCustomFont(this.value)"></div>
-                        <p class="t-body-s muted">端末にインストールされているフォント名を入力すると、そのフォントが優先されます。空欄にすると上のボタンの選択に戻ります。</p>
+                        <div class="tf"><label for="pref-font-custom">フォント名を直接指定(任意)</label>
+                            <input type="text" id="pref-font-custom" list="font-name-list" placeholder="例: Yu Gothic UI" maxlength="60" autocomplete="off" onfocus="searchLocalFonts()" oninput="setCustomFont(this.value)">
+                            <datalist id="font-name-list"></datalist>
+                        </div>
+                        <p id="font-search-note" class="t-body-s muted">入力すると候補が表示されます。この欄をタップ/クリックすると、対応ブラウザではお使いの端末にインストールされているフォントを検索して候補に追加します(初回のみ確認あり)。空欄にすると上のボタンの選択に戻ります。</p>
                         <div class="set-row" style="gap:8px">
                             <label class="btn has-icon" style="cursor:pointer"><span class="ms">upload</span>フォントファイルを追加<input type="file" accept=".ttf,.otf,.woff,.woff2" style="display:none" onchange="handleFontFileUpload(this)"></label>
                             <button type="button" id="btn-use-font-file" class="chip hidden" data-pref-font="file" aria-pressed="false" onclick="setPref('font','file')"></button>
@@ -5838,6 +5841,29 @@
         const FONT_FILE_MAX_BYTES = 5 * 1024 * 1024; // localStorageに保存するのでファイルサイズに上限を設ける
         const FONT_FILE_EXT_RE = /\.(ttf|otf|woff2?|ttc)$/i;
         const FONT_FILE_FORMATS = { ttf: 'truetype', otf: 'opentype', woff: 'woff', woff2: 'woff2', ttc: 'truetype' };
+        // フォント名入力の候補(datalist用)。OSでよく使われる定番フォント名(実際に入っているかは端末による)
+        const FONT_NAME_SUGGESTIONS = [
+            // 日本語(Windows)
+            'Yu Gothic UI', 'Yu Gothic', 'Yu Gothic Medium', 'Meiryo', 'Meiryo UI', 'MS Gothic', 'MS PGothic',
+            'Yu Mincho', 'MS Mincho', 'MS PMincho', 'BIZ UDGothic', 'BIZ UDPGothic', 'BIZ UDMincho', 'BIZ UDPMincho',
+            'UD デジタル 教科書体 N-R', 'UD デジタル 教科書体 NP-R', 'UD デジタル 教科書体 NK-R',
+            'HGP創英角ポップ体', 'HG丸ゴシックM-PRO', 'HGP行書体', 'HGP教科書体',
+            // 日本語(macOS)
+            'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Hiragino Kaku Gothic Pro', 'Hiragino Kaku Gothic StdN',
+            'Hiragino Mincho ProN', 'Hiragino Mincho Pro', 'Hiragino Maru Gothic ProN', 'Hiragino Maru Gothic Pro',
+            'Osaka', 'Osaka-Mono',
+            // 日本語(Google Fonts系。端末にインストールされていれば使える)
+            'Noto Sans JP', 'Noto Serif JP', 'M PLUS 1p', 'M PLUS Rounded 1c', 'Kosugi', 'Kosugi Maru',
+            'Sawarabi Gothic', 'Sawarabi Mincho', 'Zen Kaku Gothic New', 'Zen Old Mincho', 'Zen Maru Gothic',
+            'Kiwi Maru', 'Shippori Mincho', 'Klee One', 'Yusei Magic', 'RocknRoll One', 'Dela Gothic One',
+            // 欧文(定番)
+            'Segoe UI', 'Segoe UI Variable', 'Arial', 'Arial Black', 'Calibri', 'Cambria', 'Candara', 'Consolas',
+            'Constantia', 'Corbel', 'Georgia', 'Verdana', 'Tahoma', 'Trebuchet MS', 'Times New Roman', 'Impact',
+            'Comic Sans MS', 'Courier New', 'Lucida Console', 'Franklin Gothic Medium', 'Gill Sans',
+            'Helvetica', 'Helvetica Neue', 'San Francisco', 'SF Pro Display', 'SF Pro Text', 'SF Mono',
+            'Avenir', 'Avenir Next', 'Futura', 'Optima', 'Palatino', 'Baskerville', 'American Typewriter',
+            'Cascadia Code', 'Cascadia Mono', 'Roboto', 'Open Sans', 'Lato', 'Montserrat', 'Inter'
+        ];
 
         let account = null;                              // { uid, id, key, hash }
         let myRank = '';
@@ -5917,17 +5943,40 @@
             savePrefs();
             applyPrefs();
         }
-        // ---------- フォント ----------
-        function applyFontPref() {
-            const root = document.documentElement;
-            let stack = null;
-            if (prefs.font === 'custom' && prefs.fontCustom && FONT_CUSTOM_RE.test(prefs.fontCustom)) {
-                stack = '"' + prefs.fontCustom.replace(/"/g, '') + '"';
-            } else if (FONT_PRESETS[prefs.font]) {
-                stack = FONT_PRESETS[prefs.font].stack;
+        // ---------- フォント名の候補(datalist) ----------
+        function populateFontNameSuggestions(extraNames) {
+            const list = byId('font-name-list');
+            if (!list) return;
+            const names = Array.from(new Set([...FONT_NAME_SUGGESTIONS, ...(extraNames || [])])).sort((a, b) => a.localeCompare(b, 'ja'));
+            list.innerHTML = '';
+            const frag = document.createDocumentFragment();
+            names.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                frag.appendChild(opt);
+            });
+            list.appendChild(frag);
+        }
+        let localFontsSearched = false;
+        async function searchLocalFonts() {
+            if (localFontsSearched) return; // 初回のみ(フォーカスのたびに権限確認しない)
+            if (!('queryLocalFonts' in window)) return; // 非対応ブラウザでは何もしない(候補リストは標準のまま)
+            localFontsSearched = true;
+            const note = byId('font-search-note');
+            try {
+                const fonts = await window.queryLocalFonts();
+                const names = Array.from(new Set(fonts.map(f => f.family))).sort((a, b) => a.localeCompare(b, 'ja'));
+                populateFontNameSuggestions(names);
+                showToast(`端末のフォントを${names.length}件見つけました。入力欄の候補に追加しました`, 'success');
+                if (note) note.textContent = `端末のフォント ${names.length}件を含む候補を表示中です。入力すると絞り込まれます。空欄にすると上のボタンの選択に戻ります。`;
+            } catch (e) {
+                localFontsSearched = false; // 拒否された場合などは、次にフォーカスしたときまた試せるようにする
+                if (e && e.name === 'NotAllowedError') {
+                    showToast('フォントへのアクセスが許可されませんでした', 'warning');
+                } else {
+                    showToast('端末フォントの検索に失敗しました', 'error');
+                }
             }
-            if (stack) root.style.setProperty('--font-user', stack + ', var(--font-default)');
-            else root.style.removeProperty('--font-user');
         }
         // ---------- フォント ----------
         function applyFontPref() {
@@ -9753,6 +9802,7 @@
             loadPrefs();
             loadLocalSettings();
             applyPrefs();
+            populateFontNameSuggestions();
             resizeCanvases();
             renderKeyConfigUI();
             loadScrollSpeed();
