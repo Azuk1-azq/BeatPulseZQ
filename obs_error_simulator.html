@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100 select-none">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OBS Studio - Fatal Error</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'monospace'],
+                    },
+                    colors: {
+                        obs: {
+                            dark: '#121316',
+                            card: '#1b1d22',
+                            border: '#2a2d35',
+                            header: '#16181d',
+                            accent: '#2b5cff',
+                            red: '#ef4444',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #121316;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2b2e38;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b3f4d;
+        }
+        
+        .scanlines {
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%, 
+                rgba(0, 0, 0, 0.25) 50%
+            ), linear-gradient(
+                90deg,
+                rgba(255, 0, 0, 0.03),
+                rgba(0, 255, 0, 0.01),
+                rgba(0, 0, 255, 0.03)
+            );
+            background-size: 100% 4px, 6px 100%;
+        }
+
+        .window-shadow {
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col font-sans overflow-hidden bg-slate-950 text-slate-200 relative">
+
+    <canvas id="bg-canvas" class="fixed inset-0 w-full h-full pointer-events-none z-0 opacity-20 hidden"></canvas>
+    
+    <!-- CRT Overlay Scanlines -->
+    <div id="crt-overlay" class="fixed inset-0 pointer-events-none z-10 scanlines opacity-60 transition-opacity duration-300"></div>
+
+    <div id="toast" class="fixed top-5 right-5 z-50 transform translate-y-[-100px] opacity-0 transition-all duration-300 flex items-center gap-3 bg-slate-800 text-slate-100 border border-slate-700 px-4 py-3 rounded-lg shadow-2xl">
+        <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-lg"></i>
+        <span id="toast-message" class="text-sm font-medium">Notification Message</span>
+    </div>
+
+    <main id="main-container" class="relative z-20 flex-1 flex items-center justify-center p-4">
+        
+        <!-- OBS Crash Dialog Window -->
+        <div id="error-window" class="w-full max-w-2xl bg-obs-card rounded-lg window-shadow overflow-hidden border border-obs-border flex flex-col transition-all duration-300">
+            
+            <div class="bg-obs-header px-4 py-2.5 flex items-center justify-between border-b border-obs-border select-none">
+                <div class="flex items-center gap-2.5">
+                    <div class="w-5 h-5 rounded-full bg-obs-accent/20 flex items-center justify-center text-obs-accent text-xs">
+                        <i class="fa-solid fa-video"></i>
+                    </div>
+                    <span class="text-xs font-semibold tracking-wide text-slate-300">OBS Studio 30.1.2 (64-bit, windows) - Crash Handler</span>
+                </div>
+                <div class="flex items-center gap-2 text-slate-400">
+                    <button onclick="minimizeWindow()" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition"><i class="fa-solid fa-minus text-xs"></i></button>
+                    <button onclick="toggleFullscreen()" class="hover:text-white px-2 py-0.5 rounded hover:bg-slate-800 transition" title="Fullscreen"><i class="fa-solid fa-expand text-xs"></i></button>
+                    <button onclick="playErrorSound()" class="hover:text-red-400 px-2 py-0.5 rounded hover:bg-red-500/20 transition"><i class="fa-solid fa-xmark text-sm"></i></button>
+                </div>
+            </div>
+
+            <div class="p-6 flex flex-col gap-5">
+                
+                <!-- Alert Banner -->
+                <div class="flex items-start gap-4 p-4 rounded-lg bg-red-950/40 border border-red-800/50">
+                    <div class="p-3 bg-red-500/20 rounded-lg text-red-500 shrink-0 mt-0.5">
+                        <i class="fa-solid fa-circle-exclamation text-2xl"></i>
+                    </div>
+                    <div class="space-y-1.5 flex-1">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <h2 class="text-xs font-bold tracking-wider uppercase text-red-400">System Fatal Exception</h2>
+                            <span id="error-code-badge" class="font-mono text-xs px-2 py-0.5 bg-red-950 text-red-300 rounded border border-red-800/80">0xC0000005</span>
+                        </div>
+                        <!-- Main English Error Message -->
+                        <h1 id="error-message-text" class="text-lg md:text-xl font-bold text-slate-100 leading-snug">
+                            A fatal error occurred and OBS could not be loaded.
+                        </h1>
+                        <p id="error-subtext" class="text-xs text-slate-400 leading-relaxed pt-1">
+                            Error Code: 0xC0000005 (EXCEPTION_ACCESS_VIOLATION) in thread <span class="font-mono text-slate-300">obs64.exe</span>.<br>
+                            Failed to initialize Direct3D 11 graphics context due to a memory access fault in the rendering pipeline or third-party plugin (<span class="font-mono text-slate-300">obs-browser.dll</span>).
+                        </p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <button onclick="startRestartSequence()" class="flex items-center justify-center gap-2.5 bg-blue-600 hover:bg-blue-500 text-white font-medium text-sm px-4 py-2.5 rounded-md transition-all shadow-lg shadow-blue-600/20 active:scale-[0.98]">
+                        <i class="fa-solid fa-rotate-right"></i>
+                        <span>Relaunch OBS Studio</span>
+                    </button>
+
+                    <button onclick="launchSafeMode()" class="flex items-center justify-center gap-2.5 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-medium text-sm px-4 py-2.5 rounded-md transition-all active:scale-[0.98]">
+                        <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                        <span>Launch in Safe Mode</span>
+                    </button>
+
+                    <button onclick="toggleLogView()" class="flex items-center justify-center gap-2 bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/80 font-medium text-xs px-3 py-2 rounded-md transition">
+                        <i id="log-toggle-icon" class="fa-solid fa-chevron-down text-slate-400"></i>
+                        <span id="log-toggle-label">Toggle Crash Log</span>
+                    </button>
+
+                    <button onclick="copyLogToClipboard()" class="flex items-center justify-center gap-2 bg-slate-800/80 hover:bg-slate-700/80 text-slate-300 border border-slate-700/80 font-medium text-xs px-3 py-2 rounded-md transition">
+                        <i class="fa-regular fa-copy text-slate-400"></i>
+                        <span>Copy Log to Clipboard</span>
+                    </button>
+                </div>
+
+                <div id="log-panel" class="hidden transition-all duration-300">
+                    <div class="flex items-center justify-between bg-obs-dark px-3 py-1.5 rounded-t-md border-t border-x border-obs-border">
+                        <span class="text-[11px] font-mono text-slate-400"><i class="fa-solid fa-terminal mr-1.5 text-xs text-slate-500"></i>crash-log-2026-09-22-1216.txt</span>
+                        <span class="text-[10px] font-mono text-slate-500">UTF-8</span>
+                    </div>
+                    <pre id="log-content" class="bg-slate-950 p-3.5 rounded-b-md border border-obs-border font-mono text-xs text-emerald-400/90 overflow-x-auto max-h-48 leading-relaxed selection:bg-blue-900 selection:text-white">
+[2026-09-22 12:16:10.042] [OBS Studio v30.1.2 64-bit (windows)]
+[INFO] Loading module: obs-express-encoder.dll... OK
+[INFO] Loading module: graphics-hook64.dll... OK
+[INFO] Loading module: obs-browser.dll...
+[ERROR] Direct3D11: Failed to create device (0x887A0005: DXGI_ERROR_DEVICE_REMOVED)
+[ERROR] Exception caught in module: obs-browser.dll (Base: 0x00007FF7831A0000)
+[ERROR] Fault address: 0x00007FF7831A1230 (code: 0xC0000005)
+[ERROR] Thread 0x00002A14 execution failed: ACCESS_VIOLATION reading address 0x0000000000000018
+[System Info] GPU: NVIDIA GeForce RTX 4080 (Driver Version: 551.86)
+[System Info] OS: Windows 11 Pro 64-bit (Build 22631.3296)
+[Stack Trace]
+  0x00007FF7831A1230 obs-browser.dll!PluginMain + 0x48a
+  0x00007FF783158A12 obs64.exe!OBSInitCore + 0x11e
+  0x00007FF783141105 obs64.exe!WinMain + 0x240
+  0x00007FF7832B9921 kernel32.dll!BaseThreadInitThunk + 0x14
+  0x00007FF7833C1210 ntdll.dll!RtlUserThreadStart + 0x21
+[FATAL] Application initialization aborted due to unrecoverable graphics device context crash.</pre>
+                </div>
+
+            </div>
+
+            <div class="bg-obs-header px-6 py-3 border-t border-obs-border flex flex-wrap items-center justify-between text-xs text-slate-400 gap-2">
+                <div class="flex items-center gap-2">
+                    <span class="inline-block w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                    <span>Status: Aborted Uncleanly</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="toggleAudioMute()" id="audio-toggle-btn" class="hover:text-slate-200 transition flex items-center gap-1.5">
+                        <i id="audio-icon" class="fa-solid fa-volume-high text-slate-400"></i>
+                        <span id="audio-label">Audio ON</span>
+                    </button>
+                    <button onclick="toggleFullscreen()" class="hover:text-slate-200 transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-expand"></i>
+                        <span>Fullscreen (F11)</span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <div id="restart-modal" class="fixed inset-0 z-40 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-md bg-obs-card rounded-lg border border-obs-border p-6 shadow-2xl space-y-4">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-circle-notch fa-spin text-obs-accent text-xl"></i>
+                <h3 class="text-sm font-semibold text-slate-200">Relaunching OBS Studio...</h3>
+            </div>
+            
+            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden border border-slate-800">
+                <div id="restart-progress-bar" class="bg-obs-accent h-full w-0 transition-all duration-300"></div>
+            </div>
+
+            <div id="boot-log-feed" class="h-20 bg-obs-dark rounded p-2.5 font-mono text-[11px] text-slate-400 overflow-y-auto space-y-1">
+                <div>> Initializing core subsystems...</div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="cancelRestart()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 rounded border border-slate-700">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="safemode-view" class="fixed inset-0 z-30 bg-obs-dark flex flex-col hidden">
+        <!-- Safe Mode Banner Header -->
+        <div class="bg-amber-500/20 border-b border-amber-500/40 text-amber-300 px-4 py-2 flex items-center justify-between text-xs font-medium">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-400 text-sm"></i>
+                <span>SAFE MODE ACTIVE — Third-party plugins and hardware acceleration disabled</span>
+            </div>
+            <button onclick="exitSafeMode()" class="bg-amber-500/30 hover:bg-amber-500/50 text-amber-200 px-2.5 py-1 rounded text-xs transition">
+                <i class="fa-solid fa-power-off mr-1"></i> Return to Main Window
+            </button>
+        </div>
+
+        <div class="bg-obs-header border-b border-obs-border px-3 py-1.5 flex items-center gap-4 text-xs text-slate-300 select-none">
+            <span class="hover:bg-slate-800 px-2 py-0.5 rounded cursor-pointer">File</span>
+            <span class="hover:bg-slate-800 px-2 py-0.5 rounded cursor-pointer">Edit</span>
+            <span class="hover:bg-slate-800 px-2 py-0.5 rounded cursor-pointer">View</span>
+            <span class="hover:bg-slate-800 px-2 py-0.5 rounded cursor-pointer">Profile</span>
+            <span class="hover:bg-slate-800 px-2 py-0.5 rounded cursor-pointer">Scene Collection</span>
+            <span class="hover:bg-slate-800 px-2 py-0.5 rounded cursor-pointer">Tools</span>
+            <span class="hover:bg-slate-800 px-2 py-0.5 rounded cursor-pointer">Help</span>
+        </div>
+
+        <div class="flex-1 flex flex-col md:flex-row overflow-hidden p-2 gap-2">
+            <div class="flex-1 bg-black rounded border border-obs-border flex flex-col items-center justify-center relative overflow-hidden group">
+                <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#3b82f6_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                <i class="fa-solid fa-video-slash text-slate-700 text-5xl mb-3"></i>
+                <p class="text-xs font-mono text-slate-500">Preview Disabled (Safe Mode)</p>
+                <span class="text-[10px] text-slate-600 mt-1">1920x1080 @ 60fps</span>
+            </div>
+
+            <!-- Controls Panel -->
+            <div class="w-full md:w-64 bg-obs-card rounded border border-obs-border p-3 flex flex-col justify-between gap-3 shrink-0">
+                <div class="space-y-2">
+                    <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Controls</div>
+                    <button class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-medium rounded text-slate-200 border border-slate-700 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-play text-emerald-400"></i> Start Streaming
+                    </button>
+                    <button class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-medium rounded text-slate-200 border border-slate-700 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-circle text-red-500"></i> Start Recording
+                    </button>
+                    <button class="w-full py-2 bg-slate-800 hover:bg-slate-700 text-xs font-medium rounded text-slate-200 border border-slate-700 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-sliders"></i> Settings
+                    </button>
+                </div>
+
+                <div class="space-y-1 text-[11px] text-slate-400 border-t border-obs-border pt-3">
+                    <div class="flex justify-between"><span>CPU Usage:</span><span class="font-mono text-emerald-400">0.4%</span></div>
+                    <div class="flex justify-between"><span>FPS:</span><span class="font-mono text-emerald-400">60.00</span></div>
+                    <div class="flex justify-between"><span>Dropped Frames:</span><span class="font-mono text-slate-500">0 (0.0%)</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="h-32 bg-obs-card border-t border-obs-border p-2 grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div class="bg-obs-dark rounded border border-obs-border p-2 flex flex-col justify-between">
+                <span class="text-[11px] font-bold text-slate-400">Scenes</span>
+                <div class="bg-slate-800/60 p-1.5 rounded text-xs text-slate-200 flex items-center justify-between">
+                    <span>Main Stream Scene</span>
+                    <i class="fa-solid fa-eye text-xs text-blue-400"></i>
+                </div>
+                <div class="flex gap-1 text-slate-500 text-xs">
+                    <button class="p-1 hover:text-slate-300"><i class="fa-solid fa-plus"></i></button>
+                    <button class="p-1 hover:text-slate-300"><i class="fa-solid fa-minus"></i></button>
+                </div>
+            </div>
+            
+            <div class="bg-obs-dark rounded border border-obs-border p-2 flex flex-col justify-between">
+                <span class="text-[11px] font-bold text-slate-400">Sources</span>
+                <div class="text-[11px] text-slate-500 italic p-1">No Sources (Safe Mode)</div>
+                <div class="flex gap-1 text-slate-500 text-xs">
+                    <button class="p-1 hover:text-slate-300"><i class="fa-solid fa-plus"></i></button>
+                    <button class="p-1 hover:text-slate-300"><i class="fa-solid fa-minus"></i></button>
+                </div>
+            </div>
+
+            <div class="bg-obs-dark rounded border border-obs-border p-2 col-span-2 flex flex-col justify-between">
+                <span class="text-[11px] font-bold text-slate-400">Audio Mixer</span>
+                <div class="space-y-1.5">
+                    <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                        <span class="w-20 truncate">Desktop Audio</span>
+                        <div class="flex-1 bg-slate-900 h-2 rounded overflow-hidden flex">
+                            <div class="bg-emerald-500 w-1/3"></div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 text-[10px] text-slate-400">
+                        <span class="w-20 truncate">Mic/Aux</span>
+                        <div class="flex-1 bg-slate-900 h-2 rounded overflow-hidden flex">
+                            <div class="bg-emerald-500 w-1/12"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="custom-toolbar" class="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-30 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-4 py-2.5 rounded-full shadow-2xl flex items-center gap-3 text-xs">
+        <button onclick="openConfigModal()" class="flex items-center gap-1.5 hover:text-blue-400 transition font-medium">
+            <i class="fa-solid fa-gear text-slate-400"></i>
+            <span>Edit Messages</span>
+        </button>
+
+        <div class="w-px h-4 bg-slate-700"></div>
+
+        <button onclick="toggleGlitchEffect()" id="glitch-toggle-btn" class="flex items-center gap-1.5 hover:text-purple-400 transition font-medium text-slate-300">
+            <i class="fa-solid fa-wand-magic-sparkles text-slate-400"></i>
+            <span>Glitch FX</span>
+        </button>
+
+        <div class="w-px h-4 bg-slate-700"></div>
+
+        <button onclick="triggerFakeCrash()" class="flex items-center gap-1.5 text-red-400 hover:text-red-300 transition font-medium">
+            <i class="fa-solid fa-burst"></i>
+            <span>Simulate Crash</span>
+        </button>
+    </div>
+
+    <div id="config-modal" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="w-full max-w-lg bg-obs-card rounded-lg border border-obs-border p-6 shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-obs-border pb-3">
+                <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+                    <i class="fa-solid fa-sliders text-obs-accent"></i> Custom Dialog Configuration
+                </h3>
+                <button onclick="closeConfigModal()" class="text-slate-400 hover:text-slate-200"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">Main Error Heading:</label>
+                    <textarea id="input-error-msg" rows="2" class="w-full bg-obs-dark border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-obs-accent">A fatal error occurred and OBS could not be loaded.</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-slate-400 mb-1">Description Subtext:</label>
+                    <textarea id="input-error-sub" rows="2" class="w-full bg-obs-dark border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-obs-accent">Failed to initialize Direct3D 11 graphics context due to a memory access fault in the rendering pipeline or third-party plugin (obs-browser.dll).</textarea>
+                </div>
+
+                <div>
+                    <label class="block text-slate-400 mb-1">Error Code Exception:</label>
+                    <select id="input-error-code" class="w-full bg-obs-dark border border-slate-700 rounded p-2 text-slate-200 focus:outline-none focus:border-obs-accent">
+                        <option value="0xC0000005">0xC0000005 (EXCEPTION_ACCESS_VIOLATION)</option>
+                        <option value="0x887A0005">0x887A0005 (DXGI_ERROR_DEVICE_REMOVED)</option>
+                        <option value="0x0000007B">0x0000007B (INACCESSIBLE_BOOT_DEVICE)</option>
+                        <option value="0x8007000E">0x8007000E (E_OUTOFMEMORY)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex justify-end gap-2 pt-2 border-t border-obs-border">
+                <button onclick="closeConfigModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-xs rounded text-slate-300">Cancel</button>
+                <button onclick="applyConfigChanges()" class="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-xs rounded text-white font-medium">Apply Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let soundEnabled = true;
+        let isGlitchActive = false;
+        let isLogOpen = false;
+        let audioCtx = null;
+
+        function playErrorSound() {
+            if (!soundEnabled) return;
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                const now = audioCtx.currentTime;
+                
+                // Primary low tone oscillator
+                const osc1 = audioCtx.createOscillator();
+                const gain1 = audioCtx.createGain();
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(160, now);
+                osc1.frequency.exponentialRampToValueAtTime(70, now + 0.35);
+                
+                gain1.gain.setValueAtTime(0.25, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+                osc1.connect(gain1);
+                gain1.connect(audioCtx.destination);
+                osc1.start(now);
+                osc1.stop(now + 0.35);
+
+                // Sub oscillator
+                const osc2 = audioCtx.createOscillator();
+                const gain2 = audioCtx.createGain();
+                osc2.type = 'square';
+                osc2.frequency.setValueAtTime(110, now);
+                osc2.frequency.exponentialRampToValueAtTime(40, now + 0.4);
+
+                gain2.gain.setValueAtTime(0.15, now);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+
+                osc2.connect(gain2);
+                gain2.connect(audioCtx.destination);
+                osc2.start(now);
+                osc2.stop(now + 0.4);
+
+            } catch (e) {
+                console.error("Audio playback error:", e);
+            }
+        }
+
+        function toggleLogView() {
+            const panel = document.getElementById('log-panel');
+            const icon = document.getElementById('log-toggle-icon');
+            const label = document.getElementById('log-toggle-label');
+
+            isLogOpen = !isLogOpen;
+
+            if (isLogOpen) {
+                panel.classList.remove('hidden');
+                icon.className = 'fa-solid fa-chevron-up text-slate-400';
+                label.innerText = 'Hide Crash Log';
+            } else {
+                panel.classList.add('hidden');
+                icon.className = 'fa-solid fa-chevron-down text-slate-400';
+                label.innerText = 'Toggle Crash Log';
+            }
+        }
+
+        function copyLogToClipboard() {
+            const logText = document.getElementById('log-content').innerText;
+            
+            try {
+                const textarea = document.createElement('textarea');
+                textarea.value = logText;
+                textarea.style.position = 'fixed';
+                textarea.style.opacity = '0';
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+
+                showToast('Crash dump log copied to clipboard!', 'success');
+            } catch (err) {
+                showToast('Failed to copy log to clipboard', 'error');
+            }
+        }
+
+        function showToast(msg, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-message');
+            const toastIcon = document.getElementById('toast-icon');
+
+            toastMsg.innerText = msg;
+            if (type === 'success') {
+                toastIcon.className = 'fa-solid fa-circle-check text-emerald-400 text-lg';
+            } else {
+                toastIcon.className = 'fa-solid fa-circle-xmark text-red-400 text-lg';
+            }
+
+            toast.classList.remove('translate-y-[-100px]', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-[-100px]', 'opacity-0');
+            }, 3000);
+        }
+
+        let restartTimer = null;
+        function startRestartSequence() {
+            const modal = document.getElementById('restart-modal');
+            const bar = document.getElementById('restart-progress-bar');
+            const feed = document.getElementById('boot-log-feed');
+
+            modal.classList.remove('hidden');
+            bar.style.width = '0%';
+            feed.innerHTML = '<div>> Cleaning up OBS Studio processes...</div>';
+
+            let stepIdx = 0;
+            const steps = [
+                { p: 20, log: '> Rebuilding Direct3D 11 device context...' },
+                { p: 45, log: '> Probing plugin module obs-browser.dll...' },
+                { p: 70, log: '> Memory access violation at address 0x00007FF7831A1230...' },
+                { p: 90, log: '> [FATAL] Relaunch procedure halted.' },
+                { p: 100, log: '> Reinitialization failed. Displaying error dialog.' }
+            ];
+
+            restartTimer = setInterval(() => {
+                if (stepIdx < steps.length) {
+                    const step = steps[stepIdx];
+                    bar.style.width = step.p + '%';
+                    const item = document.createElement('div');
+                    item.innerText = step.log;
+                    if (step.p >= 90) item.className = 'text-red-400 font-semibold';
+                    feed.appendChild(item);
+                    feed.scrollTop = feed.scrollHeight;
+                    stepIdx++;
+                } else {
+                    clearInterval(restartTimer);
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                        playErrorSound();
+                        showToast('Relaunch failed. Please try launching in Safe Mode.', 'error');
+                    }, 600);
+                }
+            }, 700);
+        }
+
+        function cancelRestart() {
+            if (restartTimer) clearInterval(restartTimer);
+            document.getElementById('restart-modal').classList.add('hidden');
+        }
+
+        function launchSafeMode() {
+            document.getElementById('safemode-view').classList.remove('hidden');
+            showToast('Loaded OBS Studio in Safe Mode', 'success');
+        }
+
+        function exitSafeMode() {
+            document.getElementById('safemode-view').classList.add('hidden');
+        }
+
+        function toggleAudioMute() {
+            soundEnabled = !soundEnabled;
+            const icon = document.getElementById('audio-icon');
+            const label = document.getElementById('audio-label');
+
+            if (soundEnabled) {
+                icon.className = 'fa-solid fa-volume-high text-slate-400';
+                label.innerText = 'Audio ON';
+                playErrorSound();
+            } else {
+                icon.className = 'fa-solid fa-volume-xmark text-slate-500';
+                label.innerText = 'Audio OFF';
+            }
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(() => {});
+                showToast('Entered Fullscreen (Press Esc to exit)', 'success');
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+
+        function minimizeWindow() {
+            const win = document.getElementById('error-window');
+            win.classList.toggle('scale-95');
+            win.classList.toggle('opacity-30');
+            setTimeout(() => {
+                win.classList.remove('scale-95', 'opacity-30');
+            }, 1000);
+        }
+
+        function triggerFakeCrash() {
+            playErrorSound();
+            const win = document.getElementById('error-window');
+            win.classList.add('animate-bounce');
+            setTimeout(() => win.classList.remove('animate-bounce'), 500);
+        }
+
+        function openConfigModal() {
+            document.getElementById('config-modal').classList.remove('hidden');
+        }
+
+        function closeConfigModal() {
+            document.getElementById('config-modal').classList.add('hidden');
+        }
+
+        function applyConfigChanges() {
+            const newMsg = document.getElementById('input-error-msg').value;
+            const newSub = document.getElementById('input-error-sub').value;
+            const newCode = document.getElementById('input-error-code').value;
+
+            if (newMsg.trim()) {
+                document.getElementById('error-message-text').innerText = newMsg;
+            }
+            if (newSub.trim()) {
+                document.getElementById('error-subtext').innerText = newSub;
+            }
+            if (newCode) {
+                document.getElementById('error-code-badge').innerText = newCode;
+            }
+
+            closeConfigModal();
+            triggerFakeCrash();
+            showToast('Updated crash dialog content', 'success');
+        }
+
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let animationFrameId = null;
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        function drawGlitchBackground() {
+            if (!isGlitchActive) return;
+
+            ctx.fillStyle = 'rgba(10, 11, 14, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < 15; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const w = Math.random() * 200 + 50;
+                const h = Math.random() * 2 + 1;
+
+                ctx.fillStyle = Math.random() > 0.5 ? 'rgba(239, 68, 68, 0.15)' : 'rgba(59, 130, 246, 0.15)';
+                ctx.fillRect(x, y, w, h);
+            }
+
+            ctx.fillStyle = 'rgba(239, 68, 68, 0.3)';
+            ctx.font = '12px monospace';
+            for (let i = 0; i < canvas.width; i += 30) {
+                const text = String.fromCharCode(0x30A0 + Math.floor(Math.random() * 96));
+                const y = (Date.now() / 10 + i * 10) % canvas.height;
+                ctx.fillText(text, i, y);
+            }
+
+            animationFrameId = requestAnimationFrame(drawGlitchBackground);
+        }
+
+        function toggleGlitchEffect() {
+            isGlitchActive = !isGlitchActive;
+            const btn = document.getElementById('glitch-toggle-btn');
+
+            if (isGlitchActive) {
+                canvas.classList.remove('hidden');
+                btn.classList.add('text-purple-400');
+                drawGlitchBackground();
+                showToast('Glitch FX Overlay Enabled', 'success');
+            } else {
+                canvas.classList.add('hidden');
+                btn.classList.remove('text-purple-400');
+                if (animationFrameId) cancelAnimationFrame(animationFrameId);
+                showToast('Glitch FX Overlay Disabled', 'success');
+            }
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        window.onload = function() {
+            resizeCanvas();
+            document.body.addEventListener('click', function initialAudioUnlock() {
+                playErrorSound();
+                document.body.removeEventListener('click', initialAudioUnlock);
+            }, { once: true });
+        };
+    </script>
+</body>
+</html>
