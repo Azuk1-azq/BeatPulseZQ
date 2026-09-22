@@ -29,6 +29,13 @@
         (function () {
             var mode = 'dark', accent = 'blue', skin = 'default', cvars = null;
             var SK = { sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light', forest: 'dark', space: 'dark', cyber: 'dark', wafu: 'dark', snow: 'light', matcha: 'light', retro: 'dark', flame: 'dark' };
+            var FONTS = {
+                gothic: '"Yu Gothic UI","Yu Gothic Medium","Yu Gothic","Meiryo UI","Meiryo","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif',
+                maru: '"UD デジタル 教科書体 N-R","Hiragino Maru Gothic ProN","BIZ UDPGothic","M PLUS Rounded 1c","Meiryo UI",sans-serif',
+                mincho: '"Yu Mincho","Hiragino Mincho ProN","MS PMincho",serif',
+                mono: '"Cascadia Code","SF Mono","Consolas","MS Gothic","Courier New",monospace',
+                pop: '"HGP創英角ポップ体","UD デジタル 教科書体 N-R","Rounded Mplus 1c Bold","Comic Sans MS",sans-serif'
+            };
             try {
                 var d = JSON.parse(localStorage.getItem('beatpulsezq_prefs') || 'null');
                 if (d) { if (d.theme) mode = d.theme; if (d.accent) accent = d.accent; if (d.skin && SK[d.skin]) { skin = d.skin; mode = SK[d.skin]; }
@@ -40,6 +47,21 @@
             document.documentElement.dataset.accent = accent;
             document.documentElement.dataset.skin = skin;
             if (cvars) { for (var k in cvars) document.documentElement.style.setProperty(k, cvars[k]); }
+            try {
+                var fontStack = null;
+                if (d && d.font === 'file' && d.fontFile && typeof d.fontFile.dataUrl === 'string' && /^data:[^;]*;base64,/.test(d.fontFile.dataUrl) && d.fontFile.format) {
+                    var fs = document.createElement('style');
+                    fs.id = 'user-font-face';
+                    fs.textContent = '@font-face { font-family: "BPZQUserFont"; src: url("' + d.fontFile.dataUrl + '") format("' + d.fontFile.format + '"); font-display: swap; }';
+                    document.head.appendChild(fs);
+                    fontStack = '"BPZQUserFont"';
+                } else if (d && d.font === 'custom' && typeof d.fontCustom === 'string' && /^[A-Za-z0-9 _\-",'ぁ-んァ-ヶ一-龠々ー]{1,60}$/.test(d.fontCustom.trim()) && d.fontCustom.trim()) {
+                    fontStack = '"' + d.fontCustom.trim().replace(/"/g, '') + '"';
+                } else if (d && FONTS[d.font]) {
+                    fontStack = FONTS[d.font];
+                }
+                if (fontStack) document.documentElement.style.setProperty('--font-user', fontStack + ', var(--font-default)');
+            } catch (e) {}
         })();
     </script>
 
@@ -52,7 +74,8 @@
            ========================================================= */
         :root {
             color-scheme: dark;
-            --font: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", "Yu Gothic UI", "Meiryo UI", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+            --font-default: "Segoe UI Variable Text", "Segoe UI Variable", "Segoe UI", "Yu Gothic UI", "Meiryo UI", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+            --font: var(--font-user, var(--font-default));
 
             /* Materials */
             --bg-base: #202020;
@@ -1782,6 +1805,9 @@
                 <button id="btn-play-start" class="fab-ext" onclick="togglePlayGame()">
                     <span class="ms fill">play_arrow</span><span>ゲーム開始</span>
                 </button>
+                <button id="btn-quit-play" type="button" class="btn btn-text has-icon hidden" onclick="exitPlay()">
+                    <span class="ms">stop_circle</span>ゲームをやめる
+                </button>
                 <button class="btn btn-tonal has-icon" style="width:100%" onclick="openModal('chart-import-export-modal')">
                     <span class="ms">upload_file</span>譜面データの読込 / 出力
                 </button>
@@ -1905,7 +1931,7 @@
                         <li><b>レーンキー:</b> <span class="kbd">D</span> <span class="kbd">F</span> <span class="kbd">J</span> <span class="kbd">K</span> (または矢印キー Left, Up, Down, Right)</li>
                         <li><b>長押し音符 (Hold Note):</b> 音符の長さに合わせてキーを押し続けてください。終点に達すると自動で判定され、押し続けていてもミスにはなりません。</li>
                         <li><b>エディタの音符間隔:</b> <span class="kbd">1</span>〜<span class="kbd">6</span> キーで 1/4・1/8・1/16・1/32・3連符・Free を切り替えられます。</li>
-                        <li><b>お手付き:</b> ノーツがないところでレーンキーを押すと MISS になります(コンボも途切れます)。</li>
+                        <li><b>お手付き:</b> ノーツがないところでレーンキーを押しても、何も起こりません(MISSにはなりません)。</li>
                         <li><b>オート演奏 (BETA):</b> 「ゲーム開始」の前後にあるスイッチをONにすると、ノーツを自動で打ちます。スコアは1/4になり、ランキングには登録できません(演奏中に一度でも使った回も対象外)。</li>
                     </ul>
                 </section>
@@ -2148,6 +2174,24 @@
                             <button type="button" class="seg-btn" data-pref-theme="system" aria-pressed="false" onclick="setPref('theme','system')">システム</button>
                         </div></div>
                     <div class="set-row" id="row-accent"><span>アクセントカラー</span><div class="swatches" role="group" aria-label="アクセントカラー"><button type="button" class="swatch" data-pref-accent="blue" style="--sw:#60CDFF" aria-label="ブルー" title="ブルー" aria-pressed="false" onclick="setPref('accent','blue')"></button><button type="button" class="swatch" data-pref-accent="green" style="--sw:#6CCB5F" aria-label="グリーン" title="グリーン" aria-pressed="false" onclick="setPref('accent','green')"></button><button type="button" class="swatch" data-pref-accent="purple" style="--sw:#C5A3FF" aria-label="パープル" title="パープル" aria-pressed="false" onclick="setPref('accent','purple')"></button><button type="button" class="swatch" data-pref-accent="pink" style="--sw:#FF8AC4" aria-label="ピンク" title="ピンク" aria-pressed="false" onclick="setPref('accent','pink')"></button><button type="button" class="swatch" data-pref-accent="orange" style="--sw:#FFB454" aria-label="オレンジ" title="オレンジ" aria-pressed="false" onclick="setPref('accent','orange')"></button></div></div>
+                    <div class="set-row col" style="gap:8px"><span>フォント</span>
+                        <div class="seg" role="group" aria-label="フォント" style="flex-wrap:wrap">
+                            <button type="button" class="seg-btn" data-pref-font="default" aria-pressed="true" onclick="setPref('font','default')">標準</button>
+                            <button type="button" class="seg-btn" data-pref-font="gothic" aria-pressed="false" onclick="setPref('font','gothic')">ゴシック</button>
+                            <button type="button" class="seg-btn" data-pref-font="maru" aria-pressed="false" onclick="setPref('font','maru')">丸ゴシック</button>
+                            <button type="button" class="seg-btn" data-pref-font="mincho" aria-pressed="false" onclick="setPref('font','mincho')">明朝体</button>
+                            <button type="button" class="seg-btn" data-pref-font="pop" aria-pressed="false" onclick="setPref('font','pop')">ポップ</button>
+                            <button type="button" class="seg-btn" data-pref-font="mono" aria-pressed="false" onclick="setPref('font','mono')">等幅</button>
+                        </div>
+                        <div class="tf"><label for="pref-font-custom">フォント名を直接指定(任意)</label><input type="text" id="pref-font-custom" placeholder="例: Yu Gothic UI" maxlength="60" oninput="setCustomFont(this.value)"></div>
+                        <p class="t-body-s muted">端末にインストールされているフォント名を入力すると、そのフォントが優先されます。空欄にすると上のボタンの選択に戻ります。</p>
+                        <div class="set-row" style="gap:8px">
+                            <label class="btn has-icon" style="cursor:pointer"><span class="ms">upload</span>フォントファイルを追加<input type="file" accept=".ttf,.otf,.woff,.woff2" style="display:none" onchange="handleFontFileUpload(this)"></label>
+                            <button type="button" id="btn-use-font-file" class="chip hidden" data-pref-font="file" aria-pressed="false" onclick="setPref('font','file')"></button>
+                            <button type="button" id="btn-remove-font-file" class="btn hidden" onclick="removeFontFile()">削除</button>
+                        </div>
+                        <p class="t-body-s muted">.ttf / .otf / .woff / .woff2 に対応(端末内で保存、外部送信はしません。上限 5MB)。</p>
+                    </div>
                 </section>
                 <section class="dlg-section">
                     <h4><span class="ms">volume_up</span>サウンド</h4>
@@ -2884,8 +2928,7 @@
                 registerJudgment('GOOD', diff, candidate);
                 spawnHitEffect(lane, hitX, targetY);
             } else {
-                // ノーツがない(または遠い)ところで押した = お手付き。MISS にする
-                registerJudgment('MISS', 0, { phantom: true });
+                // ノーツがない(または遠い)ところで押しても、何も判定しない(お手付きMISSは廃止)
             }
         }
 
@@ -5782,13 +5825,26 @@
         const ACCENTS = ['blue', 'green', 'purple', 'pink', 'orange'];
         // デザインテーマ: mode は固定の明るさ(default はテーマ設定に従う)
         const SKINS = { default: null, sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light', forest: 'dark', space: 'dark', cyber: 'dark', wafu: 'dark', snow: 'light', matcha: 'light', retro: 'dark', flame: 'dark' };
+        // フォント: 端末に入っている定番フォントだけを使う(外部読み込みなし)
+        const FONT_PRESETS = {
+            gothic: { label: 'ゴシック', stack: '"Yu Gothic UI","Yu Gothic Medium","Yu Gothic","Meiryo UI","Meiryo","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif' },
+            maru: { label: '丸ゴシック', stack: '"UD デジタル 教科書体 N-R","Hiragino Maru Gothic ProN","BIZ UDPGothic","M PLUS Rounded 1c","Meiryo UI",sans-serif' },
+            mincho: { label: '明朝体', stack: '"Yu Mincho","Hiragino Mincho ProN","MS PMincho",serif' },
+            mono: { label: '等幅', stack: '"Cascadia Code","SF Mono","Consolas","MS Gothic","Courier New",monospace' },
+            pop: { label: 'ポップ', stack: '"HGP創英角ポップ体","UD デジタル 教科書体 N-R","Rounded Mplus 1c Bold","Comic Sans MS",sans-serif' }
+        };
+        const FONT_CUSTOM_RE = /^[A-Za-z0-9 _\-",'ぁ-んァ-ヶ一-龠々ー]{1,60}$/;
+        const FONT_FILE_FAMILY = 'BPZQUserFont';
+        const FONT_FILE_MAX_BYTES = 5 * 1024 * 1024; // localStorageに保存するのでファイルサイズに上限を設ける
+        const FONT_FILE_EXT_RE = /\.(ttf|otf|woff2?|ttc)$/i;
+        const FONT_FILE_FORMATS = { ttf: 'truetype', otf: 'opentype', woff: 'woff', woff2: 'woff2', ttc: 'truetype' };
 
         let account = null;                              // { uid, id, key, hash }
         let myRank = '';
         let accountBusy = false;
         let adminDeleteTarget = null;
         let settings = { music: 0.8, sfx: 0.8, beta: false };   // クラウドと同期する項目(互換のためこの3つだけ)
-        let prefs = { theme: 'dark', accent: 'blue', skin: 'default', customs: [], offsetMs: 0, fx: true, judgeText: true, comboText: true }; // この端末だけの表示設定
+        let prefs = { theme: 'dark', accent: 'blue', skin: 'default', customs: [], offsetMs: 0, fx: true, judgeText: true, comboText: true, font: 'default', fontCustom: '', fontFile: null }; // この端末だけの表示設定
         let gameOffsetSec = 0;                           // 判定調整(秒)。プレイ中の時間から引く
         let musicGainNode = null;
         let sfxGainNode = null;
@@ -5827,10 +5883,13 @@
                     if (typeof d.skin === 'string' && (Object.prototype.hasOwnProperty.call(SKINS, d.skin) || prefs.customs.some(c => 'custom:' + c.id === d.skin))) prefs.skin = d.skin;
                     if (Number.isFinite(d.offsetMs)) prefs.offsetMs = Math.max(-200, Math.min(200, Math.round(d.offsetMs)));
                     ['fx', 'judgeText', 'comboText'].forEach(k => { if (typeof d[k] === 'boolean') prefs[k] = d[k]; });
+                    if (typeof d.font === 'string' && (d.font === 'default' || d.font === 'custom' || d.font === 'file' || FONT_PRESETS[d.font])) prefs.font = d.font;
+                    if (typeof d.fontCustom === 'string' && FONT_CUSTOM_RE.test(d.fontCustom.trim())) prefs.fontCustom = d.fontCustom.trim();
+                    if (d.fontFile && typeof d.fontFile === 'object' && typeof d.fontFile.name === 'string' && typeof d.fontFile.dataUrl === 'string' && /^data:[^;]*;base64,/.test(d.fontFile.dataUrl) && Object.values(FONT_FILE_FORMATS).includes(d.fontFile.format)) prefs.fontFile = { name: d.fontFile.name, dataUrl: d.fontFile.dataUrl, format: d.fontFile.format };
                 }
             } catch (e) {}
         }
-        function savePrefs() { try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); } catch (e) {} }
+        function savePrefs() { try { localStorage.setItem(PREFS_KEY, JSON.stringify(prefs)); return true; } catch (e) { return false; } }
         function resolvedTheme() {
             if (prefs.theme === 'system') return window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
             return prefs.theme;
@@ -5844,6 +5903,7 @@
             root.dataset.skin = custom ? 'custom' : prefs.skin;
             clearCustomVars();
             if (custom) applyCustomVars(custom.vars); // マイテーマの配色(インラインのCSS変数で上書き)
+            applyFontPref();
             gameOffsetSec = prefs.offsetMs / 1000;
             const icon = byId('theme-icon');
             if (icon) icon.textContent = mode === 'light' ? 'dark_mode' : 'light_mode';
@@ -5856,6 +5916,87 @@
             prefs[key] = value;
             savePrefs();
             applyPrefs();
+        }
+        // ---------- フォント ----------
+        function applyFontPref() {
+            const root = document.documentElement;
+            let stack = null;
+            if (prefs.font === 'custom' && prefs.fontCustom && FONT_CUSTOM_RE.test(prefs.fontCustom)) {
+                stack = '"' + prefs.fontCustom.replace(/"/g, '') + '"';
+            } else if (FONT_PRESETS[prefs.font]) {
+                stack = FONT_PRESETS[prefs.font].stack;
+            }
+            if (stack) root.style.setProperty('--font-user', stack + ', var(--font-default)');
+            else root.style.removeProperty('--font-user');
+        }
+        // ---------- フォント ----------
+        function applyFontPref() {
+            const root = document.documentElement;
+            let stack = null;
+            if (prefs.font === 'file' && prefs.fontFile && prefs.fontFile.dataUrl) {
+                injectUserFontFace(prefs.fontFile);
+                stack = `"${FONT_FILE_FAMILY}"`;
+            } else if (prefs.font === 'custom' && prefs.fontCustom && FONT_CUSTOM_RE.test(prefs.fontCustom)) {
+                stack = '"' + prefs.fontCustom.replace(/"/g, '') + '"';
+            } else if (FONT_PRESETS[prefs.font]) {
+                stack = FONT_PRESETS[prefs.font].stack;
+            }
+            if (stack) root.style.setProperty('--font-user', stack + ', var(--font-default)');
+            else root.style.removeProperty('--font-user');
+        }
+        function injectUserFontFace(fontFile) {
+            let style = document.getElementById('user-font-face');
+            if (!style) { style = document.createElement('style'); style.id = 'user-font-face'; document.head.appendChild(style); }
+            style.textContent = `@font-face { font-family: "${FONT_FILE_FAMILY}"; src: url("${fontFile.dataUrl}") format("${fontFile.format}"); font-display: swap; }`;
+        }
+        function extToFontFormat(name) {
+            const m = /\.([a-z0-9]+)$/i.exec(name || '');
+            const ext = m ? m[1].toLowerCase() : '';
+            return FONT_FILE_FORMATS[ext] || null;
+        }
+        function handleFontFileUpload(input) {
+            const file = input.files && input.files[0];
+            input.value = ''; // 同じファイルを選び直せるようにリセット
+            if (!file) return;
+            if (!FONT_FILE_EXT_RE.test(file.name)) { showToast('対応形式は .ttf / .otf / .woff / .woff2 です', 'error'); return; }
+            if (file.size > FONT_FILE_MAX_BYTES) { showToast(`フォントファイルは ${Math.floor(FONT_FILE_MAX_BYTES / 1024 / 1024)}MB以下にしてください`, 'error'); return; }
+            const format = extToFontFormat(file.name);
+            if (!format) { showToast('対応形式は .ttf / .otf / .woff / .woff2 です', 'error'); return; }
+            const reader = new FileReader();
+            reader.onerror = () => showToast('フォントファイルの読み込みに失敗しました', 'error');
+            reader.onload = () => {
+                const dataUrl = String(reader.result || '');
+                if (!/^data:[^;]*;base64,/.test(dataUrl)) { showToast('フォントファイルの読み込みに失敗しました', 'error'); return; }
+                prefs.fontFile = { name: file.name, dataUrl, format };
+                prefs.font = 'file';
+                if (!savePrefs()) {
+                    prefs.fontFile = null;
+                    prefs.font = 'default';
+                    showToast('保存容量が足りず、このフォントファイルは登録できませんでした', 'error');
+                    return;
+                }
+                applyPrefs();
+                showToast(`フォント「${file.name}」を適用しました`, 'success');
+            };
+            reader.readAsDataURL(file);
+        }
+        function removeFontFile() {
+            prefs.fontFile = null;
+            if (prefs.font === 'file') prefs.font = 'default';
+            savePrefs();
+            const ff = document.getElementById('user-font-face'); if (ff) ff.remove();
+            applyPrefs();
+        }
+        let customFontTimer = null;
+        function setCustomFont(value) {
+            const v = (value || '').trim().slice(0, 60);
+            clearTimeout(customFontTimer);
+            customFontTimer = setTimeout(() => {
+                prefs.fontCustom = v;
+                prefs.font = v && FONT_CUSTOM_RE.test(v) ? 'custom' : 'default';
+                savePrefs();
+                applyPrefs();
+            }, 250);
         }
         function toggleTheme() {
             if (prefs.skin !== 'default') { setPref('skin', 'default'); return; } // デザインテーマ中は標準に戻す
@@ -6133,7 +6274,8 @@
                 return;
             }
             resetArmed = false;
-            prefs = { theme: 'dark', accent: 'blue', skin: 'default', customs: prefs.customs || [], offsetMs: 0, fx: true, judgeText: true, comboText: true };
+            prefs = { theme: 'dark', accent: 'blue', skin: 'default', customs: prefs.customs || [], offsetMs: 0, fx: true, judgeText: true, comboText: true, font: 'default', fontCustom: '', fontFile: null };
+            const ff = byId('user-font-face'); if (ff) ff.remove();
             settings.music = 0.8; settings.sfx = 0.8;
             savePrefs(); saveSettings(); applyVolumeSettings(); applyPrefs();
             if (btn) btn.querySelector('span:last-child').textContent = '設定を初期化';
@@ -6148,6 +6290,13 @@
             const sn = byId('skin-note');
             if (sn) sn.textContent = prefs.skin === 'default' ? '' : 'デザインテーマ使用中は、ダーク/ライトとアクセントカラーはテーマに合わせて固定されます。';
             document.querySelectorAll('[data-pref-accent]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.prefAccent === prefs.accent)));
+            document.querySelectorAll('[data-pref-font]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.prefFont === prefs.font)));
+            const fontCustomInput = byId('pref-font-custom');
+            if (fontCustomInput && document.activeElement !== fontCustomInput) fontCustomInput.value = prefs.fontCustom || '';
+            const fontFileBtn = byId('btn-use-font-file');
+            const fontFileRemoveBtn = byId('btn-remove-font-file');
+            if (fontFileBtn) { fontFileBtn.classList.toggle('hidden', !prefs.fontFile); fontFileBtn.textContent = prefs.fontFile ? prefs.fontFile.name : ''; fontFileBtn.title = prefs.fontFile ? prefs.fontFile.name : ''; }
+            if (fontFileRemoveBtn) fontFileRemoveBtn.classList.toggle('hidden', !prefs.fontFile);
             const range = (id, textId, val, fmt) => {
                 const r = byId(id); if (r) { r.value = val; syncRange(r); }
                 const t = byId(textId); if (t) t.textContent = fmt(val);
@@ -9440,6 +9589,7 @@
             toggle('play-hint-empty', !hasAudio && !showResult && !playing);
             toggle('play-hint-ready', (hasAudio || showResult) && !playing);
             toggle('editor-hint', !hasAudio);
+            toggle('btn-quit-play', playing);
 
             toggle('result-block', showResult);
             const readyHint = document.getElementById('play-hint-ready');
@@ -9493,7 +9643,7 @@
             if (document.visibilityState === 'visible' && _wasPlaying) setWakeLock(true);
         });
 
-        // スマホ: 演奏の中断(リザルトは出さない)
+        // 演奏の中断(リザルトは出さない)。モバイルの close アイコン、デスクトップの「ゲームをやめる」ボタン共通
         function exitPlay() {
             if (!(playState && playState.isPlaying)) return;
             endPlayGame();
