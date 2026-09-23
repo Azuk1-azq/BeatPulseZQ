@@ -553,6 +553,16 @@
 
         /* Empty / ready / result cards (アクリル調のフライアウト) */
         .hint { position: absolute; inset: 0; z-index: 2; display: grid; place-items: center; padding: 24px 24px calc(var(--pad-h, 64px) + 36px); pointer-events: none; }
+
+        /* Pause overlay (プレイ中の一時停止) */
+        .stage-pause { display: none; }
+        .pause-overlay { position: absolute; inset: 0; z-index: 8; display: none; align-items: center; justify-content: center; padding: 24px; background: color-mix(in srgb, var(--bg-base) 72%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+        .pause-overlay.open { display: flex; }
+        .pause-card { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; max-width: 280px; text-align: center; padding: 24px; border-radius: 8px; background: var(--dialog-bg); border: 1px solid var(--surface-stroke); box-shadow: var(--shadow-dialog); }
+        .pause-card h2 { font: 600 20px/28px var(--font); color: var(--text); }
+        .pause-card p { color: var(--text-2); font: 400 13px/18px var(--font); }
+        .pause-card .btn { width: 100%; margin-top: 4px; }
+        .pause-overlay.open ~ .pads { opacity: .25; pointer-events: none; }
         .editor-stage .hint { padding-bottom: 24px; }
         .hint-card {
             display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
@@ -779,10 +789,12 @@
         [data-device="mobile"] .pad-key { display: none; }
         [data-device="mobile"] .hint { padding: 16px 16px calc(var(--pad-h, 64px) + 36px + env(safe-area-inset-bottom)); }
         [data-device="mobile"] .hud { display: none; top: calc(env(safe-area-inset-top, 0px) + 12px); left: 60px; right: 16px; }
-        [data-device="mobile"] .stage-exit {
-            position: absolute; z-index: 4; top: calc(env(safe-area-inset-top, 0px) + 8px); left: 8px;
+        [data-device="mobile"] .stage-exit, [data-device="mobile"] .stage-pause {
+            position: absolute; z-index: 4; top: calc(env(safe-area-inset-top, 0px) + 8px);
             background: color-mix(in srgb, var(--flyout-bg) 90%, transparent); color: var(--text); border-radius: 50%;
         }
+        [data-device="mobile"] .stage-exit { left: 8px; }
+        [data-device="mobile"] .stage-pause { right: 8px; }
 
         /* 演奏中は没入表示 */
         [data-device="mobile"][data-playing="true"] :is(.titlebar, .navbar, .source) { display: none; }
@@ -792,6 +804,13 @@
         [data-device="mobile"][data-playing="true"] .stage-exit { display: inline-grid; }
         [data-device="mobile"][data-playing="true"] .stage-progress { top: env(safe-area-inset-top, 0px); }
         [data-device="mobile"][data-playing="true"] .snackbars { display: none; }
+
+        /* デスクトップ: ステージ右上に一時停止ボタン */
+        [data-device="desktop"] .stage-pause[data-visible="true"] {
+            display: inline-grid; position: absolute; z-index: 4; top: 12px; right: 12px;
+            background: color-mix(in srgb, var(--flyout-bg) 90%, transparent); color: var(--text); border-radius: 50%;
+        }
+        [data-device="mobile"][data-playing="true"] .stage-pause[data-visible="true"] { display: inline-grid; }
 
         /* Editor: ツールを詰め、横スクロールのストリップに */
         [data-device="mobile"] .editor { gap: 8px; }
@@ -1742,6 +1761,7 @@
             <div class="stage" id="play-stage">
                 <div class="stage-progress" aria-hidden="true"><i id="play-progress"></i></div>
                 <button type="button" class="icon-btn stage-exit" onclick="exitPlay()" aria-label="プレイを中断" title="プレイを中断"><span class="ms">close</span></button>
+                <button type="button" class="icon-btn stage-pause" id="btn-stage-pause" onclick="togglePausePlay()" aria-label="一時停止" title="一時停止 (Esc)"><span class="ms" id="stage-pause-icon">pause</span></button>
                 <canvas id="game-canvas" role="img" aria-label="ノーツが流れるプレイ画面"></canvas>
                 <div class="auto-flag" aria-hidden="true">AUTO ・ スコア×¼</div>
                 <div id="dojo-hud" class="dojo-hud tw hidden"><div class="dojo-hud-top"><div id="dojo-hud-title">段位道場</div><div id="dojo-hud-pips"></div></div><div id="dojo-hud-song">-</div><div id="dojo-hud-conds"></div></div>
@@ -1754,6 +1774,16 @@
 
                 <div id="judgment-overlay" class="judge-wrap" aria-hidden="true">
                     <span id="judgment-text" class="judge-text" data-judge="perfect">PERFECT</span>
+                </div>
+
+                <div id="pause-overlay" class="pause-overlay" aria-hidden="true">
+                    <div class="pause-card">
+                        <div class="hint-icon"><span class="ms fill">pause</span></div>
+                        <h2>一時停止中</h2>
+                        <p>曲とノーツが止まっています。準備ができたら再開しましょう。</p>
+                        <button type="button" class="btn btn-filled has-icon" onclick="togglePausePlay()"><span class="ms fill">play_arrow</span>再開する</button>
+                        <button type="button" class="btn btn-text has-icon" onclick="exitPlay()"><span class="ms">stop</span>ゲームをやめる</button>
+                    </div>
                 </div>
 
                 <div id="play-hint-empty" class="hint">
@@ -2926,6 +2956,7 @@
 
             playState = {
                 isPlaying: true,
+                isPaused: false,
                 score: 0,
                 combo: 0,
                 maxCombo: 0,
@@ -2935,6 +2966,7 @@
                 missCount: 0,
                 judgeBoost: useJudgeBoost
             };
+            hidePauseOverlay();
 
             updateScoreUI();
             audioPauseOffset = 0;
@@ -2961,6 +2993,8 @@
                 return;
             }
             playState.isPlaying = false;
+            playState.isPaused = false;
+            hidePauseOverlay();
             stopAudioBuffer();
             const boostFlagEl = document.getElementById('judge-boost-flag');
             if (boostFlagEl) boostFlagEl.classList.add('hidden');
@@ -3060,6 +3094,7 @@
 
         function triggerLanePress(lane) {
             if (lane < 0 || lane >= LANE_COUNT) return;
+            if (currentMode === 'play' && playState.isPlaying && playState.isPaused) return; // 一時停止中は入力を無視する
             lanePressedState[lane] = true;
             laneHeldStartTimes[lane] = getCurrentAudioTime();
             playHitSound(600 + lane * 150);
@@ -3101,6 +3136,7 @@
 
         function triggerLaneRelease(lane) {
             if (lane < 0 || lane >= LANE_COUNT) return;
+            if (currentMode === 'play' && playState.isPlaying && playState.isPaused) { lanePressedState[lane] = false; laneHeldStartTimes[lane] = null; return; }
             lanePressedState[lane] = false;
 
             if (currentMode === 'editor') {
@@ -3158,6 +3194,83 @@
                 setEditorPlayIcon(true);
             }
         }
+
+        // ---------- Play mode: pause / resume ----------
+        // 曲・ノーツ・入力すべてを一時停止する(Web Audioの BufferSource は一時停止できないため、
+        // 停止した時刻を audioPauseOffset に保存しておき、再開時に同じ位置から再生し直す)
+        function setStagePauseButton(visible) {
+            const btn = document.getElementById('btn-stage-pause');
+            if (btn) btn.dataset.visible = visible ? 'true' : 'false';
+        }
+
+        function setPauseIcon(paused) {
+            const icon = document.getElementById('stage-pause-icon');
+            if (icon) icon.textContent = paused ? 'play_arrow' : 'pause';
+            const btn = document.getElementById('btn-stage-pause');
+            if (btn) {
+                const label = paused ? '再開' : '一時停止';
+                btn.setAttribute('aria-label', label);
+                btn.setAttribute('title', paused ? `${label} (Esc)` : `${label} (Esc)`);
+            }
+        }
+
+        function showPauseOverlay() {
+            const el = document.getElementById('pause-overlay');
+            if (el) { el.classList.add('open'); el.setAttribute('aria-hidden', 'false'); }
+            setPauseIcon(true);
+        }
+
+        function hidePauseOverlay() {
+            const el = document.getElementById('pause-overlay');
+            if (el) { el.classList.remove('open'); el.setAttribute('aria-hidden', 'true'); }
+            setPauseIcon(false);
+        }
+
+        function isPauseUnavailable() {
+            // 段位道場の挑戦中や、フレンドとのライブセッション中は他プレイヤーとの同期が崩れるため一時停止できない
+            if (typeof dojoActive === 'function' && dojoActive()) return true;
+            if (room && room.started) return true;
+            return false;
+        }
+
+        function pauseIsBlocked() {
+            if (!isPauseUnavailable()) return false;
+            if (typeof dojoActive === 'function' && dojoActive()) {
+                showToast('段位道場の挑戦中は一時停止できません', 'warning');
+            } else {
+                showToast('フレンドセッション中は一時停止できません', 'warning');
+            }
+            return true;
+        }
+
+        function togglePausePlay() {
+            if (currentMode !== 'play' || !playState.isPlaying) return;
+            if (!playState.isPaused && pauseIsBlocked()) return;
+
+            if (!playState.isPaused) {
+                playState.isPaused = true;
+                audioPauseOffset = getCurrentAudioTime();
+                stopAudioBuffer();
+                lanePressedState = [false, false, false, false];
+                laneHeldStartTimes = [null, null, null, null];
+                showPauseOverlay();
+            } else {
+                playState.isPaused = false;
+                hidePauseOverlay();
+                if (audioBuffer) {
+                    if (audioPauseOffset >= audioBuffer.duration) audioPauseOffset = 0;
+                    playAudioBuffer(audioPauseOffset);
+                }
+            }
+        }
+
+        // タブを離れた・バックグラウンドに回った際は自動で一時停止する(曲だけ進んでしまうのを防ぐ)
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState !== 'hidden') return;
+            if (currentMode !== 'play' || !playState.isPlaying || playState.isPaused) return;
+            if (isPauseUnavailable()) return; // 道場・フレンドセッション中は自動一時停止しない(同期がずれるため)
+            togglePausePlay();
+        });
 
         let previousGamepadButtons = {};
 
@@ -3276,6 +3389,7 @@
         // Gameplay Scores & Judgment
         let playState = {
             isPlaying: false,
+            isPaused: false,
             score: 0,
             combo: 0,
             maxCombo: 0,
@@ -4136,7 +4250,7 @@
             const currentTime = getCurrentAudioTime();
             const noteSpeed = BASE_NOTE_SPEED * scrollSpeed;
             const curPos = scrollPos(currentTime);
-            if (autoPlayEnabled && playState.isPlaying) autoPlayTick(currentTime);
+            if (autoPlayEnabled && playState.isPlaying && !playState.isPaused) autoPlayTick(currentTime);
 
             // 曲の進行(ステージ上端のプログレスバー)
             if (playProgressEl) {
@@ -4722,6 +4836,10 @@
                     rebindState = null;
                     renderKeyConfigUI();
                     showToast('割り当てをキャンセルしました', 'info');
+                    return;
+                }
+                if (!document.querySelector('.scrim.open') && currentMode === 'play' && playState.isPlaying) {
+                    togglePausePlay();
                     return;
                 }
                 closeTopModal();
@@ -7526,9 +7644,10 @@
 
             currentChart.notes.forEach(n => { n.judged = false; n.holdJudged = false; });
             playState = {
-                isPlaying: true, score: 0, combo: 0, maxCombo: 0,
+                isPlaying: true, isPaused: false, score: 0, combo: 0, maxCombo: 0,
                 perfectCount: 0, greatCount: 0, goodCount: 0, missCount: 0
             };
+            hidePauseOverlay();
             autoPlayReset();
             autoUsedThisRun = false;
             lastResult = null;
@@ -8538,9 +8657,10 @@
             currentChart.notes.forEach(n => { n.judged = false; n.holdJudged = false; });
             dojoApplyMv(song);
             playState = {
-                isPlaying: false, score: 0, combo: 0, maxCombo: 0,
+                isPlaying: false, isPaused: false, score: 0, combo: 0, maxCombo: 0,
                 perfectCount: 0, greatCount: 0, goodCount: 0, missCount: 0, holdTime: 0, autoUsed: false
             };
+            hidePauseOverlay();
             resetAutoPlayState();
             audioPauseOffset = 0;
             audioPlaybackRate = 1.0;
@@ -10284,6 +10404,7 @@
             toggle('play-hint-ready', (hasAudio || showResult) && !playing);
             toggle('editor-hint', !hasAudio);
             toggle('btn-quit-play', playing);
+            setStagePauseButton(!!(playState && playState.isPlaying) && !isPauseUnavailable());
 
             toggle('result-block', showResult);
             const readyHint = document.getElementById('play-hint-ready');
