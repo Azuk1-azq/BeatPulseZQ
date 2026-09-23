@@ -144,6 +144,9 @@
             --shadow-flyout: 0 8px 16px rgba(0, 0, 0, .26), 0 0 0 1px rgba(0, 0, 0, .2);
             --shadow-dialog: 0 32px 64px rgba(0, 0, 0, .37), 0 2px 21px rgba(0, 0, 0, .37);
 
+            --blur-flyout: 30px;
+            --blur-drop: 6px;
+
             --ease: cubic-bezier(.1, .9, .2, 1);
         }
 
@@ -555,7 +558,7 @@
             display: flex; flex-direction: column; align-items: center; gap: 12px; text-align: center;
             width: min(100%, 380px); max-height: 100%; overflow-y: auto; pointer-events: auto; padding: 24px 28px;
             border-radius: 8px; background: var(--flyout-bg); border: 1px solid var(--card-stroke);
-            -webkit-backdrop-filter: blur(30px) saturate(1.25); backdrop-filter: blur(30px) saturate(1.25);
+            -webkit-backdrop-filter: blur(var(--blur-flyout, 30px)) saturate(1.25); backdrop-filter: blur(var(--blur-flyout, 30px)) saturate(1.25);
             box-shadow: var(--shadow-flyout);
         }
         .hint-card > * { flex-shrink: 0; }
@@ -609,7 +612,7 @@
         .snackbar {
             display: flex; align-items: center; gap: 12px; min-height: 48px; padding: 10px 14px; pointer-events: auto;
             border-radius: 8px; background: var(--flyout-bg); border: 1px solid var(--card-stroke); color: var(--text);
-            -webkit-backdrop-filter: blur(30px) saturate(1.25); backdrop-filter: blur(30px) saturate(1.25);
+            -webkit-backdrop-filter: blur(var(--blur-flyout, 30px)) saturate(1.25); backdrop-filter: blur(var(--blur-flyout, 30px)) saturate(1.25);
             box-shadow: var(--shadow-flyout); font: 400 14px/20px var(--font);
             opacity: 0; transform: translateY(12px); transition: opacity .18s linear, transform .25s var(--ease);
         }
@@ -975,7 +978,7 @@
         .status-line[data-tone="ok"] { color: var(--success); }
         .status-line[data-tone="warn"] { color: var(--caution); }
         #account-badge[data-on="true"] { color: var(--success); }
-        .drop-overlay { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; pointer-events: none; background: color-mix(in srgb, var(--bg-base) 72%, transparent); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+        .drop-overlay { position: fixed; inset: 0; z-index: 300; display: grid; place-items: center; pointer-events: none; background: color-mix(in srgb, var(--bg-base) 72%, transparent); -webkit-backdrop-filter: blur(var(--blur-drop, 6px)); backdrop-filter: blur(var(--blur-drop, 6px)); }
         .drop-card { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 32px 40px; border-radius: 8px; text-align: center; background: var(--flyout-bg); border: 2px dashed var(--accent); box-shadow: var(--shadow-flyout); }
         .drop-card .ms { --s: 40px; color: var(--accent); }
         .drop-card h2 { font: 600 20px/28px var(--font); }
@@ -1568,6 +1571,24 @@
 
         /* ===== 段位道場 ===== */
         .dot-new { position: absolute; top: 3px; right: 3px; width: 8px; height: 8px; border-radius: 50%; background: var(--critical); }
+        .judge-boost-flag { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 999px; background: rgba(96, 205, 255, .85); color: #101418; font-weight: 700; font-size: 13px; box-shadow: 0 2px 10px rgba(0,0,0,.3); z-index: 5; }
+        #btn-login-calendar.has-bonus { background: var(--accent); color: var(--on-accent); }
+        #btn-login-calendar.has-bonus .ms { color: var(--on-accent); }
+        .login-cal-status { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 8px; background: var(--ctl); font-weight: 700; font-size: 13px; }
+        .login-cal-status.is-ready { background: rgba(96, 205, 255, .25); color: var(--accent-text); }
+        .login-cal-status .ms { font-size: 20px; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin: 8px 0; }
+        .cal-dow { text-align: center; font-size: 12px; color: var(--text-3); padding: 4px 0; }
+        .cal-cell { position: relative; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; border-radius: 4px; background: var(--ctl); font-size: 13px; }
+        .cal-cell.empty { background: transparent; }
+        .cal-cell.is-today { outline: 2px solid var(--accent); outline-offset: -2px; }
+        .cal-cell.is-login { background: rgba(108, 203, 95, .25); color: var(--success); }
+        .cal-cell.is-boost { background: rgba(96, 205, 255, .30); color: var(--accent-text); font-weight: 700; }
+        .cal-cell .ms { position: absolute; bottom: 2px; font-size: 12px; }
+        .cal-legend { display: flex; gap: 16px; font-size: 12px; color: var(--text-2); }
+        .cal-legend .cal-dot { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 4px; vertical-align: middle; }
+        .cal-legend .cal-dot.is-login { background: rgba(108, 203, 95, .6); }
+        .cal-legend .cal-dot.is-boost { background: rgba(96, 205, 255, .7); }
         .dojo-hud {
             position: absolute; right: 10px; top: 10px; z-index: 3; width: min(250px, 46%); display: flex; flex-direction: column; gap: 4px; padding: 8px 10px;
             border-radius: 8px; pointer-events: none; background: color-mix(in srgb, var(--flyout-bg) 92%, transparent); border: 1px solid color-mix(in srgb, var(--gold) 50%, transparent);
@@ -1612,6 +1633,9 @@
                 <span class="ms">sports_esports</span>
                 <span id="gamepad-status-text">コントローラー未接続</span>
             </div>
+            <button id="btn-login-calendar" class="btn btn-text has-icon" style="position:relative" onclick="openLoginCalendarModal()" title="デイリーボーナス" aria-label="デイリーボーナス">
+                <span class="ms">grid_on</span><span class="lbl">デイリーボーナス</span><span id="login-bonus-dot" class="dot-new hidden"></span>
+            </button>
             <button id="account-badge" class="btn btn-text has-icon" data-on="false" onclick="openAccountModal()" title="アカウント" aria-label="アカウント">
                 <span class="ms">person</span><span id="account-badge-label" class="lbl">未ログイン</span>
             </button>
@@ -1620,6 +1644,9 @@
             </button>
             <button id="btn-dojo" class="btn btn-text has-icon" style="position:relative" onclick="openModal('dojo-modal')" title="段位道場" aria-label="段位道場">
                 <span class="ms">dojo</span><span class="lbl">段位道場</span><span id="dojo-new-dot" class="dot-new hidden"></span>
+            </button>
+            <button id="btn-achievements" class="btn btn-text has-icon" onclick="openAchievements()" title="実績" aria-label="実績">
+                <span class="ms">emoji_events</span><span class="lbl">実績</span>
             </button>
             <button class="icon-btn" onclick="openModal('key-config-modal')" title="キー設定" aria-label="キー設定"><span class="ms">keyboard</span></button>
             <button class="icon-btn" onclick="openModal('help-modal')" title="操作方法・ヘルプ" aria-label="操作方法・ヘルプ"><span class="ms">help</span></button>
@@ -1723,6 +1750,7 @@
                     <span>スコア<b id="hud-score">0000000</b></span>
                     <span>コンボ<b id="hud-combo">0</b></span>
                 </div>
+                <div id="judge-boost-flag" class="judge-boost-flag hidden" aria-hidden="true"><span class="ms fill">auto_awesome</span>判定強化中(PERFECTが広がっています)</div>
 
                 <div id="judgment-overlay" class="judge-wrap" aria-hidden="true">
                     <span id="judgment-text" class="judge-text" data-judge="perfect">PERFECT</span>
@@ -2158,6 +2186,29 @@
     </div>
 
     <!-- Settings dialog -->
+    <!-- Login calendar dialog -->
+    <div id="login-calendar-modal" class="scrim hidden" onclick="if (event.target === this) closeModal(this.id)">
+        <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="login-cal-title-h" tabindex="-1" style="max-width:420px">
+            <div class="dlg-head"><span class="ms">grid_on</span><h2 id="login-cal-title-h" class="dlg-title">デイリーボーナス</h2></div>
+            <div class="dlg-body">
+                <p class="t-body-s muted">毎日ログインすると連続日数がカウントされます。2日連続ログインするごとに、次に遊ぶ1曲だけ「判定強化」(PERFECTの許容タイミングが少し広がる)が発動します。</p>
+                <div id="login-cal-status" class="login-cal-status"></div>
+                <div class="set-row" style="justify-content:space-between">
+                    <button type="button" class="btn btn-text has-icon" onclick="shiftLoginCalendar(-1)"><span class="ms">chevron_left</span></button>
+                    <b id="login-cal-title"></b>
+                    <button type="button" class="btn btn-text has-icon" onclick="shiftLoginCalendar(1)"><span class="ms">chevron_right</span></button>
+                </div>
+                <div id="login-cal-grid" class="cal-grid"></div>
+                <p id="login-cal-streak" class="t-body-s muted"></p>
+                <div class="cal-legend">
+                    <span><i class="cal-dot is-login"></i>ログインした日</span>
+                    <span><i class="cal-dot is-boost"></i>判定強化がついた日</span>
+                </div>
+            </div>
+            <div class="dlg-foot"><button class="btn btn-filled" onclick="closeModal('login-calendar-modal')" data-autofocus>閉じる</button></div>
+        </div>
+    </div>
+
     <div id="settings-modal" class="scrim hidden" onclick="if (event.target === this) closeModal(this.id)">
         <div class="dialog lg" role="dialog" aria-modal="true" aria-labelledby="settings-title" tabindex="-1">
             <div class="dlg-head"><span class="ms">settings</span><h2 id="settings-title" class="dlg-title">設定</h2></div>
@@ -2375,18 +2426,7 @@
                 </div>
                 <button type="button" class="btn has-icon" style="align-self:flex-start" onclick="teRandom()"><span class="ms">auto_awesome</span>おまかせで作る(ランダム)</button>
                 <hr class="divider">
-                <div class="set-row col" style="gap:4px"><span class="t-label-l">詳細調整</span><span class="t-body-s muted">カスタムCSSを書かなくても、スライダーで細かく色味を追い込めます。</span></div>
-                <div class="set-row col" style="gap:12px">
-                    <div class="slider-head"><span class="t-label-l">彩度</span><output id="te-sat-text">±0%</output></div>
-                    <input type="range" id="te-sat" class="slider" min="-50" max="50" step="5" value="0" oninput="teSet('satAdj', parseInt(this.value,10))" aria-label="彩度の微調整">
-                    <div class="slider-head"><span class="t-label-l">明るさ</span><output id="te-light-text">±0%</output></div>
-                    <input type="range" id="te-light" class="slider" min="-30" max="30" step="5" value="0" oninput="teSet('lightAdj', parseInt(this.value,10))" aria-label="明るさの微調整">
-                    <div class="slider-head"><span class="t-label-l">背景の光彩の強さ</span><output id="te-glow-text">100%</output></div>
-                    <input type="range" id="te-glow" class="slider" min="0" max="200" step="10" value="100" oninput="teSet('glowAdj', parseInt(this.value,10))" aria-label="背景の光彩の強さ">
-                    <div class="slider-head"><span class="t-label-l">カードの不透明度</span><output id="te-card-text">100%</output></div>
-                    <input type="range" id="te-card" class="slider" min="0" max="200" step="10" value="100" oninput="teSet('cardAdj', parseInt(this.value,10))" aria-label="カードの不透明度">
-                </div>
-                <button type="button" class="btn btn-text" style="align-self:flex-start" onclick="teResetAdv()"><span class="ms">restart_alt</span>詳細調整を初期値に戻す</button>
+                <button type="button" class="btn has-icon" style="align-self:flex-start" onclick="openThemeAdvanced()"><span class="ms">tune</span>詳細エディタを開く(カスタムCSSレベルで調整)</button>
                 <hr class="divider">
                 <div class="set-row col" style="gap:8px"><span class="t-label-l">テーマコード(共有・バックアップ)</span>
                     <textarea id="te-code" class="fluent-input" rows="2" style="height:auto" spellcheck="false"></textarea>
@@ -2396,6 +2436,68 @@
                 <button class="btn btn-filled" onclick="saveThemeEditor()">保存して使う</button>
                 <button id="te-delete" class="btn btn-danger hidden" onclick="deleteThemeFromEditor()">削除</button>
                 <button class="btn btn-text" onclick="closeModal('theme-editor-modal')">キャンセル</button>
+            </div>
+        </div>
+    </div>
+    <!-- Advanced theme editor (カスタムCSSレベルの細かい調整を、コードなしでスライダーだけで行う専用画面) -->
+    <div id="theme-advanced-modal" class="scrim hidden" onclick="if (event.target === this) closeModal(this.id)">
+        <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="tea-title" tabindex="-1" style="max-width:560px">
+            <div class="dlg-head"><span class="ms">tune</span><h2 id="tea-title" class="dlg-title">詳細エディタ</h2></div>
+            <div class="dlg-body">
+                <p class="t-body-s muted">マイテーマの色味を、カスタムCSSを書かずにスライダーだけで細かく追い込めます。変更はすぐ下のプレビューと画面に反映されます。</p>
+
+                <div style="position:relative; border-radius:8px; overflow:hidden; padding:20px; background:var(--bg-mica);">
+                    <div style="position:relative; display:flex; flex-direction:column; gap:8px; width:min(100%,260px); padding:14px 16px; border-radius:8px; background:var(--card); border:1px solid var(--card-stroke); box-shadow:var(--shadow-card);">
+                        <span class="t-title-s" style="color:var(--text)">プレビューカード</span>
+                        <span class="t-body-s" style="color:var(--text-2)">補足文字(--text-2)の見え方はここで確認できます。</span>
+                        <div style="display:flex; align-items:center; gap:8px; margin-top:4px; padding:8px 10px; border-radius:8px; background:var(--flyout-bg); border:1px solid var(--card-stroke); -webkit-backdrop-filter:blur(var(--blur-flyout,30px)) saturate(1.25); backdrop-filter:blur(var(--blur-flyout,30px)) saturate(1.25);">
+                            <span class="t-body-s" style="color:var(--text)">ガラスパネル(ぼかし)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dlg-section" style="gap:14px">
+                    <span class="t-title-s">色味</span>
+                    <div class="set-row col" style="gap:12px">
+                        <div class="slider-head"><span class="t-label-l">彩度</span><output id="tea-sat-text">±0%</output></div>
+                        <input type="range" id="tea-sat" class="slider" min="-50" max="50" step="5" value="0" oninput="teSet('satAdj', parseInt(this.value,10))" aria-label="彩度">
+                        <div class="slider-head"><span class="t-label-l">明るさ</span><output id="tea-light-text">±0%</output></div>
+                        <input type="range" id="tea-light" class="slider" min="-30" max="30" step="5" value="0" oninput="teSet('lightAdj', parseInt(this.value,10))" aria-label="明るさ">
+                    </div>
+                </div>
+
+                <div class="dlg-section" style="gap:14px">
+                    <span class="t-title-s">背景</span>
+                    <div class="set-row col" style="gap:12px">
+                        <div class="slider-head"><span class="t-label-l">背景の光彩の強さ</span><output id="tea-glow-text">100%</output></div>
+                        <input type="range" id="tea-glow" class="slider" min="0" max="200" step="10" value="100" oninput="teSet('glowAdj', parseInt(this.value,10))" aria-label="背景の光彩の強さ">
+                    </div>
+                </div>
+
+                <div class="dlg-section" style="gap:14px">
+                    <span class="t-title-s">カード・パネル</span>
+                    <div class="set-row col" style="gap:12px">
+                        <div class="slider-head"><span class="t-label-l">カードの不透明度</span><output id="tea-card-text">100%</output></div>
+                        <input type="range" id="tea-card" class="slider" min="0" max="200" step="10" value="100" oninput="teSet('cardAdj', parseInt(this.value,10))" aria-label="カードの不透明度">
+                        <div class="slider-head"><span class="t-label-l">枠線の濃さ</span><output id="tea-stroke-text">100%</output></div>
+                        <input type="range" id="tea-stroke" class="slider" min="0" max="200" step="10" value="100" oninput="teSet('strokeAdj', parseInt(this.value,10))" aria-label="枠線の濃さ">
+                        <div class="slider-head"><span class="t-label-l">パネルのガラスぼかし</span><output id="tea-blur-text">30px</output></div>
+                        <input type="range" id="tea-blur" class="slider" min="0" max="60" step="2" value="30" oninput="teSet('blurAdj', parseInt(this.value,10))" aria-label="パネルのガラスぼかし">
+                    </div>
+                </div>
+
+                <div class="dlg-section" style="gap:14px">
+                    <span class="t-title-s">文字</span>
+                    <div class="set-row col" style="gap:12px">
+                        <div class="slider-head"><span class="t-label-l">補足文字の濃さ</span><output id="tea-text-text">100%</output></div>
+                        <input type="range" id="tea-text" class="slider" min="50" max="150" step="10" value="100" oninput="teSet('textAdj', parseInt(this.value,10))" aria-label="補足文字の濃さ">
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-text" style="align-self:flex-start" onclick="teResetAdv()"><span class="ms">restart_alt</span>詳細調整をすべて初期値に戻す</button>
+            </div>
+            <div class="dlg-foot">
+                <button class="btn btn-filled" onclick="closeModal('theme-advanced-modal')">マイテーマ編集に戻る</button>
             </div>
         </div>
     </div>
@@ -2545,6 +2647,18 @@
                 <div id="dojo-received-list" class="tw" style="display:flex;flex-direction:column;gap:10px"></div>
             </div>
             <div class="dlg-foot"><button class="btn btn-text" onclick="closeModal('dojo-modal')" data-autofocus>閉じる</button></div>
+        </div>
+    </div>
+
+    <!-- ===== 実績(アチーブメント) ===== -->
+    <div id="achievements-modal" class="scrim hidden" onclick="if (event.target === this) closeModal(this.id)">
+        <div class="dialog lg" role="dialog" aria-modal="true" aria-labelledby="achv-title" tabindex="-1">
+            <div class="dlg-head"><span class="ms">emoji_events</span><h2 id="achv-title" class="dlg-title">実績</h2><span id="achv-summary" class="t-body-s muted" style="margin-left:auto">0 / 0 解除</span></div>
+            <div class="dlg-body">
+                <p class="t-body-s muted">演奏や段位道場、テーマ作りなどで実績が解除されます。この端末に保存されます。</p>
+                <div id="achv-grid" style="display:flex; flex-direction:column; gap:10px"></div>
+            </div>
+            <div class="dlg-foot"><button class="btn btn-text" onclick="closeModal('achievements-modal')" data-autofocus>閉じる</button></div>
         </div>
     </div>
 
@@ -2807,6 +2921,9 @@
                 n.holdJudged = false;
             });
 
+            const useJudgeBoost = judgeBoostAvailable;
+            if (useJudgeBoost) { consumeJudgeBoost(); achvOnBoostUsed(); } // この1曲だけ判定強化を消費する
+
             playState = {
                 isPlaying: true,
                 score: 0,
@@ -2815,7 +2932,8 @@
                 perfectCount: 0,
                 greatCount: 0,
                 goodCount: 0,
-                missCount: 0
+                missCount: 0,
+                judgeBoost: useJudgeBoost
             };
 
             updateScoreUI();
@@ -2828,7 +2946,9 @@
                 startBtn.innerHTML = '<span class="ms fill">restart_alt</span><span>リセット / 再スタート</span>';
             }
 
-            showToast('ゲームスタート！', 'success');
+            showToast(useJudgeBoost ? 'ゲームスタート！判定強化 発動中(PERFECTが広がります)' : 'ゲームスタート！', 'success');
+            const boostFlag = document.getElementById('judge-boost-flag');
+            if (boostFlag) boostFlag.classList.toggle('hidden', !useJudgeBoost);
             lastResult = null;
             autoPlayReset();
             autoUsedThisRun = autoPlayEnabled;
@@ -2842,6 +2962,8 @@
             }
             playState.isPlaying = false;
             stopAudioBuffer();
+            const boostFlagEl = document.getElementById('judge-boost-flag');
+            if (boostFlagEl) boostFlagEl.classList.add('hidden');
             const startBtn = document.getElementById('btn-play-start');
             if (startBtn) {
                 startBtn.innerHTML = '<span class="ms fill">play_arrow</span><span>ゲーム開始</span>';
@@ -2858,6 +2980,7 @@
             if (completed === true) {
                 saveScoreAfterPlay();
                 handleRankingAfterPlay();
+                achvOnPlayEnd(lastResult);
             }
         }
 
@@ -2961,7 +3084,8 @@
                 .sort((a, b) => Math.abs(a.time - currentTime) - Math.abs(b.time - currentTime))[0];
 
             const diff = candidate ? Math.abs(candidate.time - currentTime) : Infinity;
-            if (diff <= 0.05) {
+            const perfectWindow = (playState.judgeBoost ? 0.08 : 0.05); // 判定強化中はPERFECT判定の許容誤差を広げる
+            if (diff <= perfectWindow) {
                 registerJudgment('PERFECT', diff, candidate);
                 spawnHitEffect(lane, hitX, targetY);
             } else if (diff <= 0.10) {
@@ -2998,7 +3122,7 @@
             if (activeHoldNote) {
                 const holdEndTime = activeHoldNote.time + activeHoldNote.duration;
 
-                if (currentTime >= holdEndTime - 0.12) {
+                if (currentTime >= holdEndTime - (playState.judgeBoost ? 0.15 : 0.12)) {
                     registerJudgment('PERFECT', Math.abs(holdEndTime - currentTime), activeHoldNote, true);
                 } else {
                     registerJudgment('MISS', Math.abs(holdEndTime - currentTime), activeHoldNote, true);
@@ -5735,6 +5859,7 @@
                 showToast(mediaFile
                     ? '譜面と曲をアップロードしました！「オンライン曲」から確認できます'
                     : '譜面をアップロードしました！「オンライン曲」から確認できます', 'success');
+                achvOnChartUpload();
             } catch (err) {
                 showToast(describeOnlineError(err), 'error');
                 try { await fbRemoveValue(`charts/${id}`); } catch (e) {}
@@ -5859,6 +5984,127 @@
         const CONSENT_COOKIE = 'beatpulse_terms';
         const CONSENT_VERSION = 'v1';
         const PREFS_KEY = 'beatpulsezq_prefs';
+        const LOGIN_BONUS_KEY = 'beatpulsezq_login';
+        let judgeBoostAvailable = false; // ログインボーナス:次の1曲だけ判定強化が使えるか
+        const loginCalState = { year: 0, month: 0 };
+
+        function loginDateKey(d) {
+            const pad = n => String(n).padStart(2, '0');
+            return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+        }
+
+        // 毎日ログインすると連続日数を記録し、2日に1回「判定強化」(次の1曲だけPERFECT判定が少し広がる)を付与する
+        function checkDailyLoginBonus() {
+            const today = loginDateKey(new Date());
+            let data;
+            try { data = JSON.parse(localStorage.getItem(LOGIN_BONUS_KEY) || 'null'); } catch (e) { data = null; }
+            if (!data || typeof data !== 'object') data = { lastDate: '', streak: 0, boostDate: '', history: [], boostDates: [] };
+            if (!Array.isArray(data.history)) data.history = [];
+            if (!Array.isArray(data.boostDates)) data.boostDates = [];
+
+            if (data.lastDate === today) {
+                judgeBoostAvailable = (data.boostDate === today); // 同日の再読み込みではボーナス状態を維持
+                updateLoginBonusDot();
+                return;
+            }
+            const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+            data.streak = (data.lastDate === loginDateKey(yesterday)) ? data.streak + 1 : 1;
+            data.lastDate = today;
+            data.history.push(today);
+            data.history = data.history.slice(-400); // 履歴は直近約1年分だけ保持
+            showToast(`ログインボーナス：${data.streak}日目`, 'info');
+            achvOnLoginStreak(data.streak);
+            if (data.streak % 2 === 0) {
+                data.boostDate = today;
+                data.boostDates.push(today);
+                data.boostDates = data.boostDates.slice(-400);
+                judgeBoostAvailable = true;
+                showToast('ログインボーナス：次の1曲だけ判定強化！(PERFECT判定が少し広がります)', 'success');
+            } else {
+                data.boostDate = '';
+                judgeBoostAvailable = false;
+            }
+            try { localStorage.setItem(LOGIN_BONUS_KEY, JSON.stringify(data)); } catch (e) {}
+            updateLoginBonusDot();
+        }
+
+        function updateLoginBonusDot() {
+            const dot = document.getElementById('login-bonus-dot');
+            if (dot) dot.classList.toggle('hidden', !judgeBoostAvailable);
+            const btn = document.getElementById('btn-login-calendar');
+            if (btn) btn.classList.toggle('has-bonus', judgeBoostAvailable);
+        }
+
+        // ボーナスは1曲プレイしたら消費する(保存データからも消す)
+        function consumeJudgeBoost() {
+            judgeBoostAvailable = false;
+            updateLoginBonusDot();
+            try {
+                const data = JSON.parse(localStorage.getItem(LOGIN_BONUS_KEY) || 'null');
+                if (data) { data.boostDate = ''; localStorage.setItem(LOGIN_BONUS_KEY, JSON.stringify(data)); }
+            } catch (e) {}
+        }
+
+        // ---------- ログインカレンダー ----------
+        function openLoginCalendarModal() {
+            const now = new Date();
+            loginCalState.year = now.getFullYear();
+            loginCalState.month = now.getMonth();
+            renderLoginCalendar();
+            openModal('login-calendar-modal');
+        }
+
+        function shiftLoginCalendar(delta) {
+            loginCalState.month += delta;
+            if (loginCalState.month < 0) { loginCalState.month = 11; loginCalState.year--; }
+            if (loginCalState.month > 11) { loginCalState.month = 0; loginCalState.year++; }
+            renderLoginCalendar();
+        }
+
+        function renderLoginCalendar() {
+            let data;
+            try { data = JSON.parse(localStorage.getItem(LOGIN_BONUS_KEY) || 'null'); } catch (e) { data = null; }
+            const history = new Set((data && data.history) || []);
+            const boostDates = new Set((data && data.boostDates) || []);
+            const y = loginCalState.year, m = loginCalState.month;
+            const setText = (id, t) => { const n = document.getElementById(id); if (n) n.textContent = t; };
+            const first = new Date(y, m, 1);
+            const daysInMonth = new Date(y, m + 1, 0).getDate();
+            const startWeekday = first.getDay();
+            const todayKey = loginDateKey(new Date());
+
+            setText('login-cal-title', `${y}年${m + 1}月`);
+            const grid = document.getElementById('login-cal-grid');
+            if (grid) {
+                grid.innerHTML = '';
+                ['日', '月', '火', '水', '木', '金', '土'].forEach(w => grid.appendChild(el('div', 'cal-dow', w)));
+                for (let i = 0; i < startWeekday; i++) grid.appendChild(el('div', 'cal-cell empty'));
+                for (let d = 1; d <= daysInMonth; d++) {
+                    const key = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                    const cell = el('div', 'cal-cell');
+                    if (key === todayKey) cell.classList.add('is-today');
+                    if (boostDates.has(key)) { cell.classList.add('is-boost'); }
+                    else if (history.has(key)) { cell.classList.add('is-login'); }
+                    cell.appendChild(el('span', 'cal-num', String(d)));
+                    if (boostDates.has(key)) cell.appendChild(iconEl('auto_awesome'));
+                    else if (history.has(key)) cell.appendChild(iconEl('check'));
+                    grid.appendChild(cell);
+                }
+            }
+            setText('login-cal-streak', `現在の連続ログイン日数: ${data ? (data.streak || 0) : 0}日 (2日ごとに判定強化)`);
+            const statusEl = document.getElementById('login-cal-status');
+            if (statusEl) {
+                const streak = data ? (data.streak || 0) : 0;
+                statusEl.classList.toggle('is-ready', judgeBoostAvailable);
+                if (judgeBoostAvailable) {
+                    statusEl.innerHTML = '<span class="ms fill">auto_awesome</span>判定強化 使用可能！次に遊ぶ1曲でPERFECTが広がります';
+                } else {
+                    const untilNext = (streak % 2 === 0) ? 2 : 1;
+                    statusEl.innerHTML = `<span class="ms">history</span>あと${untilNext}日連続でログインすると判定強化がもらえます`;
+                }
+                renderIcons(statusEl);
+            }
+        }
         const ONLINE_MAX_NOTES = 5000;
         const ONLINE_MAX_MEDIA_BYTES = 30 * 1024 * 1024; // 曲ファイルの上限
         const ONLINE_CHUNK_CHARS = 1000000;              // base64 を分割する1片の文字数 (4の倍数)
@@ -6242,11 +6488,14 @@
         // 選んだ色から、画面全体の配色(CSS変数)を作る
         function computeThemeVars(t) {
             const dark = t.mode !== 'light';
-            // 詳細調整(スライダー): カスタムCSSを書かなくても色味・光彩・カードの濃さを追い込めるようにする
+            // 詳細調整(スライダー): カスタムCSSを書かなくても色味・光彩・カードの濃さ・枠線・ぼかし・文字の濃さを追い込めるようにする
             const satAdj = clampAdj(t.satAdj, -50, 50, 0) / 100;      // 彩度 ±0.5
             const lightAdj = clampAdj(t.lightAdj, -30, 30, 0) / 100;  // 明るさ ±0.3
             const glowAdj = clampAdj(t.glowAdj, 0, 200, 100) / 100;   // 光彩の強さ 0〜2倍
             const cardAdj = clampAdj(t.cardAdj, 0, 200, 100) / 100;   // カードの不透明度 0〜2倍
+            const strokeAdj = clampAdj(t.strokeAdj, 0, 200, 100) / 100; // 枠線の濃さ 0〜2倍
+            const blurAdj = clampAdj(t.blurAdj, 0, 60, 30);           // ガラスのぼかし(px)
+            const textAdj = clampAdj(t.textAdj, 50, 150, 100) / 100;  // 補足文字の濃さ 0.5〜1.5倍
             const [h, sBase, lBase] = hexToHsl(t.main);
             const accS = Math.max(0, Math.min(1, Math.max(0.45, Math.min(1, sBase)) + satAdj));
             const accLBase = dark ? Math.max(0.62, Math.min(0.75, lBase)) : Math.max(0.30, Math.min(0.44, lBase));
@@ -6276,12 +6525,18 @@
             const glowA2 = Math.max(0, Math.min(1, (dark ? 0.24 : 0.35) * glowAdj));
             const glow1 = `hsla(${Math.round(h)}, 70%, ${dark ? 55 : 65}%, ${glowA1.toFixed(3)})`;
             const glow2 = `hsla(${Math.round(h + 40)}, 70%, ${dark ? 55 : 70}%, ${glowA2.toFixed(3)})`;
-            const cardA = Math.max(0, Math.min(1, 0.0512 * cardAdj));
-            const card2A = Math.max(0, Math.min(1, 0.0837 * cardAdj));
-            const cardStrokeA = Math.max(0, Math.min(1, 0.0698 * cardAdj));
-            const cardALight = Math.max(0, Math.min(1, 0.70 * cardAdj));
-            const card2ALight = Math.max(0, Math.min(1, 0.50 * cardAdj));
-            const cardStrokeALight = Math.max(0, Math.min(1, 0.0578 * cardAdj));
+            const cardA = Math.max(0, Math.min(0.9, 0.0512 + (cardAdj - 1) * 0.4));
+            const card2A = Math.max(0, Math.min(0.9, 0.0837 + (cardAdj - 1) * 0.4));
+            const cardALight = Math.max(0.05, Math.min(1, 0.70 + (cardAdj - 1) * 0.4));
+            const card2ALight = Math.max(0.05, Math.min(1, 0.50 + (cardAdj - 1) * 0.4));
+            const cardStrokeA = Math.max(0, Math.min(1, 0.0698 + (strokeAdj - 1) * 0.5));
+            const cardStrokeALight = Math.max(0, Math.min(1, 0.0578 + (strokeAdj - 1) * 0.5));
+            const ctlStrokeA = Math.max(0, Math.min(1, 0.0698 + (strokeAdj - 1) * 0.5));
+            const ctlStrokeALight = Math.max(0, Math.min(1, 0.0578 + (strokeAdj - 1) * 0.5));
+            const outlineL = dark ? Math.max(0.05, Math.min(0.7, 0.24 + (strokeAdj - 1) * 0.28)) : Math.max(0.3, Math.min(0.98, 0.84 - (strokeAdj - 1) * 0.28));
+            const text2A = Math.max(0, Math.min(1, (dark ? 0.7863 : 0.6063) * textAdj));
+            const text3A = Math.max(0, Math.min(1, (dark ? 0.5442 : 0.4458) * textAdj));
+            const textOffA = Math.max(0, Math.min(1, (dark ? 0.3628 : 0.3614) * textAdj));
             return {
                 '--bg-base': bg1,
                 '--bg-mica': `radial-gradient(90% 70% at 0% 0%, ${glow1}, transparent 60%), radial-gradient(80% 70% at 100% 100%, ${glow2}, transparent 60%), linear-gradient(180deg, ${bg1}, ${bg2})`,
@@ -6289,6 +6544,13 @@
                 '--card': dark ? `rgba(255, 255, 255, ${cardA.toFixed(4)})` : `rgba(255, 255, 255, ${cardALight.toFixed(4)})`,
                 '--card-2': dark ? `rgba(255, 255, 255, ${card2A.toFixed(4)})` : `rgba(249, 249, 249, ${card2ALight.toFixed(4)})`,
                 '--card-stroke': dark ? `rgba(255, 255, 255, ${cardStrokeA.toFixed(4)})` : `rgba(0, 0, 0, ${cardStrokeALight.toFixed(4)})`,
+                '--ctl-stroke': dark ? `rgba(255, 255, 255, ${ctlStrokeA.toFixed(4)})` : `rgba(0, 0, 0, ${ctlStrokeALight.toFixed(4)})`,
+                '--outline-variant': hslToHex(bh, dark ? 0.25 : 0.3, outlineL),
+                '--text-2': dark ? `rgba(255, 255, 255, ${text2A.toFixed(4)})` : `rgba(0, 0, 0, ${text2A.toFixed(4)})`,
+                '--text-3': dark ? `rgba(255, 255, 255, ${text3A.toFixed(4)})` : `rgba(0, 0, 0, ${text3A.toFixed(4)})`,
+                '--text-off': dark ? `rgba(255, 255, 255, ${textOffA.toFixed(4)})` : `rgba(0, 0, 0, ${textOffA.toFixed(4)})`,
+                '--blur-flyout': `${blurAdj}px`,
+                '--blur-drop': `${Math.max(0, Math.round(blurAdj * 0.2))}px`,
                 '--dialog-bg': dark ? hslToHex(bh, 0.30, 0.14) : hslToHex(bh, 0.5, 0.98),
                 '--dialog-foot': dark ? hslToHex(bh, 0.32, 0.10) : hslToHex(bh, 0.45, 0.94),
                 '--flyout-bg': (dark ? hslToHex(bh, 0.30, 0.15) : hslToHex(bh, 0.5, 0.98)) + 'EB',
@@ -6300,8 +6562,7 @@
                 '--on-lane': dark ? '#0B0B0F' : '#FFFFFF',
                 '--surface-lowest': dark ? hslToHex(bh, 0.45, 0.05) : hslToHex(bh, 0.6, 0.99),
                 '--surface-low': dark ? hslToHex(bh, 0.40, 0.08) : hslToHex(bh, 0.5, 0.96),
-                '--surface-container': dark ? hslToHex(bh, 0.35, 0.12) : hslToHex(bh, 0.4, 0.93),
-                '--outline-variant': dark ? hslToHex(bh, 0.25, 0.24) : hslToHex(bh, 0.3, 0.84)
+                '--surface-container': dark ? hslToHex(bh, 0.35, 0.12) : hslToHex(bh, 0.4, 0.93)
             };
         }
         function clearCustomVars() {
@@ -6319,7 +6580,9 @@
             const rec = { id: String(c.id), name: String(c.name || 'マイテーマ').slice(0, 12), mode: c.mode === 'light' ? 'light' : 'dark',
                           main: c.main, auto: c.auto !== false, bg1: c.bg1, bg2: c.bg2, lanes: c.lanes.slice(),
                           satAdj: clampAdj(c.satAdj, -50, 50, 0), lightAdj: clampAdj(c.lightAdj, -30, 30, 0),
-                          glowAdj: clampAdj(c.glowAdj, 0, 200, 100), cardAdj: clampAdj(c.cardAdj, 0, 200, 100) };
+                          glowAdj: clampAdj(c.glowAdj, 0, 200, 100), cardAdj: clampAdj(c.cardAdj, 0, 200, 100),
+                          strokeAdj: clampAdj(c.strokeAdj, 0, 200, 100), blurAdj: clampAdj(c.blurAdj, 0, 60, 30),
+                          textAdj: clampAdj(c.textAdj, 50, 150, 100) };
             rec.vars = computeThemeVars(rec);
             return rec;
         }
@@ -6357,17 +6620,22 @@
 
         // ----- エディタ -----
         function newThemeDraft() {
-            return { id: '', name: 'マイテーマ', mode: 'dark', main: '#FF7A59', auto: true, bg1: '#141018', bg2: '#2A1830', lanes: ['#4FE3F7', '#FF7BAF', '#FFD95A', '#62F0A5'], satAdj: 0, lightAdj: 0, glowAdj: 100, cardAdj: 100 };
+            return { id: '', name: 'マイテーマ', mode: 'dark', main: '#FF7A59', auto: true, bg1: '#141018', bg2: '#2A1830', lanes: ['#4FE3F7', '#FF7BAF', '#FFD95A', '#62F0A5'],
+                     satAdj: 0, lightAdj: 0, glowAdj: 100, cardAdj: 100, strokeAdj: 100, blurAdj: 30, textAdj: 100 };
         }
         function openThemeEditor(id) {
             const ex = id ? (prefs.customs || []).find(c => c.id === id) : null;
             if (!ex && (prefs.customs || []).length >= MAX_CUSTOM_THEMES) { showToast(`マイテーマは ${MAX_CUSTOM_THEMES} つまで作れます。不要なものを削除してください`, 'warning'); return; }
             themeEditId = ex ? ex.id : null;
             themeDraft = ex ? JSON.parse(JSON.stringify({ id: ex.id, name: ex.name, mode: ex.mode, main: ex.main, auto: ex.auto, bg1: ex.bg1, bg2: ex.bg2, lanes: ex.lanes,
-                satAdj: clampAdj(ex.satAdj, -50, 50, 0), lightAdj: clampAdj(ex.lightAdj, -30, 30, 0), glowAdj: clampAdj(ex.glowAdj, 0, 200, 100), cardAdj: clampAdj(ex.cardAdj, 0, 200, 100) })) : newThemeDraft();
+                satAdj: clampAdj(ex.satAdj, -50, 50, 0), lightAdj: clampAdj(ex.lightAdj, -30, 30, 0), glowAdj: clampAdj(ex.glowAdj, 0, 200, 100), cardAdj: clampAdj(ex.cardAdj, 0, 200, 100),
+                strokeAdj: clampAdj(ex.strokeAdj, 0, 200, 100), blurAdj: clampAdj(ex.blurAdj, 0, 60, 30), textAdj: clampAdj(ex.textAdj, 50, 150, 100) })) : newThemeDraft();
             teFill();
             openModal('theme-editor-modal');
             teApply();
+        }
+        function openThemeAdvanced() {
+            openModal('theme-advanced-modal');
         }
         function teFill() {
             const d = themeDraft;
@@ -6385,13 +6653,17 @@
                 const t = byId(textId); if (t) t.textContent = fmt(val);
             };
             const signed = v => `${v > 0 ? '+' : ''}${v}%`;
-            rangeTe('te-sat', 'te-sat-text', d.satAdj, signed);
-            rangeTe('te-light', 'te-light-text', d.lightAdj, signed);
-            rangeTe('te-glow', 'te-glow-text', d.glowAdj, v => `${v}%`);
-            rangeTe('te-card', 'te-card-text', d.cardAdj, v => `${v}%`);
+            rangeTe('tea-sat', 'tea-sat-text', d.satAdj, signed);
+            rangeTe('tea-light', 'tea-light-text', d.lightAdj, signed);
+            rangeTe('tea-glow', 'tea-glow-text', d.glowAdj, v => `${v}%`);
+            rangeTe('tea-card', 'tea-card-text', d.cardAdj, v => `${v}%`);
+            rangeTe('tea-stroke', 'tea-stroke-text', d.strokeAdj, v => `${v}%`);
+            rangeTe('tea-blur', 'tea-blur-text', d.blurAdj, v => `${v}px`);
+            rangeTe('tea-text', 'tea-text-text', d.textAdj, v => `${v}%`);
         }
         function teResetAdv() {
             themeDraft.satAdj = 0; themeDraft.lightAdj = 0; themeDraft.glowAdj = 100; themeDraft.cardAdj = 100;
+            themeDraft.strokeAdj = 100; themeDraft.blurAdj = 30; themeDraft.textAdj = 100;
             teFill(); teApply();
         }
         function teApply() { // 変更をすぐ画面に反映(プレビュー)。閉じるときに保存済みの設定へ戻る
@@ -6420,13 +6692,16 @@
         }
         function saveThemeEditor() {
             const d = themeDraft;
-            const rec = sanitizeCustom({ id: themeEditId || Math.random().toString(36).slice(2, 10), name: (d.name || '').trim() || 'マイテーマ', mode: d.mode, main: d.main, auto: d.auto, bg1: d.bg1, bg2: d.bg2, lanes: d.lanes });
+            const rec = sanitizeCustom({ id: themeEditId || Math.random().toString(36).slice(2, 10), name: (d.name || '').trim() || 'マイテーマ', mode: d.mode, main: d.main, auto: d.auto, bg1: d.bg1, bg2: d.bg2, lanes: d.lanes,
+                satAdj: d.satAdj, lightAdj: d.lightAdj, glowAdj: d.glowAdj, cardAdj: d.cardAdj, strokeAdj: d.strokeAdj, blurAdj: d.blurAdj, textAdj: d.textAdj });
             if (!rec) { showToast('テーマを保存できませんでした', 'error'); return; }
             prefs.customs = (prefs.customs || []).filter(c => c.id !== rec.id).concat([rec]).slice(-MAX_CUSTOM_THEMES);
             prefs.skin = 'custom:' + rec.id;
             savePrefs();
             closeModal('theme-editor-modal'); // 閉じるときに applyPrefs が走り、保存したテーマが適用される
             showToast(`「${rec.name}」を保存して使用中にしました`, 'success');
+            achvUnlock('theme_maker');
+            if (rec.satAdj !== 0 || rec.lightAdj !== 0 || rec.glowAdj !== 100 || rec.cardAdj !== 100 || rec.strokeAdj !== 100 || rec.blurAdj !== 30 || rec.textAdj !== 100) achvUnlock('theme_tweaker');
         }
         function deleteThemeFromEditor() {
             if (!themeEditId) return;
@@ -6439,7 +6714,7 @@
         }
         // テーマコード(他の人と共有 / バックアップ用)
         function encodeThemeCode(d) {
-            try { return THEME_CODE_PREFIX + btoa(unescape(encodeURIComponent(JSON.stringify({ n: d.name, m: d.mode, c: d.main, a: d.auto, b: [d.bg1, d.bg2], l: d.lanes, s: d.satAdj, lt: d.lightAdj, g: d.glowAdj, cd: d.cardAdj })))); } catch (e) { return ''; }
+            try { return THEME_CODE_PREFIX + btoa(unescape(encodeURIComponent(JSON.stringify({ n: d.name, m: d.mode, c: d.main, a: d.auto, b: [d.bg1, d.bg2], l: d.lanes, s: d.satAdj, lt: d.lightAdj, g: d.glowAdj, cd: d.cardAdj, st: d.strokeAdj, bl: d.blurAdj, tx: d.textAdj })))); } catch (e) { return ''; }
         }
         function teCopyCode() {
             const v = byId('te-code').value;
@@ -6450,10 +6725,10 @@
                 const raw = byId('te-code').value.trim();
                 if (raw.indexOf(THEME_CODE_PREFIX) !== 0) throw new Error('format');
                 const o = JSON.parse(decodeURIComponent(escape(atob(raw.slice(THEME_CODE_PREFIX.length)))));
-                const probe = sanitizeCustom({ id: 'probe0000', name: o.n, mode: o.m, main: o.c, auto: o.a, bg1: o.b && o.b[0], bg2: o.b && o.b[1], lanes: o.l, satAdj: o.s, lightAdj: o.lt, glowAdj: o.g, cardAdj: o.cd });
+                const probe = sanitizeCustom({ id: 'probe0000', name: o.n, mode: o.m, main: o.c, auto: o.a, bg1: o.b && o.b[0], bg2: o.b && o.b[1], lanes: o.l, satAdj: o.s, lightAdj: o.lt, glowAdj: o.g, cardAdj: o.cd, strokeAdj: o.st, blurAdj: o.bl, textAdj: o.tx });
                 if (!probe) throw new Error('invalid');
                 themeDraft = { id: themeEditId || '', name: probe.name, mode: probe.mode, main: probe.main, auto: probe.auto, bg1: probe.bg1, bg2: probe.bg2, lanes: probe.lanes,
-                    satAdj: probe.satAdj, lightAdj: probe.lightAdj, glowAdj: probe.glowAdj, cardAdj: probe.cardAdj };
+                    satAdj: probe.satAdj, lightAdj: probe.lightAdj, glowAdj: probe.glowAdj, cardAdj: probe.cardAdj, strokeAdj: probe.strokeAdj, blurAdj: probe.blurAdj, textAdj: probe.textAdj };
                 teFill(); teApply();
                 showToast('テーマコードを読み込みました', 'success');
             } catch (e) {
@@ -6734,6 +7009,175 @@
             return { acc: acc, rank: rank, badge: badge };
         }
 
+        // ---------- 実績(アチーブメント) ----------
+        const ACHV_KEY = 'beatpulse_achievements';
+        // 各カテゴリの達成ライン(段階)。ここに数値を足すだけで実績が増える
+        const ACHV_TIERS = {
+            play: [1, 5, 10, 25, 50, 100, 200, 300, 500, 750, 1000],
+            combo: [10, 25, 50, 75, 100, 150, 200, 300, 400, 500, 750, 1000],
+            score: [1000, 5000, 10000, 25000, 50000, 100000, 150000, 200000, 300000, 500000, 1000000],
+            total_score: [10000, 50000, 100000, 500000, 1000000, 5000000, 10000000],
+            perfect_total: [10, 50, 100, 300, 500, 1000, 3000, 5000, 10000],
+            notes_total: [100, 500, 1000, 5000, 10000, 50000],
+            full_combo: [1, 5, 10, 25, 50, 100],
+            all_perfect: [1, 3, 5, 10, 25],
+            rank_s: [1, 5, 10, 25, 50],
+            dojo_clear: [1, 3, 5, 10, 20, 30],
+            login_streak: [3, 7, 14, 30, 50, 100, 200, 365],
+            boost_used: [1, 5, 10, 25],
+            chart_upload: [1, 5, 10, 25]
+        };
+        // カテゴリごとのアイコンと表示テキストの組み立て方
+        const ACHV_TIER_DEFS = {
+            play: { icon: 'history', name: n => `演奏${n}回`, desc: n => `演奏を${n}回、最後まで終える` },
+            combo: { icon: 'speed', name: n => `${n}コンボ`, desc: n => `最大コンボ${n}を達成する` },
+            score: { icon: 'star', name: n => `スコア${n.toLocaleString()}`, desc: n => `1プレイでスコア${n.toLocaleString()}点以上を取る` },
+            total_score: { icon: 'emoji_events', name: n => `累計スコア${n.toLocaleString()}`, desc: n => `全プレイの合計スコアが${n.toLocaleString()}点に達する` },
+            perfect_total: { icon: 'auto_awesome', name: n => `累計PERFECT ${n.toLocaleString()}`, desc: n => `PERFECT判定を累計${n.toLocaleString()}回出す` },
+            notes_total: { icon: 'music_note', name: n => `累計ノーツ${n.toLocaleString()}`, desc: n => `累計で${n.toLocaleString()}個のノーツを判定する` },
+            full_combo: { icon: 'auto_awesome', name: n => n === 1 ? 'フルコンボ!' : `フルコンボ${n}回`, desc: n => `MISSを1つも出さずに${n}回クリアする` },
+            all_perfect: { icon: 'star', name: n => n === 1 ? 'ALL PERFECT' : `ALL PERFECT ${n}回`, desc: n => `全ノーツをPERFECTで${n}回クリアする` },
+            rank_s: { icon: 'verified_user', name: n => n === 1 ? 'Sランク' : `Sランク${n}回`, desc: n => `評価「S」を${n}回取る` },
+            dojo_clear: { icon: 'dojo', name: n => n === 1 ? '道場破り' : `段位道場${n}回クリア`, desc: n => `段位道場を合計${n}回クリアする` },
+            login_streak: { icon: 'grid_on', name: n => `連続ログイン${n}日`, desc: n => `${n}日連続でログインする` },
+            boost_used: { icon: 'auto_awesome', name: n => `判定強化${n}回`, desc: n => `デイリーボーナスの判定強化を${n}回使う` },
+            chart_upload: { icon: 'edit_note', name: n => `譜面投稿${n}曲`, desc: n => `オンラインに譜面を${n}曲アップロードする` }
+        };
+        const ACHIEVEMENTS = [
+            { id: 'theme_maker', icon: 'palette', name: 'マイテーマ誕生', desc: 'オリジナルのテーマを保存する' },
+            { id: 'theme_tweaker', icon: 'tune', name: 'カラーマイスター', desc: '詳細エディタで色味を調整したテーマを保存する' },
+            { id: 'friend_add', icon: 'person_add', name: 'フレンドができました', desc: 'フレンドを1人追加する' },
+            { id: 'friend_add_5', icon: 'group', name: '人望のあかし', desc: 'フレンドを5人追加する' },
+            { id: 'night_owl', icon: 'dark_mode', name: '夜更かし', desc: '深夜0時〜4時に演奏を終える' },
+            { id: 'early_bird', icon: 'light_mode', name: '早起き', desc: '朝4時〜6時に演奏を終える' }
+        ];
+        Object.keys(ACHV_TIERS).forEach(cat => {
+            const def = ACHV_TIER_DEFS[cat];
+            ACHV_TIERS[cat].forEach(n => ACHIEVEMENTS.push({ id: `${cat}_${n}`, icon: def.icon, name: def.name(n), desc: def.desc(n) }));
+        });
+        let achvStore = null;
+        function achvGet() {
+            if (achvStore) return achvStore;
+            achvStore = { unlocked: {}, stats: {} };
+            try {
+                const d = JSON.parse(localStorage.getItem(ACHV_KEY) || 'null');
+                if (d && typeof d === 'object') {
+                    if (d.unlocked && typeof d.unlocked === 'object') achvStore.unlocked = d.unlocked;
+                    if (d.stats && typeof d.stats === 'object') achvStore.stats = Object.assign(achvStore.stats, d.stats);
+                }
+            } catch (e) {}
+            return achvStore;
+        }
+        function achvSave() {
+            try { localStorage.setItem(ACHV_KEY, JSON.stringify(achvGet())); } catch (e) {}
+        }
+        function achvUnlock(id) {
+            const store = achvGet();
+            if (store.unlocked[id]) return; // すでに解除済み
+            const def = ACHIEVEMENTS.find(a => a.id === id);
+            if (!def) return;
+            store.unlocked[id] = Date.now();
+            achvSave();
+            showToast(`🏆 実績解除: ${def.name}`, 'success'); // 実績クリア時の通知
+            renderAchievements();
+        }
+        // ある数値がカテゴリ内のどの段階を超えたかをまとめて解除する
+        function achvCheckTiers(cat, value) {
+            (ACHV_TIERS[cat] || []).forEach(n => { if (value >= n) achvUnlock(`${cat}_${n}`); });
+        }
+        function achvOnPlayEnd(result) {
+            if (!result) return;
+            const store = achvGet();
+            const s = store.stats;
+            const total = result.perfect + result.great + result.good + result.miss;
+            s.playCount = (s.playCount || 0) + 1;
+            s.totalScore = (s.totalScore || 0) + (result.score || 0);
+            s.totalPerfect = (s.totalPerfect || 0) + (result.perfect || 0);
+            s.totalNotes = (s.totalNotes || 0) + total;
+            const isFullCombo = total > 0 && result.miss === 0;
+            const isAllPerfect = total > 0 && result.perfect === total;
+            const ev = evaluateResult(result);
+            if (isFullCombo) s.fullComboCount = (s.fullComboCount || 0) + 1;
+            if (isAllPerfect) s.allPerfectCount = (s.allPerfectCount || 0) + 1;
+            if (ev.rank === 'S') s.rankSCount = (s.rankSCount || 0) + 1;
+            achvSave();
+
+            achvCheckTiers('play', s.playCount);
+            achvCheckTiers('combo', result.maxCombo);
+            achvCheckTiers('score', result.score);
+            achvCheckTiers('total_score', s.totalScore);
+            achvCheckTiers('perfect_total', s.totalPerfect);
+            achvCheckTiers('notes_total', s.totalNotes);
+            if (isFullCombo) achvCheckTiers('full_combo', s.fullComboCount);
+            if (isAllPerfect) achvCheckTiers('all_perfect', s.allPerfectCount);
+            if (ev.rank === 'S') achvCheckTiers('rank_s', s.rankSCount);
+            const hour = new Date().getHours();
+            if (hour >= 0 && hour < 4) achvUnlock('night_owl');
+            if (hour >= 4 && hour < 6) achvUnlock('early_bird');
+        }
+        function achvOnDojoClear(passed) {
+            if (!passed) return;
+            const store = achvGet();
+            store.stats.dojoClearCount = (store.stats.dojoClearCount || 0) + 1;
+            achvSave();
+            achvCheckTiers('dojo_clear', store.stats.dojoClearCount);
+        }
+        // デイリーボーナスの連続ログイン日数から実績を解除する
+        function achvOnLoginStreak(streak) {
+            achvCheckTiers('login_streak', streak || 0);
+        }
+        // 判定強化を使うたびに呼ぶ
+        function achvOnBoostUsed() {
+            const store = achvGet();
+            store.stats.boostUsedCount = (store.stats.boostUsedCount || 0) + 1;
+            achvSave();
+            achvCheckTiers('boost_used', store.stats.boostUsedCount);
+        }
+        // オンラインに譜面をアップロードするたびに呼ぶ
+        function achvOnChartUpload() {
+            const store = achvGet();
+            store.stats.chartUploadCount = (store.stats.chartUploadCount || 0) + 1;
+            achvSave();
+            achvCheckTiers('chart_upload', store.stats.chartUploadCount);
+        }
+        function openAchievements() {
+            renderAchievements();
+            openModal('achievements-modal');
+        }
+        function renderAchievements() {
+            const grid = byId('achv-grid');
+            if (!grid) return;
+            const store = achvGet();
+            const unlockedCount = ACHIEVEMENTS.filter(a => store.unlocked[a.id]).length;
+            const summary = byId('achv-summary');
+            if (summary) summary.textContent = `${unlockedCount} / ${ACHIEVEMENTS.length} 解除`;
+            grid.innerHTML = '';
+            const frag = document.createDocumentFragment();
+            ACHIEVEMENTS.forEach(a => {
+                const on = !!store.unlocked[a.id];
+                const card = document.createElement('div');
+                card.className = 'dlg-section';
+                card.style.cssText = 'flex-direction:row; align-items:center; gap:12px;' + (on ? '' : ' opacity:.5;');
+                const iconWrap = document.createElement('span');
+                iconWrap.className = 'ms';
+                iconWrap.style.cssText = '--s:28px; color:' + (on ? 'var(--gold, var(--accent))' : 'var(--text-3)');
+                iconWrap.textContent = on ? a.icon : 'lock';
+                const textWrap = document.createElement('div');
+                textWrap.style.cssText = 'display:flex; flex-direction:column; gap:2px; min-width:0';
+                const nameEl = document.createElement('span');
+                nameEl.className = 't-title-s';
+                nameEl.textContent = a.name;
+                const descEl = document.createElement('span');
+                descEl.className = 't-body-s muted';
+                descEl.textContent = on ? a.desc + '(達成済み)' : a.desc;
+                textWrap.appendChild(nameEl); textWrap.appendChild(descEl);
+                card.appendChild(iconWrap); card.appendChild(textWrap);
+                frag.appendChild(card);
+            });
+            grid.appendChild(frag);
+            renderIcons(grid);
+        }
+
         // ---------- ディープリンク: ?chart=譜面ID でその譜面を開く(ホームページの「この曲をプレイ」) ----------
         async function handleDeepLink() {
             let id = null;
@@ -6833,6 +7277,7 @@
                 await fbSetValue(`users/${uid}/friends/${account.uid}`, { id: account.id, uid: account.uid, at: Date.now() });
                 await fbRemoveValue(`users/${account.uid}/requests/${uid}`);
                 showToast(`${id} とフレンドになりました！`, 'success');
+                achvUnlock('friend_add');
             } catch (err) {
                 showToast(describeOnlineError(err), 'error');
             } finally {
@@ -8403,6 +8848,7 @@
                     dojoStoreSave();
                 }
             }
+            achvOnDojoClear(passed);
             dojoShowResult(run);
         }
 
@@ -9998,6 +10444,7 @@
         }
 
         window.onload = function() {
+            checkDailyLoginBonus();
             loadPrefs();
             loadLocalSettings();
             applyPrefs();
