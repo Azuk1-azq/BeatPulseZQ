@@ -28,7 +28,7 @@
         // 保存済みの表示設定(テーマ/アクセント)を描画前に適用してちらつきを防ぐ。未設定ならダーク
         (function () {
             var mode = 'dark', accent = 'blue', skin = 'default', cvars = null;
-            var SK = { sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light', forest: 'dark', space: 'dark', cyber: 'dark', wafu: 'dark', snow: 'light', matcha: 'light', retro: 'dark', flame: 'dark', mono: 'light', brutal: 'light', aurora: 'dark' };
+            var SK = { sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light', forest: 'dark', space: 'dark', cyber: 'dark', wafu: 'dark', snow: 'light', matcha: 'light', retro: 'dark', flame: 'dark', neon: 'dark', mono: 'light', brutal: 'light', aurora: 'dark' };
             var FONTS = {
                 gothic: '"Yu Gothic UI","Yu Gothic Medium","Yu Gothic","Meiryo UI","Meiryo","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif',
                 maru: '"UD デジタル 教科書体 N-R","Hiragino Maru Gothic ProN","BIZ UDPGothic","M PLUS Rounded 1c","Meiryo UI",sans-serif',
@@ -759,12 +759,15 @@
         [data-device="mobile"] .t-short { display: inline; }
         [data-device="mobile"] canvas, [data-device="mobile"] .pad { touch-action: none; }
 
-        [data-device="mobile"] .titlebar { height: calc(48px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 4px 0 14px; }
+        [data-device="mobile"] .titlebar { height: calc(48px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 4px 0 14px; overflow: hidden; }
         [data-device="mobile"] .logo { height: 20px; }
         [data-device="mobile"] .brand h1 { font-size: 14px; }
         [data-device="mobile"] .actions .status-chip { display: none; }
         [data-device="mobile"] .actions .status-chip[data-connected="true"] { display: inline-flex; }
-        [data-device="mobile"] .icon-btn, [data-device="mobile"] .actions .btn.has-icon { width: 40px; height: 40px; }
+        [data-device="mobile"] .icon-btn, [data-device="mobile"] .actions .btn.has-icon { width: 40px; height: 40px; flex: none; }
+        /* アイコンが画面幅に収まりきらない場合、切れて押せなくなる代わりに横スクロールできるようにする */
+        [data-device="mobile"] .actions { flex: 1 1 auto; min-width: 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; -ms-overflow-style: none; -webkit-overflow-scrolling: touch; padding-right: 4px; }
+        [data-device="mobile"] .actions::-webkit-scrollbar { display: none; }
 
         /* タブバー(下)。横向きでは左のレール */
         [data-device="mobile"] .shell { flex-direction: column-reverse; }
@@ -1439,6 +1442,120 @@
             --dialog-foot: #1E0D09;
             --flyout-bg: rgba(42,19,14,.92);
         }
+
+        /* ネオン: index14(BeatPulse)の配色・角丸・グラデーションボタン・発光を、
+           index15のCSS変数(Fluent系トークン)の範囲内で"限界まで"再現したスキン。
+           surface色はTailwindのslate-950/900/800/700、アクセントはcyan-400/500、
+           ボタンはcyan-500→blue-600のグラデーションなど、index14で実際に使われている値に合わせている。
+           埋め込みではなく、index15自身のCSSとして描画される。 */
+        :root[data-skin="neon"][data-theme] {
+            --accent: #22D3EE;
+            --primary: #22D3EE;
+            --accent-text: #67E8F9;
+            --on-accent: #04141A;
+            --accent-hover: #38DBF5;
+            --accent-pressed: #0EA5C7;
+            --tertiary: #F472B6;
+            --lane-0: #00F3FF;
+            --lane-1: #FF007F;
+            --lane-2: #FFEA00;
+            --lane-3: #00FF66;
+            --on-lane: #020617;
+            --surface-lowest: #020617;
+            --surface-low: #0F172A;
+            --surface-container: #1E293B;
+            --outline-variant: #334155;
+            --bg-base: #020617;
+            --bg-mica: radial-gradient(60% 45% at 8% -5%, rgba(236,72,153,.22), transparent 60%), radial-gradient(60% 50% at 96% 105%, rgba(34,211,238,.24), transparent 60%), linear-gradient(180deg, #020617, #0B1220 55%, #020617);
+            --layer: rgba(2,6,23,.55);
+            --card: rgba(15,23,42,.72);
+            --card-2: rgba(30,41,59,.6);
+            --card-stroke: rgba(51,65,85,.75);
+            --surface-stroke: rgba(51,65,85,.85);
+            --dialog-bg: #0F172A;
+            --dialog-foot: #020617;
+            --flyout-bg: rgba(15,23,42,.94);
+            --secondary: #67E8F9;
+            --on-surface: #F1F5F9;
+            --on-surface-variant: #94A3B8;
+            --ctl: rgba(30,41,59,.65);
+            --ctl-hover: rgba(51,65,85,.6);
+            --ctl-pressed: rgba(51,65,85,.85);
+            --ctl-stroke: rgba(51,65,85,.75);
+        }
+        :root[data-skin="neon"] body::before {
+            content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+            background: repeating-linear-gradient(0deg, rgba(34,211,238,.035) 0 1px, transparent 1px 3px);
+        }
+
+        /* Orbitron風フォント: オンライン時のみJSでGoogle Fontsを読み込み、取得できたら --font-neon が効く。
+           オフライン時は等幅フォント+letter-spacingで近似(グレースフルフォールバック) */
+        :root[data-skin="neon"] { --font-neon: "Orbitron", "Bahnschrift", "Consolas", "Courier New", monospace; }
+        :root[data-skin="neon"] :is(.score-num, .result-score, .timer, .tile-num, .rk-score, #hud-score, #play-score, .judge-text, #room-countdown-num) {
+            font-family: var(--font-neon); font-weight: 700; letter-spacing: .06em;
+        }
+        :root[data-skin="neon"] :is(.score-num, .result-score, #hud-score, #play-score, .rk-score, .tile-num) { text-shadow: 0 0 12px rgba(0,243,255,.8); }
+        :root[data-skin="neon"] .judge-text { text-shadow: 0 0 12px rgba(0,243,255,.8), 0 0 26px currentColor; }
+        :root[data-skin="neon"] .brand h1 {
+            font: 700 14px/18px var(--font-neon); letter-spacing: .05em;
+            background: linear-gradient(90deg, #22D3EE, #F472B6 55%, #FDE047);
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        :root[data-skin="neon"] :is(h1, h2, h3, .t-title-m, .t-title-l) { font-family: var(--font-neon); letter-spacing: .03em; }
+
+        /* 角丸: Tailwindの rounded-lg(8px) / rounded-xl(12px) / rounded-2xl(16px) 相当に寄せる */
+        :root[data-skin="neon"] .app { border-top-left-radius: 16px; }
+        :root[data-skin="neon"] .card { border-radius: 12px; }
+        :root[data-skin="neon"] .dialog { border-radius: 16px; }
+        :root[data-skin="neon"] :is(.btn, .chip, .seg-btn, .icon-btn, .room-card, .fr-row, .tile) { border-radius: 8px; }
+        :root[data-skin="neon"] .badge { border-radius: 6px; }
+        :root[data-skin="neon"] .fab { border-radius: 50%; }
+        :root[data-skin="neon"] .seg { border-radius: 10px; }
+        :root[data-skin="neon"] .pad { border-radius: 12px; }
+
+        /* パネル/ダイアログ: slate系の地に、シアンの淡い発光の縁取り(index14のborder-cyan-500/50, shadow-cyan-500/20 相当) */
+        :root[data-skin="neon"] .card {
+            box-shadow: 0 0 0 1px rgba(34,211,238,.08), 0 8px 22px rgba(0,0,0,.5);
+        }
+        :root[data-skin="neon"] :is(.hint-card, #dojo-hud, #gamepad-status-badge, .status-chip) {
+            border-color: rgba(34,211,238,.35) !important;
+            box-shadow: 0 0 18px rgba(34,211,238,.18);
+        }
+        :root[data-skin="neon"] .dialog {
+            box-shadow: var(--shadow-dialog), 0 0 46px rgba(34,211,238,.16), 0 0 0 1px rgba(51,65,85,.9);
+        }
+        :root[data-skin="neon"] .pad {
+            border-width: 2px;
+            box-shadow: 0 0 14px color-mix(in srgb, var(--lane) 45%, transparent);
+        }
+
+        /* アクセントボタン/再生ボタン: from-cyan-500 to-blue-600 グラデーション(index14そのままの配色) */
+        :root[data-skin="neon"] :is(.btn-filled, .fab, .fab-ext) {
+            --btn-bg: linear-gradient(90deg, #06B6D4, #2563EB); --btn-bg-h: linear-gradient(90deg, #22D3EE, #3B82F6); --btn-bg-p: linear-gradient(90deg, #0891B2, #1D4ED8);
+            background: var(--btn-bg); color: #F8FAFC; --btn-fg: #F8FAFC;
+            border: none; font-family: var(--font-neon); letter-spacing: .03em;
+            box-shadow: 0 4px 14px rgba(6,182,212,.35), 0 0 16px rgba(34,211,238,.35);
+        }
+        :root[data-skin="neon"] .fab { background: linear-gradient(135deg, #06B6D4, #2563EB); }
+
+        /* 選択中のチップ / セグメント / ナビ現在地 */
+        :root[data-skin="neon"] :is(.chip[aria-pressed="true"], .seg-btn[aria-pressed="true"]) {
+            background: linear-gradient(90deg, #06B6D4, #2563EB); color: #F8FAFC;
+            box-shadow: 0 0 14px rgba(34,211,238,.4);
+        }
+        :root[data-skin="neon"] .seg-btn[aria-pressed="true"]::after { display: none; }
+        :root[data-skin="neon"] .nav-item[aria-current="page"] {
+            background: rgba(34,211,238,.08);
+            box-shadow: inset 0 0 0 1px rgba(34,211,238,.35), 0 0 14px rgba(34,211,238,.16);
+            border-radius: 8px;
+        }
+        :root[data-skin="neon"] .nav-item[aria-current="page"]::before {
+            width: 4px; box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
+        }
+
+        /* スクロールバー(index14の暗いスクロールバー相当) */
+        :root[data-skin="neon"] ::-webkit-scrollbar-thumb { background: #334155; border-radius: 8px; }
+        :root[data-skin="neon"] ::-webkit-scrollbar-track { background: transparent; }
 
         :root[data-skin="space"] body::before {
             content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
@@ -2261,7 +2378,7 @@
             <div class="dlg-body">
                 <section class="dlg-section">
                     <h4><span class="ms">palette</span>外観</h4>
-                    <div class="set-row col" style="gap:8px"><span>デザインテーマ</span><div class="skin-grid" role="group" aria-label="デザインテーマ"><button type="button" class="skin" data-pref-skin="default" aria-pressed="false" onclick="setPref('skin','default')"><i style="--p:linear-gradient(135deg,#202020,#2c3f5a)"></i>デフォルト</button><button type="button" class="skin" data-pref-skin="sunset" aria-pressed="false" onclick="setPref('skin','sunset')"><i style="--p:linear-gradient(160deg,#1b1230,#a2385a 60%,#ff9a62)"></i>夕焼け</button><button type="button" class="skin" data-pref-skin="dream" aria-pressed="false" onclick="setPref('skin','dream')"><i style="--p:linear-gradient(135deg,#ffbee6,#aac8ff 55%,#c8aaff)"></i>夢</button><button type="button" class="skin" data-pref-skin="arcade" aria-pressed="false" onclick="setPref('skin','arcade')"><i style="--p:linear-gradient(135deg,#08040f,#ff2e97 55%,#00e5ff)"></i>ゲームセンター</button><button type="button" class="skin" data-pref-skin="ocean" aria-pressed="false" onclick="setPref('skin','ocean')"><i style="--p:linear-gradient(160deg,#06202e,#1a6fa8 60%,#2de2c5)"></i>海</button><button type="button" class="skin" data-pref-skin="sakura" aria-pressed="false" onclick="setPref('skin','sakura')"><i style="--p:linear-gradient(135deg,#fff5f7,#ffb6cb 60%,#ffd6be)"></i>桜</button><button type="button" class="skin" data-pref-skin="forest" aria-pressed="false" onclick="setPref('skin','forest')"><i style="--p:linear-gradient(160deg,#0b1a12,#2f8f5a 70%,#a3e048)"></i>森</button><button type="button" class="skin" data-pref-skin="space" aria-pressed="false" onclick="setPref('skin','space')"><i style="--p:linear-gradient(135deg,#05060f,#4a3aa8 60%,#7dd3fc)"></i>宇宙</button><button type="button" class="skin" data-pref-skin="cyber" aria-pressed="false" onclick="setPref('skin','cyber')"><i style="--p:linear-gradient(135deg,#0a0a12,#ff2a6d 55%,#fcee09)"></i>サイバー</button><button type="button" class="skin" data-pref-skin="wafu" aria-pressed="false" onclick="setPref('skin','wafu')"><i style="--p:linear-gradient(135deg,#0e1526,#2a3c78 55%,#e8604c)"></i>和</button><button type="button" class="skin" data-pref-skin="snow" aria-pressed="false" onclick="setPref('skin','snow')"><i style="--p:linear-gradient(135deg,#f3f8fd,#a0c8f5 60%,#ffffff)"></i>雪</button><button type="button" class="skin" data-pref-skin="matcha" aria-pressed="false" onclick="setPref('skin','matcha')"><i style="--p:linear-gradient(135deg,#f4f7ee,#b2d68c 60%,#e8dcaa)"></i>抹茶</button><button type="button" class="skin" data-pref-skin="retro" aria-pressed="false" onclick="setPref('skin','retro')"><i style="--p:linear-gradient(135deg,#0f1f0f,#3c5f1a 60%,#9bbc0f)"></i>レトロ</button><button type="button" class="skin" data-pref-skin="flame" aria-pressed="false" onclick="setPref('skin','flame')"><i style="--p:linear-gradient(160deg,#160806,#a3260f 60%,#ffb03a)"></i>炎</button></div><div id="custom-skins" class="skin-grid"></div>
+                    <div class="set-row col" style="gap:8px"><span>デザインテーマ</span><div class="skin-grid" role="group" aria-label="デザインテーマ"><button type="button" class="skin" data-pref-skin="default" aria-pressed="false" onclick="setPref('skin','default')"><i style="--p:linear-gradient(135deg,#202020,#2c3f5a)"></i>デフォルト</button><button type="button" class="skin" data-pref-skin="sunset" aria-pressed="false" onclick="setPref('skin','sunset')"><i style="--p:linear-gradient(160deg,#1b1230,#a2385a 60%,#ff9a62)"></i>夕焼け</button><button type="button" class="skin" data-pref-skin="dream" aria-pressed="false" onclick="setPref('skin','dream')"><i style="--p:linear-gradient(135deg,#ffbee6,#aac8ff 55%,#c8aaff)"></i>夢</button><button type="button" class="skin" data-pref-skin="arcade" aria-pressed="false" onclick="setPref('skin','arcade')"><i style="--p:linear-gradient(135deg,#08040f,#ff2e97 55%,#00e5ff)"></i>ゲームセンター</button><button type="button" class="skin" data-pref-skin="ocean" aria-pressed="false" onclick="setPref('skin','ocean')"><i style="--p:linear-gradient(160deg,#06202e,#1a6fa8 60%,#2de2c5)"></i>海</button><button type="button" class="skin" data-pref-skin="sakura" aria-pressed="false" onclick="setPref('skin','sakura')"><i style="--p:linear-gradient(135deg,#fff5f7,#ffb6cb 60%,#ffd6be)"></i>桜</button><button type="button" class="skin" data-pref-skin="forest" aria-pressed="false" onclick="setPref('skin','forest')"><i style="--p:linear-gradient(160deg,#0b1a12,#2f8f5a 70%,#a3e048)"></i>森</button><button type="button" class="skin" data-pref-skin="space" aria-pressed="false" onclick="setPref('skin','space')"><i style="--p:linear-gradient(135deg,#05060f,#4a3aa8 60%,#7dd3fc)"></i>宇宙</button><button type="button" class="skin" data-pref-skin="cyber" aria-pressed="false" onclick="setPref('skin','cyber')"><i style="--p:linear-gradient(135deg,#0a0a12,#ff2a6d 55%,#fcee09)"></i>サイバー</button><button type="button" class="skin" data-pref-skin="wafu" aria-pressed="false" onclick="setPref('skin','wafu')"><i style="--p:linear-gradient(135deg,#0e1526,#2a3c78 55%,#e8604c)"></i>和</button><button type="button" class="skin" data-pref-skin="snow" aria-pressed="false" onclick="setPref('skin','snow')"><i style="--p:linear-gradient(135deg,#f3f8fd,#a0c8f5 60%,#ffffff)"></i>雪</button><button type="button" class="skin" data-pref-skin="matcha" aria-pressed="false" onclick="setPref('skin','matcha')"><i style="--p:linear-gradient(135deg,#f4f7ee,#b2d68c 60%,#e8dcaa)"></i>抹茶</button><button type="button" class="skin" data-pref-skin="retro" aria-pressed="false" onclick="setPref('skin','retro')"><i style="--p:linear-gradient(135deg,#0f1f0f,#3c5f1a 60%,#9bbc0f)"></i>レトロ</button><button type="button" class="skin" data-pref-skin="flame" aria-pressed="false" onclick="setPref('skin','flame')"><i style="--p:linear-gradient(160deg,#160806,#a3260f 60%,#ffb03a)"></i>炎</button><button type="button" class="skin" data-pref-skin="neon" aria-pressed="false" onclick="setPref('skin','neon')"><i style="--p:linear-gradient(160deg,#020617,#2563eb 45%,#22d3ee 75%,#fde047)"></i>ネオン</button></div><div id="custom-skins" class="skin-grid"></div>
                         <button type="button" id="btn-edit-theme" class="btn has-icon hidden" style="align-self:flex-start"><span class="ms">edit_note</span>このマイテーマを編集</button>
                         <p id="skin-note" class="t-body-s muted"></p></div>
                     <div class="set-row" id="row-theme"><span>ダーク / ライト</span>
@@ -2308,6 +2425,24 @@
                         <button type="button" id="btn-remove-note-image" class="btn hidden" onclick="removeNoteImage()">削除</button>
                     </div>
                     <p id="note-image-note" class="t-body-s muted">ノーツに表示する画像を追加できます(端末内で保存、外部送信はしません。上限 2MB)。</p>
+                </section>
+                <section class="dlg-section">
+                    <h4><span class="ms">speed</span>FPS上限</h4>
+                    <p class="t-body-s muted">描画のフレームレート上限です(<span id="current-fps-cap-label">未選択</span>)。実際に出るfpsはお使いの画面のリフレッシュレートを超えません。</p>
+                    <div class="tb-group" role="group" aria-label="FPS上限" style="flex-wrap:wrap">
+                        <button type="button" class="chip" data-fps-cap="30" aria-pressed="false" onclick="chooseFpsCap(30)"><span class="ms chip-check">check</span>30 fps</button>
+                        <button type="button" class="chip" data-fps-cap="60" aria-pressed="false" onclick="chooseFpsCap(60)"><span class="ms chip-check">check</span>60 fps</button>
+                        <button type="button" class="chip" data-fps-cap="90" aria-pressed="false" onclick="chooseFpsCap(90)"><span class="ms chip-check">check</span>90 fps</button>
+                        <button type="button" class="chip" data-fps-cap="120" aria-pressed="false" onclick="chooseFpsCap(120)"><span class="ms chip-check">check</span>120 fps</button>
+                        <button type="button" class="chip" data-fps-cap="144" aria-pressed="false" onclick="chooseFpsCap(144)"><span class="ms chip-check">check</span>144 fps</button>
+                        <button type="button" class="chip" data-fps-cap="200" aria-pressed="false" onclick="chooseFpsCap(200)"><span class="ms chip-check">check</span>200 fps</button>
+                        <button type="button" class="chip" data-fps-cap="240" aria-pressed="false" onclick="chooseFpsCap(240)"><span class="ms chip-check">check</span>240 fps</button>
+                        <button type="button" class="chip" data-fps-cap="custom" aria-pressed="false" onclick="toggleFpsCustomRow('fps-custom-row')"><span class="ms chip-check">check</span>その他</button>
+                    </div>
+                    <div id="fps-custom-row" class="set-row hidden" data-fps-custom-row style="gap:8px;align-items:center">
+                        <input type="number" data-fps-custom-input min="30" max="1000" step="1" inputmode="numeric" style="width:6em" onchange="applyCustomFpsCap(this.value)">
+                        <span class="t-body-s muted">fps(30〜1000、1刻みで細かく調整できます)</span>
+                    </div>
                 </section>
                 <section class="dlg-section">
                     <h4><span class="ms">palette</span>UIのカスタマイズ</h4>
@@ -2374,7 +2509,7 @@
                 </section>
                 <section class="dlg-section">
                     <h4><span class="ms">info</span>BeatPulse ZQ について</h4>
-                    <p>バージョン 1.0.0 ・ © 2026 BeatPulse ZQ ・ アイコン: Microsoft Fluent System Icons (MIT License)</p>
+                    <p>バージョン 1.18 ・ © 2026 BeatPulse ZQ ・ アイコン: Microsoft Fluent System Icons (MIT License)</p>
                     <div class="about-links">
                         <a class="btn has-icon" href="home.html" target="_blank" rel="noopener"><span class="ms">open_in_new</span>ホームページ</a>
                         <a class="btn has-icon" href="https://discord.gg/uQX6xcuxsT" target="_blank" rel="noopener"><span class="ms">open_in_new</span>公式Discord</a>
@@ -2449,6 +2584,32 @@
                 <button id="terms-agree-btn" class="btn btn-filled terms-consent-only hidden" onclick="agreeTerms()" disabled>同意して続ける</button>
                 <button id="terms-decline-btn" class="btn btn-text terms-consent-only hidden" onclick="declineTerms()">同意しない</button>
                 <button id="terms-close-btn" class="btn btn-text" onclick="closeModal('terms-modal')">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="fps-cap-modal" class="scrim hidden" onclick="if (event.target === this && !fpsCapNeedChoice) closeModal(this.id)">
+        <div class="dialog sm" role="dialog" aria-modal="true" aria-labelledby="fps-cap-title" tabindex="-1">
+            <div class="dlg-head"><span class="ms">speed</span><h2 id="fps-cap-title" class="dlg-title">FPS上限を選択</h2></div>
+            <div class="dlg-body">
+                <p class="t-body-s muted">描画のフレームレート上限を選んでください。あとから設定画面でいつでも変更できます。</p>
+                <div class="tb-group" role="group" aria-label="FPS上限を選択" style="flex-wrap:wrap">
+                    <button type="button" class="chip" data-fps-cap="30" aria-pressed="false" onclick="chooseFpsCap(30)"><span class="ms chip-check">check</span>30 fps</button>
+                    <button type="button" class="chip" data-fps-cap="60" aria-pressed="false" onclick="chooseFpsCap(60)"><span class="ms chip-check">check</span>60 fps</button>
+                    <button type="button" class="chip" data-fps-cap="90" aria-pressed="false" onclick="chooseFpsCap(90)"><span class="ms chip-check">check</span>90 fps</button>
+                    <button type="button" class="chip" data-fps-cap="120" aria-pressed="false" onclick="chooseFpsCap(120)"><span class="ms chip-check">check</span>120 fps</button>
+                    <button type="button" class="chip" data-fps-cap="144" aria-pressed="false" onclick="chooseFpsCap(144)"><span class="ms chip-check">check</span>144 fps</button>
+                    <button type="button" class="chip" data-fps-cap="200" aria-pressed="false" onclick="chooseFpsCap(200)"><span class="ms chip-check">check</span>200 fps</button>
+                    <button type="button" class="chip" data-fps-cap="240" aria-pressed="false" onclick="chooseFpsCap(240)"><span class="ms chip-check">check</span>240 fps</button>
+                    <button type="button" class="chip" data-fps-cap="custom" aria-pressed="false" onclick="toggleFpsCustomRow('fps-custom-row-modal')"><span class="ms chip-check">check</span>その他</button>
+                </div>
+                <div id="fps-custom-row-modal" class="set-row hidden" data-fps-custom-row style="gap:8px;align-items:center">
+                    <input type="number" data-fps-custom-input min="30" max="1000" step="1" inputmode="numeric" style="width:6em" onchange="applyCustomFpsCap(this.value)">
+                    <span class="t-body-s muted">fps(30〜1000、1刻み)</span>
+                </div>
+            </div>
+            <div class="dlg-foot">
+                <button id="fps-cap-close-btn" class="btn btn-text hidden" onclick="closeModal('fps-cap-modal')">閉じる</button>
             </div>
         </div>
     </div>
@@ -5029,13 +5190,19 @@
             }
         });
 
-        function gameLoop() {
-            pollGamepadInputs();
-            if (currentMode === 'play') {
-                renderPlayCanvas();
-                renderFriendCanvas();
-            } else {
-                renderEditorCanvas();
+        let lastRenderTs = 0;
+        function gameLoop(ts) {
+            pollGamepadInputs(); // 入力反応は上限の影響を受けないよう毎フレーム実行する
+            const cap = isValidFpsCap(prefs.fpsCap) ? prefs.fpsCap : 240;
+            const minInterval = 1000 / cap;
+            if (!lastRenderTs || (ts - lastRenderTs) >= minInterval - 0.5) {
+                lastRenderTs = ts || performance.now();
+                if (currentMode === 'play') {
+                    renderPlayCanvas();
+                    renderFriendCanvas();
+                } else {
+                    renderEditorCanvas();
+                }
             }
             requestAnimationFrame(gameLoop);
         }
@@ -6248,7 +6415,7 @@
         // =========================================================
         // BeatPulse ZQ: 設定 / テーマ / アカウント / 利用規約 / アップロード / 管理 / ドロップ / ディープリンク
         // =========================================================
-        const APP_VERSION = '1.0.0';
+        const APP_VERSION = '1.18';
         const ACCOUNT_ID_RE = /^[A-Za-z0-9_-]{3,16}$/;
         const SESSION_KEY = 'beatpulse_session';
         const SETTINGS_KEY = 'beatpulse_settings';
@@ -6384,7 +6551,7 @@
         const RIGHTS_VERSION = 'v1';
         const ACCENTS = ['blue', 'green', 'purple', 'pink', 'orange'];
         // デザインテーマ: mode は固定の明るさ(default はテーマ設定に従う)
-        const SKINS = { default: null, sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light', forest: 'dark', space: 'dark', cyber: 'dark', wafu: 'dark', snow: 'light', matcha: 'light', retro: 'dark', flame: 'dark' };
+        const SKINS = { default: null, sunset: 'dark', dream: 'light', arcade: 'dark', ocean: 'dark', sakura: 'light', forest: 'dark', space: 'dark', cyber: 'dark', wafu: 'dark', snow: 'light', matcha: 'light', retro: 'dark', flame: 'dark', neon: 'dark' };
         // フォント: 端末に入っている定番フォントだけを使う(外部読み込みなし)
         const FONT_PRESETS = {
             gothic: { label: 'ゴシック', stack: '"Yu Gothic UI","Yu Gothic Medium","Yu Gothic","Meiryo UI","Meiryo","Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif' },
@@ -6401,7 +6568,9 @@
         const NOTE_STYLES = ['glossyCapsule', 'glossySquare', 'matteCapsule', 'matteSquare', 'image'];
         const NOTE_STYLE_LABELS = { glossyCapsule: '光沢カプセル', glossySquare: '光沢スクエア', matteCapsule: 'マットカプセル', matteSquare: 'マットスクエア', image: 'カスタム画像' };
         const NOTE_IMAGE_MAX_BYTES = 2 * 1024 * 1024;
-        const NOTE_IMAGE_EXT_RE = /\.(png|jpe?g|webp|gif)$/i;
+        const FPS_CAP_OPTIONS = [30, 60, 90, 120, 144, 200, 240];
+        const FPS_CAP_MIN = 30, FPS_CAP_MAX = 1000; // 「その他」で手入力できる範囲(1fps刻み)
+        function isValidFpsCap(v) { return Number.isFinite(v) && v >= FPS_CAP_MIN && v <= FPS_CAP_MAX; }
         // フォント名入力の候補(datalist用)。OSでよく使われる定番フォント名(実際に入っているかは端末による)
         const FONT_NAME_SUGGESTIONS = [
             // 日本語(Windows)
@@ -6431,7 +6600,7 @@
         let accountBusy = false;
         let adminDeleteTarget = null;
         let settings = { music: 0.8, sfx: 0.8, beta: false };   // クラウドと同期する項目(互換のためこの3つだけ)
-        let prefs = { theme: 'dark', accent: 'blue', skin: 'default', customs: [], offsetMs: 0, leadInSec: 3, fx: true, judgeText: true, comboText: true, font: 'default', fontCustom: '', fontFile: null, ui: { scale: 100, radius: 8, shadow: 100, reduceMotion: false }, customCssOn: false, customCss: '', noteStyle: 'glossyCapsule', noteImage: null }; // この端末だけの表示設定
+        let prefs = { theme: 'dark', accent: 'blue', skin: 'default', customs: [], offsetMs: 0, leadInSec: 3, fx: true, judgeText: true, comboText: true, font: 'default', fontCustom: '', fontFile: null, ui: { scale: 100, radius: 8, shadow: 100, reduceMotion: false }, customCssOn: false, customCss: '', noteStyle: 'glossyCapsule', noteImage: null, fpsCap: null }; // この端末だけの表示設定(fpsCapは未選択ならnull)
         let gameOffsetSec = 0;                           // 判定調整(秒)。プレイ中の時間から引く
         let musicGainNode = null;
         let sfxGainNode = null;
@@ -6487,6 +6656,7 @@
                     if (typeof d.customCss === 'string') prefs.customCss = d.customCss.slice(0, 50000);
                     if (typeof d.noteStyle === 'string' && NOTE_STYLES.includes(d.noteStyle)) prefs.noteStyle = d.noteStyle;
                     if (typeof d.noteImage === 'string' && /^data:image\/(png|jpe?g|webp|gif);base64,/.test(d.noteImage)) prefs.noteImage = d.noteImage;
+                    if (isValidFpsCap(Math.round(Number(d.fpsCap)))) prefs.fpsCap = Math.round(Number(d.fpsCap));
                 }
             } catch (e) {}
         }
@@ -6494,6 +6664,22 @@
         function resolvedTheme() {
             if (prefs.theme === 'system') return window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
             return prefs.theme;
+        }
+        // ネオンスキン専用: index14が使っているOrbitronフォントを、オンライン時のみ追加読み込みする。
+        // 他のスキン/オフライン時は一切通信しない(index15本体は引き続き自己完結)。
+        let neonFontRequested = false;
+        function applyNeonSkinFont() {
+            if (document.documentElement.dataset.skin !== 'neon') return;
+            if (neonFontRequested || document.getElementById('neon-orbitron-font')) return;
+            neonFontRequested = true;
+            try {
+                const link = document.createElement('link');
+                link.id = 'neon-orbitron-font';
+                link.rel = 'stylesheet';
+                link.href = 'https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap';
+                link.onerror = () => { neonFontRequested = false; }; // オフライン等で失敗しても既存フォールバックフォントで見た目は保たれる
+                document.head.appendChild(link);
+            } catch (e) { neonFontRequested = false; }
         }
         function applyPrefs() {
             const root = document.documentElement;
@@ -6505,6 +6691,7 @@
             clearCustomVars();
             if (custom) applyCustomVars(custom.vars); // マイテーマの配色(インラインのCSS変数で上書き)
             applyFontPref();
+            applyNeonSkinFont();
             applyGuiCss();
             applyCustomCss();
             syncNoteImage();
@@ -6646,6 +6833,56 @@
             if (prefs.noteStyle === 'image') prefs.noteStyle = 'glossyCapsule';
             savePrefs();
             applyPrefs();
+        }
+        // ---------- FPSの上限 ----------
+        let fpsCapNeedChoice = false;
+        function renderFpsCapUI() {
+            const presetMatch = FPS_CAP_OPTIONS.includes(prefs.fpsCap);
+            const isCustomActive = isValidFpsCap(prefs.fpsCap) && !presetMatch;
+            document.querySelectorAll('[data-fps-cap]').forEach(b => {
+                const dv = b.dataset.fpsCap;
+                b.setAttribute('aria-pressed', dv === 'custom' ? String(isCustomActive) : String(Number(dv) === prefs.fpsCap));
+            });
+            document.querySelectorAll('[data-fps-custom-input]').forEach(inp => {
+                if (document.activeElement !== inp) inp.value = isValidFpsCap(prefs.fpsCap) ? prefs.fpsCap : '';
+            });
+            if (isCustomActive) document.querySelectorAll('[data-fps-custom-row]').forEach(row => row.classList.remove('hidden'));
+            const settingsLabel = byId('current-fps-cap-label');
+            if (settingsLabel) settingsLabel.textContent = isValidFpsCap(prefs.fpsCap) ? `現在: ${prefs.fpsCap} fps` : '未選択';
+        }
+        function toggleFpsCustomRow(rowId) {
+            const row = byId(rowId);
+            if (!row) return;
+            row.classList.toggle('hidden');
+            if (!row.classList.contains('hidden')) {
+                const inp = row.querySelector('[data-fps-custom-input]');
+                if (inp) { inp.value = isValidFpsCap(prefs.fpsCap) ? prefs.fpsCap : 60; inp.focus(); inp.select(); }
+            }
+        }
+        function applyCustomFpsCap(v) {
+            let n = Math.round(Number(v));
+            if (!Number.isFinite(n)) return;
+            n = Math.max(FPS_CAP_MIN, Math.min(FPS_CAP_MAX, n));
+            chooseFpsCap(n);
+        }
+        function openFpsCapModal(needChoice) {
+            fpsCapNeedChoice = !!needChoice;
+            const closeBtn = byId('fps-cap-close-btn');
+            if (closeBtn) closeBtn.classList.toggle('hidden', fpsCapNeedChoice);
+            renderFpsCapUI();
+            openModal('fps-cap-modal');
+        }
+        function chooseFpsCap(v) {
+            v = Math.round(Number(v));
+            if (!isValidFpsCap(v)) return;
+            prefs.fpsCap = v;
+            savePrefs();
+            renderFpsCapUI();
+            if (fpsCapNeedChoice) {
+                fpsCapNeedChoice = false;
+                closeModal('fps-cap-modal');
+            }
+            showToast(`FPS上限を ${v} fps に設定しました`, 'success');
         }
         let customFontTimer = null;
         function setCustomFont(value) {
@@ -7098,7 +7335,7 @@
                 return;
             }
             resetArmed = false;
-            prefs = { theme: 'dark', accent: 'blue', skin: 'default', customs: prefs.customs || [], offsetMs: 0, leadInSec: 3, fx: true, judgeText: true, comboText: true, font: 'default', fontCustom: '', fontFile: null, ui: { scale: 100, radius: 8, shadow: 100, reduceMotion: false }, customCssOn: false, customCss: '', noteStyle: 'glossyCapsule', noteImage: null };
+            prefs = { theme: 'dark', accent: 'blue', skin: 'default', customs: prefs.customs || [], offsetMs: 0, leadInSec: 3, fx: true, judgeText: true, comboText: true, font: 'default', fontCustom: '', fontFile: null, ui: { scale: 100, radius: 8, shadow: 100, reduceMotion: false }, customCssOn: false, customCss: '', noteStyle: 'glossyCapsule', noteImage: null, fpsCap: null };
             noteImageEl = null;
             const ff = byId('user-font-face'); if (ff) ff.remove();
             const pcc = byId('pref-custom-css'); if (pcc) pcc.value = '';
@@ -7154,6 +7391,8 @@
             if (noteImgRemoveBtn) noteImgRemoveBtn.classList.toggle('hidden', !prefs.noteImage);
             const noteImgNote = byId('note-image-note');
             if (noteImgNote) noteImgNote.textContent = prefs.noteImage ? '画像を登録済みです。「カスタム画像」を選ぶとノーツに表示されます。' : 'ノーツに表示する画像を追加できます(端末内で保存、外部送信はしません。上限 2MB)。';
+
+            renderFpsCapUI();
         }
 
         // ---------- 利用規約・プライバシーポリシー(同意) ----------
@@ -7208,10 +7447,12 @@
             closeModal('terms-modal');
             resolveConsent(true);
             renderSettingsUI();
+            if (!isValidFpsCap(prefs.fpsCap)) setTimeout(() => openFpsCapModal(true), 250); // 規約同意の次にFPS上限を選ばせる
         }
         function declineTerms() {
             closeModal('terms-modal');
             showToast('同意されなかったため、オンライン機能は利用できません', 'info');
+            if (!isValidFpsCap(prefs.fpsCap)) setTimeout(() => openFpsCapModal(true), 250);
         }
 
         // ---------- アカウント(画面まわり) ----------
@@ -10674,6 +10915,7 @@
             if (!open.length) return;
             const top = open[open.length - 1];
             if (top.id === 'terms-modal' && termsNeedConsent) return; // 同意が必要なあいだは閉じない
+            if (top.id === 'fps-cap-modal' && fpsCapNeedChoice) return; // FPS上限を選ぶまでは閉じない
             if (top.id === 'app-confirm-modal') { closeAppConfirm(false); return; }
             if (top.id === 'event-popup-modal') { closeEventPopup(); return; }
             if (top.id === 'dojo-result-modal') return;
@@ -10782,6 +11024,7 @@
             handleDeepLink();
             window.addEventListener('beforeunload', () => { if (room) leaveRoom(true); });
             if (!hasConsent()) openTermsModal('terms', true); // 初回は規約とプライバシーポリシーの確認から
+            else if (!isValidFpsCap(prefs.fpsCap)) openFpsCapModal(true); // FPS上限が未選択なら選ばせる
             requestAnimationFrame(gameLoop);
         };
     </script>
