@@ -2583,11 +2583,11 @@
                 </div>
                 <div class="tf">
                     <input type="text" id="rank-name" maxlength="16" placeholder=" ">
-                    <label for="rank-name">ランキング表示名 (16文字まで)</label>
+                    <label for="rank-name">ランキングに載せる名前 (16文字まで)</label>
                 </div>
             </div>
             <div class="dlg-foot">
-                <button class="btn btn-filled online-action-btn" onclick="submitRanking()" data-autofocus>ランキングを更新</button>
+                <button class="btn btn-filled online-action-btn" onclick="submitRanking()" data-autofocus>ランキングに登録</button>
                 <button class="btn btn-text" onclick="skipRanking()">登録しない</button>
             </div>
         </div>
@@ -3044,7 +3044,7 @@
                     </div>
                     <p class="status-line">
                         「演奏」… フレンドと一緒に演奏します。なんと画面が二つ！?<br>
-                        「battle」… フレンドとスコア対決！ すべてリアルタイムで進みます。<br>「2v2ランク」… フレンド3人で2チームに分かれ、90秒のチーム合計SCOREでランク戦。
+                        「battle」… フレンドとスコア対決！ すべてリアルタイムで進みます。
                     </p>
                 </div>
             </div>
@@ -3102,7 +3102,6 @@
                 <div id="room-status" class="status-line"></div>
             </div>
             <div class="dlg-foot">
-                <button id="room-ready-btn" class="btn btn-filled has-icon hidden" type="button" onclick="toggleRoomReady()"><span class="ms">check_circle</span><span>準備OK</span></button>
                 <button class="btn btn-text" onclick="leaveRoom(true)" data-autofocus>セッションを抜ける</button>
             </div>
         </div>
@@ -3243,7 +3242,7 @@
             </div>
             <div class="dlg-foot">
                 <button type="button" class="btn btn-text" onclick="closeModal('manual-rank-modal')">キャンセル</button>
-                <button type="button" class="btn btn-filled has-icon" onclick="saveManualRank()" data-autofocus><span class="ms">upload</span>ランキングを更新</button>
+                <button type="button" class="btn btn-filled has-icon" onclick="saveManualRank()" data-autofocus><span class="ms">upload</span>ランキングに登録</button>
             </div>
         </div>
     </div>
@@ -3687,13 +3686,12 @@
                 miss: playState.missCount,
                 // ランク戦は曲を最後まで演奏して評価する。曲全体の最大判定数を保存する。
                 rank: !!eloRankActive,
-                rankMaxJudgments: eloRankActive ? rankMaxJudgments(currentChart, ELO_RANK_DURATION_SEC) : null,
-                completed: completed === true
+                rankMaxJudgments: eloRankActive ? rankMaxJudgments(currentChart, ELO_RANK_DURATION_SEC) : null
             };
             updateStageHints();
             // フレンドセッション中はランキングではなくセッションのリザルトを出す
             if (room) {
-                finishRoomPlay(completed === true);
+                finishRoomPlay();
                 return;
             }
             if (completed === true) {
@@ -6116,11 +6114,9 @@
 
         // ランキングの保存キー: ログイン中はユーザーID(他人の記録を上書きできない)。ログインできないときは名前から作る
         async function getRankingKey(name) {
-            // アプリのアカウントUIDを固定キーにする。同一アカウントは1曲1枠。
-            if (account && account.uid) return String(account.uid);
             const fb = await getFirebase();
             await ensureSignedIn(fb);
-            return (account && account.uid) ? String(account.uid) : (fb.auth.currentUser ? fb.auth.currentUser.uid : nameToKey(name));
+            return fb.auth.currentUser ? fb.auth.currentUser.uid : nameToKey(name);
         }
 
         function isPermissionError(err) {
@@ -6907,18 +6903,6 @@
             }catch(e){ if(!silent) showToast(describeOnlineError(e),'error'); }
             finally{ if(!silent) setOnlineBusy(false); }
         }
-        async function adminDeleteGlobalRanking(uid, name) {
-            if (!isAdmin() || onlineBusy || !uid) return;
-            if (!confirm(`「${String(name || '???')}」のグローバルランキングを削除しますか？`)) return;
-            setOnlineBusy(true);
-            try {
-                await fbRemoveValue(`globalRankings/${uid}`);
-                showToast('グローバルランキングから削除しました', 'success');
-                await openGlobalRankRanking();
-            } catch (err) { showToast(describeOnlineError(err), 'error'); }
-            finally { setOnlineBusy(false); }
-        }
-
         async function openGlobalRankRanking(){
             openModal('global-rank-modal');const status=byId('global-rank-status'),list=byId('global-rank-list');if(!status||!list)return;status.textContent='ロード中…';list.innerHTML='';
             try{const data=await fbGetValue('globalRankings'),rows=[];if(data&&typeof data==='object')Object.keys(data).forEach(uid=>{const d=data[uid];if(d&&Number.isFinite(Number(d.elo))){ const rankText=String(d.rank||'未決定'); const m=rankText.match(/^(.*?)([123])$/); const baseLabel=m?m[1]:rankText; const division=m?Number(m[2]):0; const baseRank=(baseLabel==='ピューセ!'?'pluse':baseLabel); rows.push({uid,name:String(d.name||'???').slice(0,16),rank:rankText,baseRank,division,elo:Number(d.elo),updatedAt:Number(d.updatedAt)||0}); }});rows.sort((a,b)=>(b.elo-a.elo)||(b.updatedAt-a.updatedAt));
@@ -6942,27 +6926,9 @@
                     main.appendChild(el('div','global-rank-sub',isUltra?'ウルトラピューセ!':r.rank));
                     item.appendChild(main);
                     item.appendChild(el('div','global-rank-elo',`ELO ${Math.round(r.elo)}`));
-                    if (isAdmin()) {
-                        const del = el('button', 'btn btn-danger online-action-btn', '削除');
-                        del.type = 'button'; del.style.marginLeft = '6px';
-                        del.addEventListener('click', () => adminDeleteGlobalRanking(r.uid, r.name));
-                        item.appendChild(del);
-                    }
                     list.appendChild(item);
                 });
             }catch(e){status.textContent=describeOnlineError(e);}
-        }
-
-        async function adminDeleteRankingRecord(onlineId, key, name) {
-            if (!isAdmin() || onlineBusy || !isValidOnlineId(onlineId) || !key) return;
-            if (!confirm(`「${String(name || '???')}」のランキング記録を削除しますか？`)) return;
-            setOnlineBusy(true);
-            try {
-                await fbRemoveValue(`rankings/${onlineId}/${key}`);
-                showToast('ランキング記録を削除しました', 'success');
-                await openRanking(rankingInfo);
-            } catch (err) { showToast(describeOnlineError(err), 'error'); }
-            finally { setOnlineBusy(false); }
         }
 
         async function submitRanking() {
@@ -6996,15 +6962,9 @@
                         good: result.good,
                         miss: result.miss,
                         noteCount: result.noteCount,
-                        accountUid: account && account.uid ? String(account.uid) : key,
-                        createdAt: existing && existing.createdAt ? existing.createdAt : Date.now(),
-                        updatedAt: Date.now()
+                        createdAt: Date.now()
                     });
-                    const legacyKey = currentFirebaseUid();
-                    if (legacyKey && legacyKey !== key) {
-                        try { await fbRemoveValue(`rankings/${result.onlineId}/${legacyKey}`); } catch (e) {}
-                    }
-                    showToast(existing ? 'ランキングを更新しました！' : 'ランキングに登録しました！', 'success');
+                    showToast('ランキングに登録しました！', 'success');
                 } else {
                     showToast(`自己ベスト(${bestBefore})を更新できませんでした`, 'info');
                 }
@@ -7081,12 +7041,6 @@
                     mid.appendChild(el('div', 'rk-sub', `COMBO ${row.maxCombo} ・ P${row.perfect} / GR${row.great} / GD${row.good} / M${row.miss}`));
                     item.appendChild(mid);
                     item.appendChild(el('div', 'rk-score', String(row.score).padStart(7, '0')));
-                    if (isAdmin()) {
-                        const del = el('button', 'btn btn-danger online-action-btn', '削除');
-                        del.type = 'button'; del.style.marginLeft = '6px';
-                        del.addEventListener('click', () => adminDeleteRankingRecord(info.id, row.key, row.name));
-                        item.appendChild(del);
-                    }
                     list.appendChild(item);
                 });
             } catch (err) {
@@ -7120,8 +7074,8 @@
 
         const ELO_RANK_DEFAULT = 900; // 初期はブロンズの下限からスタート
         const ELO_RANK_DURATION_SEC = 90; // ランク戦は90秒で終了。評価対象も90秒まで。
-        const ELO_PLACEMENT_MATCHES = 5;         // 最初のランク決定は5回のプレイで厳しく判定する
-        const ELO_PLACEMENT_STAR = 3.5;          // 初回ランク決定は通常より少し厳しめの★から
+        const ELO_PLACEMENT_MATCHES = 2;         // 最初のランクは「段位決定戦」として2回のプレイで決める
+        const ELO_PLACEMENT_STAR = 3;            // 決定戦はいきなり難しい曲ではなく、NORMALくらいの★から
         const ELO_PLACEMENT_STAR_TOLERANCE = 1.5;
         // 段位決定戦の結果は「正確率がどれだけ高いか」だけで、アイアン〜エメラルドの全レンジに直接マッピングする。
         // これにより、決定戦で極めて高い正確率を出せば、初期ランクのアイアンから一気にエメラルドまで飛べる。
@@ -7129,7 +7083,9 @@
         const ELO_PLACEMENT_RESULT_MIN = ELO_BASE_TIERS[0].min;                                          // アイアンの下限(0)
         const ELO_PLACEMENT_RESULT_MAX = ELO_BASE_TIERS[ELO_BASE_TIERS.length - 1].min - 1;              // エメラルド上限(ピューセ!の手前)
         const ELO_NORMAL_K = 32;                 // 決定戦後、通常のランク(表示ELO)を動かす係数
-                const ELO_INTERNAL_K = 40;               // 内部レート(マッチメイキング専用)を動かす係数
+        const ELO_PROMOTION_ACCURACY = 0.82;    // 昇格にはこの正確率以上が必要。足りない場合は次ランク直前で止まる
+        const ELO_PROMOTION_STREAK = 1;         // 1試合の昇格判定を厳格化
+        const ELO_INTERNAL_K = 40;               // 内部レート(マッチメイキング専用)を動かす係数
         const ELO_INTERNAL_WINDOW_DAYS = 5;      // 内部レートは直近何日分の成績で計算するか
         const ELO_INTERNAL_WINDOW_MS = ELO_INTERNAL_WINDOW_DAYS * 24 * 60 * 60 * 1000;
         const ELO_INTERNAL_STAR_TOLERANCE = 1.5; // 内部レートに応じて選ぶ曲の★の許容幅(足りなければ広げる)
@@ -7261,10 +7217,7 @@
         }
         // 段位決定戦の結果ELOを、これまでの正確率の平均からアイアン〜エメラルドの範囲に直接マッピングする
         function eloFromPlacementAccuracy(avgAcc) {
-            // 初回ランク決定だけは厳しめにする。80%未満は最低ELO、
-            // 80〜100%をアイアン〜エメラルドへ線形配分する。
-            const floor = 0.80;
-            const clamped = Math.max(0, Math.min(1, (Number(avgAcc) - floor) / (1 - floor)));
+            const clamped = Math.max(0, Math.min(1, avgAcc));
             const span = ELO_PLACEMENT_RESULT_MAX - ELO_PLACEMENT_RESULT_MIN;
             return Math.round(ELO_PLACEMENT_RESULT_MIN + clamped * span);
         }
@@ -7440,7 +7393,7 @@
                     : `次に来る曲の目安: ★${formatStarRating(starForRate(rate))} 前後(直近${ELO_INTERNAL_WINDOW_DAYS}日間の調子で変動)`;
             }
             if (startBtn) startBtn.disabled = eloRankBusy || eloRankActive;
-            if (battleBtn) battleBtn.disabled = eloRankBusy || eloRankActive;
+            if (battleBtn) battleBtn.disabled = eloRankBusy || eloRankActive || isPlacement;
         }
 
         // ---------- ランク一覧(段位とELO範囲の表) ----------
@@ -7692,7 +7645,7 @@
             showEloRankLoading('曲を探しています');
             try {
                 if (!onlineEntries.length) await refreshOnlineList();
-                let candidates = onlineEntries.filter(e => e && isValidOnlineId(e.id));
+                let candidates = onlineEntries.filter(e => Number.isFinite(e.starRating));
                 if (!candidates.length) {
                     showToast('ランクに使える曲が見つかりませんでした。時間をおいて試してください', 'warning');
                     return;
@@ -7708,7 +7661,7 @@
                         updateEloRankLoading('NORMALの曲をさらに探しています');
                         try {
                             const deepEntries = await fetchOnlineEntriesUpTo(2000);
-                            let deepCandidates = deepEntries.filter(e => e && isValidOnlineId(e.id));
+                            let deepCandidates = deepEntries.filter(e => Number.isFinite(e.starRating));
                             normals = deepCandidates.filter(e => normalizeDifficulty(e.difficulty) === 'normal');
                         } catch (e) {}
                     }
@@ -7717,19 +7670,13 @@
                         return;
                     }
                     // 決定戦(最初の2回)は必ずNORMAL表記の曲の中からのみ選ぶ(他難易度へのフォールバックはしない)
-                    entry = normals.some(e => Number.isFinite(e.starRating))
-                        ? pickRankSong(normals.filter(e => Number.isFinite(e.starRating)), ELO_PLACEMENT_STAR, 15)
-                        : normals[Math.floor(Math.random() * normals.length)];
+                    entry = pickRankSong(normals, ELO_PLACEMENT_STAR, 15);
                 } else {
                     entry = pickRankSong(candidates, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE);
                 }
                 closeModal('elo-rank-modal');
                 updateEloRankLoading('譜面をダウンロードしています');
                 await downloadOnlineChart(entry);
-                if (!Number.isFinite(Number(entry.starRating)) || Number(entry.starRating) <= 0) {
-                    const localStar = Number(computeStarRating(currentChart, entry.difficulty));
-                    if (Number.isFinite(localStar) && localStar > 0) entry.starRating = localStar;
-                }
                 eloRankActive = true;
                 lockAutoPlayForRank(); // ランク挑戦中はオート演奏を使えないようにする
                 eloRankContext = {
@@ -7762,13 +7709,12 @@
             showEloRankLoading('対戦相手を準備しています');
             try {
                 if (!onlineEntries.length) await refreshOnlineList();
-                const candidates = onlineEntries.filter(e => e && isValidOnlineId(e.id));
+                const candidates = onlineEntries.filter(e => Number.isFinite(e.starRating));
                 if (!candidates.length) {
                     showToast('対戦に使える曲が見つかりませんでした。時間をおいて試してください', 'warning');
                     return;
                 }
-                const rated = candidates.filter(e => Number.isFinite(e.starRating));
-                const entry = rated.length ? pickRankSong(rated, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE) : candidates[Math.floor(Math.random() * candidates.length)];
+                const entry = pickRankSong(candidates, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE);
                 if (!entry) throw new Error('対戦曲を選べませんでした');
                 closeModal('elo-rank-modal');
                 updateEloRankLoading('対戦曲をダウンロードしています');
@@ -7845,15 +7791,6 @@
                 }
             }
             events.sort((a, b) => a.t - b.t);
-            // BOTは絶対にAP（ALL PERFECT）にしない。
-            // 乱数で全判定がPERFECTになった場合も、最低1つはGREATにする。
-            if (events.length > 0 && events.every(ev => ev.judge === 'PERFECT')) {
-                const idx = Math.floor(events.length / 2);
-                const ev = events[idx];
-                ev.judge = 'GREAT';
-                ev.points = 700;
-                finalScore -= 300;
-            }
             ctx.botJudgments = events;
             ctx.botFinalScore = finalScore;
             return finalScore;
@@ -7933,10 +7870,17 @@
             }
             // 昇格は通常のELO到達だけでは成立させず、昇格対象試合で高い正確率を要求する。
             // 条件未達なら次ランクの直前で止め、次の試合で再び昇格を狙う。
-            // 通常ランク戦の昇格は通常通りELO到達で判定する。
-            // 初回のランク決定だけを上のplacement判定で厳しくする。
-            const promotionBlocked = false;
-            const promotionTarget = null;
+            let promotionBlocked = false;
+            let promotionTarget = null;
+            const candidateTier = tierForElo(after);
+            if (!isPlacement && candidateTier.min > beforeTier.min) {
+                promotionTarget = candidateTier;
+                if (accuracy < ELO_PROMOTION_ACCURACY) {
+                    promotionBlocked = true;
+                    after = Math.max(before, candidateTier.min - 1);
+                    delta = after - before;
+                }
+            }
             const afterTier = tierForElo(after);
 
             eloRankState.elo = after;
@@ -7957,6 +7901,9 @@
 
             saveEloRank();
             registerRankToGlobal(true); // 毎試合終了時に自動でグローバルランキングへ登録する
+            if (promotionBlocked && promotionTarget) {
+                showToast(`昇格戦失敗：正確率 ${Math.round(accuracy * 100)}%（必要 ${Math.round(ELO_PROMOTION_ACCURACY * 100)}%）。${promotionTarget.label}直前で停止しました`, 'warning');
+            }
             showEloRankResult(ctx, { accuracy, delta, before, after, beforeTier, afterTier, isPlacement, justPlaced, promotionBlocked, promotionTarget, playerScore: ctx.playerScore, botScore: ctx.botScore, outcome: ctx.outcome, botElo: ctx.botElo });
         }
 
@@ -9881,12 +9828,6 @@
                 battle.appendChild(iconEl('flag'));
                 battle.appendChild(el('span', '', 'battle'));
                 battle.addEventListener('click', () => openShareInvite(uid, id, 'battle'));
-                const rank2v2 = el('button', 'btn btn-filled has-icon account-action-btn');
-                rank2v2.type = 'button';
-                rank2v2.title = 'フレンド1人と2v2ランク';
-                rank2v2.appendChild(iconEl('group'));
-                rank2v2.appendChild(el('span', '', '2v2ランク'));
-                rank2v2.addEventListener('click', () => start2v2RankInvite(uid, id));
                 const del = el('button', 'icon-btn');
                 del.type = 'button';
                 del.title = 'フレンドを削除';
@@ -9894,16 +9835,12 @@
                 del.addEventListener('click', () => removeFriend(uid));
                 row.appendChild(coop);
                 row.appendChild(battle);
-                row.appendChild(rank2v2);
                 row.appendChild(del);
                 friendList.appendChild(row);
             });
         }
 
-        function modeLabel(mode) {
-            if (mode === 'rank2v2') return '2v2ランク';
-            return mode === 'battle' ? 'フレンドbattle' : 'フレンド演奏';
-        }
+        function modeLabel(mode) { return mode === 'battle' ? 'フレンドbattle' : 'フレンド演奏'; }
 
         async function declineInvite() {
             const inv = pendingInvite;
@@ -9938,7 +9875,7 @@
                 }
                 const meta = await fbGetValue(`rooms/${inv.roomId}/meta`);
                 if (!meta) throw new Error('セッションはすでに終了しています');
-                await fbSetValue(`rooms/${inv.roomId}/players/${account.uid}`, { id: account.id, ready: inv.mode === 'rank2v2' ? false : true, slot: Number.isFinite(Number(inv.slot)) ? Number(inv.slot) : 1, team: inv.mode === 'rank2v2' ? 'A' : 'B', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
+                await fbSetValue(`rooms/${inv.roomId}/players/${account.uid}`, { id: account.id, ready: true, at: Date.now() });
                 await fbRemoveValue(`users/${account.uid}/invites/${inv.roomId}`);
                 pendingInvite = null;
                 enterRoom(inv.roomId, 'guest', meta);
@@ -9956,13 +9893,9 @@
             room = {
                 id: roomId,
                 role: role,
-                mode: meta.mode === 'rank2v2' ? 'rank2v2' : (meta.mode === 'battle' ? 'battle' : 'coop'),
+                mode: meta.mode === 'battle' ? 'battle' : 'coop',
                 friendUid: role === 'host' ? meta.guest : meta.host,
                 friendId: role === 'host' ? meta.guestId : meta.hostId,
-                playerUids: [],
-                chartId: meta.chartId || '',
-                difficulty: meta.difficulty || '',
-                star: Number(meta.starRating) || 0,
                 chartTitle: meta.chartTitle || '',
                 started: false,
                 countdownScheduled: false,
@@ -9972,17 +9905,13 @@
             friendResult = null;
 
             const titleNode = document.getElementById('room-title');
-            if (titleNode) titleNode.textContent = room.mode === 'rank2v2' ? '2v2ランク対戦' : modeLabel(room.mode);
+            if (titleNode) titleNode.textContent = modeLabel(room.mode);
             document.getElementById('room-chart').textContent = room.chartTitle || '(無題)';
             document.getElementById('room-me-id').textContent = account ? account.id : '-';
             document.getElementById('room-friend-id').textContent = room.friendId || '-';
             document.getElementById('room-result').classList.add('hidden');
             document.getElementById('room-countdown').classList.add('hidden');
-            const readyBtn = document.getElementById('room-ready-btn');
-            if (readyBtn) readyBtn.classList.toggle('hidden', room.mode !== 'rank2v2');
-            setRoomStatus(room.mode === 'rank2v2'
-                ? (role === 'host' ? '2v2ランク：準備OKを押してください（フレンドは任意）' : '2v2ランク：参加しました。準備OKを押してください')
-                : (role === 'host' ? 'フレンドの参加を待っています…' : '参加しました。スタートを待っています…'));
+            setRoomStatus(role === 'host' ? 'フレンドの参加を待っています…' : '参加しました。スタートを待っています…');
             openModal('room-modal');
             showFriendScreen(true);
 
@@ -10001,36 +9930,11 @@
             if (!room || !data || !account) return;
             const meta = data.meta || {};
             const players = data.players || {};
-            const entries = Object.entries(players).filter(([uid, p]) => p && typeof p === 'object');
-            entries.sort((a,b) => (Number(a[1].slot) || 0) - (Number(b[1].slot) || 0));
-            room.playerUids = entries.map(([uid]) => uid);
             const me = players[account.uid] || {};
             const friend = players[room.friendUid] || {};
 
             document.getElementById('room-me-state').textContent = me.ready ? '準備OK' : '準備中';
-            if (room.mode === 'rank2v2') {
-                const humansReady = entries.length >= 1 && entries.every(([,p]) => !!p.ready);
-                document.getElementById('room-friend-id').textContent = `${entries.length}/2 人参加・2v2`;
-                const otherHuman = entries.find(([uid]) => uid !== account.uid);
-                document.getElementById('room-friend-state').textContent = otherHuman
-                    ? (otherHuman[1].ready ? `${otherHuman[1].id || 'FRIEND'}：準備OK` : `${otherHuman[1].id || 'FRIEND'}：準備中`)
-                    : 'フレンド1人を待っています';
-                const readyBtn = document.getElementById('room-ready-btn');
-                if (readyBtn) {
-                    readyBtn.classList.remove('hidden');
-                    readyBtn.disabled = !me || !me.id || meta.state === 'countdown' || meta.state === 'started';
-                    readyBtn.innerHTML = me.ready
-                        ? '<span class="ms">done</span><span>準備OK済み</span>'
-                        : '<span class="ms">check_circle</span><span>準備OK</span>';
-                }
-                setRoomStatus(humansReady
-                    ? '準備OK！まもなく2v2ランク開始！'
-                    : (entries.length < 2 ? '2v2ランク：準備OKを押してください（フレンドは任意）' : 'あなたとフレンドの2人が「準備OK」を押すと2v2ランク開始'));
-            } else {
-                document.getElementById('room-friend-state').textContent = friend.ready ? '準備OK' : '待機中';
-                const readyBtn = document.getElementById('room-ready-btn');
-                if (readyBtn) readyBtn.classList.add('hidden');
-            }
+            document.getElementById('room-friend-state').textContent = friend.ready ? '準備OK' : '待機中';
 
             if (meta.state === 'declined') {
                 showToast('招待が断られました', 'warning');
@@ -10050,10 +9954,7 @@
             if (friend.result && typeof friend.result === 'object') friendResult = friend.result;
 
             // ホストが、2人そろったらカウントダウン開始の合図を出す
-            const readyToStart = room.mode === 'rank2v2'
-                ? entries.length >= 1 && entries.every(([,p]) => !!p.ready)
-                : me.ready && friend.ready;
-            if (room.role === 'host' && meta.state !== 'countdown' && meta.state !== 'started' && readyToStart) {
+            if (room.role === 'host' && meta.state !== 'countdown' && meta.state !== 'started' && me.ready && friend.ready) {
                 fbSetValue(`rooms/${room.id}/meta/state`, 'countdown').catch(() => {});
             }
 
@@ -10063,35 +9964,9 @@
                 scheduleRoomStart();
             }
 
-            if (room.mode === 'rank2v2') {
-                const results = entries.filter(([,p]) => p.result && typeof p.result === 'object');
-                if (results.length >= 2 && !room.finishedShown) {
-                    const botPack = build2v2BotResults(players);
-                    room.finishedShown = true;
-                    const map = Object.assign({}, Object.fromEntries(results), botPack ? botPack.results : {});
-                    const displayPlayers = Object.assign({}, players, botPack ? botPack.players : {});
-                    show2v2RoomResult(map, displayPlayers);
-                }
-            } else if (me.result && friendResult && !room.finishedShown) {
+            if (me.result && friendResult && !room.finishedShown) {
                 room.finishedShown = true;
                 showRoomResult(me.result, friendResult);
-            }
-        }
-
-        async function toggleRoomReady() {
-            if (!room || room.mode !== 'rank2v2' || !account) return;
-            try {
-                const current = await fbGetValue(`rooms/${room.id}/players/${account.uid}`);
-                if (!current || current.ready === undefined) {
-                    showToast('2v2ランクの参加状態を確認できません', 'warning');
-                    return;
-                }
-                if (room.started) return;
-                const nextReady = !current.ready;
-                await fbSetValue(`rooms/${room.id}/players/${account.uid}/ready`, nextReady);
-                showToast(nextReady ? '準備OK！相手の準備を待っています' : '準備を解除しました', nextReady ? 'success' : 'info');
-            } catch (err) {
-                showToast(describeOnlineError(err), 'error');
             }
         }
 
@@ -10128,17 +10003,6 @@
                 return;
             }
             if (autoPlayEnabled) setAutoPlay(false);
-            if (room.mode === 'rank2v2') {
-                eloRankActive = true;
-                lockAutoPlayForRank();
-                eloRankContext = {
-                    entryId: currentChart.online && currentChart.online.id || '',
-                    title: room.chartTitle,
-                    star: Number(room.star) || Number(currentChart.online && currentChart.online.starRating) || 0,
-                    songElo: starToEloRating(Number(room.star) || Number(currentChart.online && currentChart.online.starRating) || 0),
-                    isPlacement: false, mode: 'team2v2'
-                };
-            }
 
             currentChart.notes.forEach(n => { n.judged = false; n.holdJudged = false; });
             playState = {
@@ -10163,7 +10027,7 @@
             lastPushedScore = -1;
             roomPushTimer = setInterval(pushRoomLive, ROOM_PUSH_INTERVAL);
             pushRoomLive();
-            showToast(room.mode === 'rank2v2' ? '⚔️ 2v2ランク開始！ 4人で90秒チーム戦！' : modeLabel(room.mode) + ' スタート！', 'success');
+            showToast(modeLabel(room.mode) + ' スタート！', 'success');
         }
 
         function pushRoomLive() {
@@ -10183,7 +10047,7 @@
             lastJudgeInfo = { type: type, at: Date.now() };
         }
 
-        function finishRoomPlay(completed = true) {
+        function finishRoomPlay() {
             if (!room || !account) return;
             clearInterval(roomPushTimer);
             roomPushTimer = null;
@@ -10195,7 +10059,6 @@
                 great: playState.greatCount,
                 good: playState.goodCount,
                 miss: playState.missCount,
-                completed: completed === true,
                 at: Date.now()
             };
             fbSetValue(`rooms/${room.id}/players/${account.uid}/result`, result).catch(() => {});
@@ -10203,131 +10066,12 @@
                 score: playState.score, combo: playState.combo, maxCombo: playState.maxCombo,
                 miss: playState.missCount, finished: true, at: Date.now()
             }).catch(() => {});
-            if (room.mode === 'rank2v2') {
-                setRoomStatus('チームメンバーの演奏が終わるのを待っています…');
-                openModal('room-modal');
-                return;
-            }
             setRoomStatus('フレンドの演奏が終わるのを待っています…');
             openModal('room-modal');
             if (friendResult && !room.finishedShown) {
                 room.finishedShown = true;
                 showRoomResult(result, friendResult);
             }
-        }
-
-        function build2v2BotResults(players) {
-            const ids = Object.keys(players || {}).filter(uid => players[uid] && !String(uid).startsWith('bot-'));
-            if (ids.length < 2) return null;
-            const humanA = ids.find(uid => String(players[uid].team || 'A') === 'A') || ids[0];
-            const humanB = ids.find(uid => uid !== humanA) || ids[1];
-            // 2v2ランクは「自分＋フレンド」vs「AI＋AI」。AIは同じ相手チーム。
-            const bots = {
-                'bot-1': { id: 'AI 1', slot: 2, team: 'B' },
-                'bot-2': { id: 'AI 2', slot: 3, team: 'B' }
-            };
-            const make = (botId, team, seed) => {
-                const ctx = { star: Number(room.star) || 0, songElo: starToEloRating(Number(room.star) || 0), botElo: Math.max(0, Math.round(ids.reduce((sum, uid) => sum + (Number(players[uid].elo) || ELO_RANK_DEFAULT), 0) / ids.length)) };
-                // AIごとに少しだけ強さを変えつつ、同じルームでは両端末で再計算しても結果を揃える。
-                const oldRandom = Math.random;
-                let state = 2166136261 ^ seed;
-                Math.random = () => {
-                    state ^= state << 13; state ^= state >>> 17; state ^= state << 5;
-                    return ((state >>> 0) % 1000000) / 1000000;
-                };
-                try { return { id: botId.toUpperCase().replace('-', ' '), score: generateRankBattleBotScore(ctx, currentChart), completed: true, bot: true, at: Date.now() }; }
-                finally { Math.random = oldRandom; }
-            };
-            return { players: Object.assign({}, players, bots), results: {
-                'bot-1': make('bot-1', 'A', 101),
-                'bot-2': make('bot-2', 'B', 202)
-            }};
-        }
-
-        async function update2v2RankElo(results, players) {
-            if (!account || !room || room.mode !== 'rank2v2') return;
-            const ids = Object.keys(results || {});
-            const humanIds = ids.filter(uid => !String(uid).startsWith('bot-'));
-            const teamA = ids.filter(uid => String((players[uid] || {}).team || (Number((players[uid] || {}).slot) < 2 ? 'A' : 'B')) === 'A');
-            const teamB = ids.filter(uid => !teamA.includes(uid));
-            const sum = team => team.reduce((n,uid) => n + (Number(results[uid].score) || 0), 0);
-            const scoreA = sum(teamA), scoreB = sum(teamB);
-            const outcome = scoreA === scoreB ? 0.5 : (teamA.includes(account.uid) ? (scoreA > scoreB ? 1 : 0) : (scoreB > scoreA ? 1 : 0));
-            let oppSum = 0, oppN = 0;
-            for (const uid of (teamA.includes(account.uid) ? teamB : teamA)) {
-                if (String(uid).startsWith('bot-')) continue;
-                try {
-                    const d = await fbGetValue(`users/${uid}/eloRank`);
-                    if (d && Number.isFinite(Number(d.elo))) { oppSum += Number(d.elo); oppN++; }
-                } catch (e) {}
-            }
-            const meResult = results[account.uid] || {};
-            const before = Number(eloRankState.elo) || ELO_RANK_DEFAULT;
-            const noteCount = Math.max(1, rankMaxJudgments(currentChart, ELO_RANK_DURATION_SEC));
-            const accuracy = judgmentAccuracy(meResult, noteCount);
-            const isPlacement = (eloRankState.plays || 0) < ELO_PLACEMENT_MATCHES;
-            let after, delta;
-            if (isPlacement) {
-                eloRankState.placementAcc = sanitizePlacementAcc(eloRankState.placementAcc);
-                eloRankState.placementAcc.push(accuracy);
-                const avgAcc = eloRankState.placementAcc.reduce((a,b) => a + b, 0) / eloRankState.placementAcc.length;
-                after = eloFromPlacementAccuracy(avgAcc);
-                delta = after - before;
-            } else {
-                const opponentElo = oppN ? oppSum / oppN : before;
-                const expected = 1 / (1 + Math.pow(10, (opponentElo - before) / 400));
-                const raw = ELO_NORMAL_K * (outcome - expected);
-                delta = Math.round(raw);
-                if (meResult && meResult.completed === false) delta = -30;
-                else if (outcome === 1) delta = Math.max(15, delta);
-                else if (outcome === 0) delta = Math.min(-15, delta);
-                else delta = 0;
-                after = Math.max(0, before + delta);
-            }
-            eloRankState.elo = after;
-            eloRankState.plays = (eloRankState.plays || 0) + 1;
-            if (isPlacement && eloRankState.plays >= ELO_PLACEMENT_MATCHES) eloRankState.placementAcc = [];
-            eloRankState.history = pruneEloHistory(eloRankState.history);
-            eloRankState.history.push({ t: Date.now(), songElo: starToEloRating(room.star || (currentChart.starRating || 0)), accuracy });
-            eloRankState.history = eloRankState.history.slice(-200);
-            eloRankState.internalRate = computeInternalRate(eloRankState.history);
-            saveEloRank();
-            registerRankToGlobal(true);
-            showToast(`${isPlacement ? '2v2決定戦' : (outcome === 1 ? '2v2 WIN' : outcome === 0 ? '2v2 LOSE' : '2v2 DRAW')}：${delta >= 0 ? '+' : ''}${delta} ELO`, outcome === 1 ? 'success' : outcome === 0 ? 'warning' : 'info');
-            renderEloRankModal();
-        }
-
-        function show2v2RoomResult(results, players) {
-            if (eloRankActive) {
-                eloRankActive = false;
-                eloRankContext = null;
-                updateEloBattleHud(null);
-                unlockAutoPlayForRank();
-            }
-            const box = document.getElementById('room-result');
-            const head = document.getElementById('room-result-head');
-            const body = document.getElementById('room-result-body');
-            const cd = document.getElementById('room-countdown');
-            if (cd) cd.classList.add('hidden');
-            if (!box || !head || !body) return;
-            const ids = Object.keys(results || {});
-            const teamA = ids.filter(uid => String((players[uid] || {}).team || (Number((players[uid] || {}).slot) < 2 ? 'A' : 'B')) === 'A');
-            const teamB = ids.filter(uid => !teamA.includes(uid));
-            const sum = team => team.reduce((n,uid) => n + (Number(results[uid].score) || 0), 0);
-            const scoreA = sum(teamA), scoreB = sum(teamB);
-            const myTeam = teamA.includes(account.uid) ? 'A' : 'B';
-            const win = scoreA === scoreB ? null : (scoreA > scoreB ? 'A' : 'B');
-            head.textContent = win === null ? 'DRAW' : (win === myTeam ? 'TEAM WIN!' : 'TEAM LOSE…');
-            head.dataset.tone = win === null ? 'draw' : (win === myTeam ? 'win' : 'lose');
-            body.innerHTML = '';
-            const line = (team, label, score) => {
-                const names = team.map(uid => `${players[uid] && players[uid].id ? players[uid].id : 'PLAYER'} ${Number(results[uid].score || 0).toLocaleString()}`).join(' / ');
-                body.appendChild(el('div', team === (myTeam === 'A' ? teamA : teamB) ? 'rr-friend' : '', `${label}  TOTAL ${score.toLocaleString()} — ${names}`));
-            };
-            line(teamA, 'TEAM A', scoreA); line(teamB, 'TEAM B', scoreB);
-            setRoomStatus('2v2ランク結果を反映しています…');
-            openModal('room-modal');
-            update2v2RankElo(results, players).finally(() => setRoomStatus('お疲れさま！'));
         }
 
         function showRoomResult(mine, theirs) {
@@ -10406,9 +10150,6 @@
                     const diff = playState.score - fScore;
                     statusNode.textContent = diff >= 0 ? `+${diff} リード中！` : `${diff} 負けてる…`;
                     statusNode.dataset.tone = diff >= 0 ? 'win' : 'lose';
-                } else if (room.mode === 'rank2v2') {
-                    statusNode.textContent = `2v2ランク：あなた ${playState.score.toLocaleString()} / 相手 ${fScore.toLocaleString()}`;
-                    statusNode.dataset.tone = 'win';
                 } else {
                     statusNode.textContent = `2人の合計: ${playState.score + fScore}`;
                     statusNode.dataset.tone = 'coop';
@@ -10492,50 +10233,9 @@
             if (node) node.textContent = text || '';
         }
 
-        async function start2v2RankInvite(uid, id) {
-            if (!betaEnabled()) { showToast('フレンド機能をONにしてください', 'warning'); return; }
-            if (room) {
-                if (room.mode === 'rank2v2' && !room.started) {
-                    openShareInvite(uid, id, 'rank2v2');
-                } else {
-                    showToast('すでにセッション中です', 'warning');
-                }
-                return;
-            }
-            if (eloRankBusy || eloRankActive) { showToast('現在ランク戦をプレイ中です', 'warning'); return; }
-            if (!account) { showToast('ログインしてください', 'warning'); return; }
-            if (dojoActive()) { showToast('段位道場の挑戦中は開始できません', 'warning'); return; }
-            eloRankBusy = true;
-            showEloRankLoading('2v2ランクの曲を選んでいます');
-            try {
-                if (!onlineEntries.length) await refreshOnlineList();
-                // 初期ランク未所持でも遊べるよう、★未計算の曲も候補に含める。
-                const candidates = onlineEntries.filter(e => e && isValidOnlineId(e.id));
-                if (!candidates.length) throw new Error('ランクに使える曲が見つかりません');
-                const rated = candidates.filter(e => Number.isFinite(e.starRating));
-                let entry = rated.length
-                    ? pickRankSong(rated, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE)
-                    : candidates[Math.floor(Math.random() * candidates.length)];
-                if (!entry) throw new Error('2v2ランク曲を選べませんでした');
-                updateEloRankLoading('2v2ランクの譜面をダウンロードしています');
-                await downloadOnlineChart(entry);
-                if (!Number.isFinite(Number(entry.starRating)) || Number(entry.starRating) <= 0) {
-                    const localStar = Number(computeStarRating(currentChart, entry.difficulty));
-                    if (Number.isFinite(localStar) && localStar > 0) entry.starRating = localStar;
-                }
-                openShareInvite(uid, id, 'rank2v2');
-                showToast(`${id}を2v2ランクに招待します。2v2ランクの4人対戦です`, 'success');
-            } catch (err) {
-                showToast(describeOnlineError(err), 'error');
-            } finally {
-                eloRankBusy = false;
-                hideEloRankLoading();
-            }
-        }
-
         function openShareInvite(uid, id, mode) {
             if (!betaEnabled()) return;
-            if (room && !(mode === 'rank2v2' && room.mode === 'rank2v2' && !room.started)) {
+            if (room) {
                 showToast('すでにセッション中です', 'warning');
                 openModal('room-modal');
                 return;
@@ -10543,7 +10243,7 @@
             if (!currentChart || !currentChart.notes.length) { showToast('譜面が読み込まれていません', 'warning'); return; }
             if (!audioBuffer) { showToast('曲が読み込まれていません', 'warning'); return; }
 
-            shareTarget = { uid: uid, id: id, mode: mode === 'rank2v2' ? 'rank2v2' : (mode === 'battle' ? 'battle' : 'coop') };
+            shareTarget = { uid: uid, id: id, mode: mode === 'battle' ? 'battle' : 'coop' };
             document.getElementById('share-friend').textContent = id;
             document.getElementById('share-mode').textContent = modeLabel(shareTarget.mode);
             const isOnline = !!(currentChart.online && currentChart.online.id);
@@ -10586,29 +10286,6 @@
         async function sendFriendInvite() {
             if (!shareTarget || !betaEnabled() || accountBusy) return;
             const target = shareTarget;
-            if (target.mode === 'rank2v2' && room && room.mode === 'rank2v2' && !room.started) {
-                try {
-                    const livePlayers = await fbGetValue(`rooms/${room.id}/players`);
-                    const players = Object.keys(livePlayers || {});
-                    room.playerUids = players;
-                    if (players.includes(target.uid)) throw new Error('そのフレンドはすでに参加しています');
-                    if (players.length >= 2) throw new Error('2v2ランクはフレンド1人までです（4人対戦）');
-                    const slot = players.length;
-                    await fbSetValue(`users/${target.uid}/invites/${room.id}`, {
-                        roomId: room.id, from: account.uid, fromId: account.id,
-                        mode: 'rank2v2', chartId: room.chartId || (currentChart.online && currentChart.online.id) || '',
-                        chartTitle: room.chartTitle, difficulty: room.difficulty || '', starRating: Number(room.star) || 0, shared: false, sharedMedia: false,
-                        slot, at: Date.now()
-                    });
-                    shareTarget = null;
-                    setShareStatus('');
-                    closeModal('share-modal');
-                    showToast(`${target.id}を2v2ランクに招待しました（4人対戦）`, 'success');
-                } catch (err) {
-                    showToast(describeOnlineError(err), 'error');
-                }
-                return;
-            }
             const shareChart = document.getElementById('share-chart-check').checked;
             const shareMediaChecked = document.getElementById('share-media-check').checked;
             const rightsOk = document.getElementById('share-rights').checked;
@@ -10636,16 +10313,14 @@
                     host: account.uid, hostId: account.id,
                     guest: target.uid, guestId: target.id,
                     mode: target.mode,
+                    chartId: isOnline ? currentChart.online.id : '',
                     chartTitle: (currentChart.online && currentChart.online.title)
                         || (currentChart.meta && currentChart.meta.title)
                         || (loadedAudioFile ? loadedAudioFile.name : DEMO_TRACK_NAME),
                     difficulty: (currentChart.online && currentChart.online.difficulty) || (currentChart.meta && currentChart.meta.difficulty) || '',
-                    starRating: Number(currentChart.online && currentChart.online.starRating) || 0,
                     shared: !!shareChart,
                     sharedMedia: !!mediaFile,
                     state: 'waiting',
-                    maxPlayers: target.mode === 'rank2v2' ? 2 : 2,
-                    chartId: isOnline ? currentChart.online.id : '',
                     createdAt: Date.now()
                 };
 
@@ -10698,11 +10373,11 @@
                     at: Date.now()
                 });
                 await fbSetValue(`rooms/${roomId}/meta`, meta);
-                await fbSetValue(`rooms/${roomId}/players/${account.uid}`, { id: account.id, ready: target.mode === 'rank2v2' ? false : true, slot: 0, team: 'A', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
+                await fbSetValue(`rooms/${roomId}/players/${account.uid}`, { id: account.id, ready: true, at: Date.now() });
                 await fbSetValue(`users/${target.uid}/invites/${roomId}`, {
                     roomId: roomId, from: account.uid, fromId: account.id,
                     mode: meta.mode, chartId: meta.chartId, chartTitle: meta.chartTitle,
-                    difficulty: meta.difficulty, shared: meta.shared, sharedMedia: meta.sharedMedia, slot: meta.mode === 'rank2v2' ? 1 : 1,
+                    difficulty: meta.difficulty, shared: meta.shared, sharedMedia: meta.sharedMedia,
                     at: Date.now()
                 });
 
