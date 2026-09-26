@@ -7845,6 +7845,15 @@
                 }
             }
             events.sort((a, b) => a.t - b.t);
+            // BOTは絶対にAP（ALL PERFECT）にしない。
+            // 乱数で全判定がPERFECTになった場合も、最低1つはGREATにする。
+            if (events.length > 0 && events.every(ev => ev.judge === 'PERFECT')) {
+                const idx = Math.floor(events.length / 2);
+                const ev = events[idx];
+                ev.judge = 'GREAT';
+                ev.points = 700;
+                finalScore -= 300;
+            }
             ctx.botJudgments = events;
             ctx.botFinalScore = finalScore;
             return finalScore;
