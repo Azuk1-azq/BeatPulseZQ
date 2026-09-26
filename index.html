@@ -665,6 +665,66 @@
         .dlg-body { display: flex; flex-direction: column; gap: 16px; padding: 12px 24px 24px; overflow-y: auto; }
         .dlg-body > p { color: var(--text-2); }
         .dlg-foot { display: flex; align-items: center; gap: 8px; padding: 24px; background: var(--dialog-foot); border-top: 1px solid var(--card-stroke); }
+
+        /* ランク戦: 曲探し中の演出付きローディング */
+        #elo-rank-loading-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0,0,0,.55);
+            backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+            opacity: 0; visibility: hidden; pointer-events: none;
+            transition: opacity .25s ease;
+        }
+        #elo-rank-loading-overlay.show { opacity: 1; visibility: visible; pointer-events: auto; }
+        .elo-rank-loading-card {
+            display: flex; flex-direction: column; align-items: center; gap: 16px;
+            padding: 30px 42px;
+            border-radius: 12px;
+            background: var(--dialog-bg);
+            border: 1px solid var(--card-stroke);
+            box-shadow: 0 24px 60px rgba(0,0,0,.5);
+            transform: translateY(6px) scale(.98); opacity: 0;
+            transition: transform .3s ease, opacity .3s ease;
+        }
+        #elo-rank-loading-overlay.show .elo-rank-loading-card { transform: translateY(0) scale(1); opacity: 1; }
+        .elo-rank-loading-ring-wrap { position: relative; width: 76px; height: 76px; }
+        .elo-rank-loading-ring {
+            position: absolute; inset: 0; border-radius: 50%;
+            border: 4px solid transparent;
+            border-top-color: var(--accent);
+            border-right-color: color-mix(in srgb, var(--accent) 35%, transparent);
+            animation: eloRankSpin 1s linear infinite;
+        }
+        .elo-rank-loading-ring.reverse {
+            inset: 11px;
+            border-top-color: transparent;
+            border-bottom-color: var(--accent-text);
+            border-left-color: color-mix(in srgb, var(--accent-text) 35%, transparent);
+            animation: eloRankSpinRev 1.35s linear infinite;
+        }
+        .elo-rank-loading-icon {
+            position: absolute; inset: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--accent);
+            animation: eloRankPulse 1.6s ease-in-out infinite;
+        }
+        .elo-rank-loading-icon.ms { --s: 30px; }
+        @keyframes eloRankSpin { to { transform: rotate(360deg); } }
+        @keyframes eloRankSpinRev { to { transform: rotate(-360deg); } }
+        @keyframes eloRankPulse { 0%, 100% { transform: scale(1); opacity: .8; } 50% { transform: scale(1.18); opacity: 1; } }
+        .elo-rank-loading-text {
+            font: 700 15px/20px var(--font); color: var(--text);
+            display: flex; align-items: baseline;
+        }
+        .elo-rank-loading-dots span {
+            display: inline-block; opacity: 0;
+            animation: eloRankDot 1.4s infinite;
+        }
+        .elo-rank-loading-dots span:nth-child(2) { animation-delay: .2s; }
+        .elo-rank-loading-dots span:nth-child(3) { animation-delay: .4s; }
+        @keyframes eloRankDot { 0%, 80%, 100% { opacity: 0; } 40% { opacity: 1; } }
+        .elo-rank-loading-sub { font: 500 12px/16px var(--font); color: var(--text-3); min-height: 16px; }
+
         .dlg-foot .btn { flex: 1 1 0; }
         .dlg-foot .btn-filled, .dlg-foot .btn-danger-filled { order: -1; }
         .dlg-foot .btn-text { --btn-bg: var(--ctl); --btn-stroke: var(--ctl-stroke); --btn-stroke-b: color-mix(in srgb, var(--ctl-stroke) 60%, transparent); --btn-bg-h: var(--ctl-hover); --btn-bg-p: var(--ctl-pressed); }
@@ -917,6 +977,30 @@
             color: var(--caution); border-color: color-mix(in srgb, var(--caution) 45%, transparent); background: color-mix(in srgb, var(--caution) 12%, transparent);
         }
         .rank-badge[data-ok="true"] { color: var(--success); border-color: color-mix(in srgb, var(--success) 45%, transparent); background: color-mix(in srgb, var(--success) 12%, transparent); }
+
+        .ultra-pluse {
+            position: relative;
+            color: #fff !important;
+            text-shadow: 0 0 5px #fff, 0 0 12px #7df9ff, 0 0 24px #8a5cff, 0 0 42px #ff4fd8;
+            animation: ultraPulse 1.15s ease-in-out infinite alternate, ultraHue 3s linear infinite;
+            filter: drop-shadow(0 0 8px rgba(125,249,255,.9));
+        }
+        .ultra-pluse::after {
+            content: '✦';
+            display: inline-block;
+            margin-left: 6px;
+            animation: ultraSpark 0.8s ease-in-out infinite alternate;
+        }
+        @keyframes ultraPulse { from { transform: scale(1); text-shadow: 0 0 5px #fff,0 0 12px #7df9ff,0 0 22px #8a5cff,0 0 35px #ff4fd8; } to { transform: scale(1.035); text-shadow: 0 0 8px #fff,0 0 18px #7df9ff,0 0 34px #8a5cff,0 0 55px #ff4fd8; } }
+        @keyframes ultraHue { 0% { filter: drop-shadow(0 0 7px #7df9ff); } 50% { filter: drop-shadow(0 0 12px #8a5cff); } 100% { filter: drop-shadow(0 0 10px #ff4fd8); } }
+        @keyframes ultraSpark { from { opacity:.55; transform: rotate(-12deg) scale(.8); } to { opacity:1; transform: rotate(12deg) scale(1.35); } }
+        .ultra-rank-panel {
+            position: relative; overflow: hidden; border: 1px solid rgba(125,249,255,.8) !important;
+            box-shadow: 0 0 10px rgba(125,249,255,.45), 0 0 28px rgba(138,92,255,.35), inset 0 0 24px rgba(255,79,216,.12);
+            background: linear-gradient(120deg, rgba(125,249,255,.10), rgba(138,92,255,.12), rgba(255,79,216,.10)) !important;
+            animation: ultraPanel 2s ease-in-out infinite alternate;
+        }
+        @keyframes ultraPanel { from { box-shadow: 0 0 10px rgba(125,249,255,.4),0 0 22px rgba(138,92,255,.25),inset 0 0 18px rgba(255,79,216,.08); } to { box-shadow: 0 0 18px rgba(125,249,255,.8),0 0 45px rgba(138,92,255,.55),inset 0 0 30px rgba(255,79,216,.18); } }
         .rank-row .btn { min-height: 24px; padding: 0 8px; font-size: 12px; }
 
         .dialog.lg { max-width: 640px; }
@@ -1795,7 +1879,7 @@
         @keyframes dojo-spin { to { transform: rotate(360deg); } }
         .dlg-body.tw input[type="datetime-local"] { color-scheme: inherit; }
 
-    </style>
+    .ultra-pluse{color:#fff!important;text-shadow:0 0 5px #ff4fd8,0 0 12px #ff4fd8,0 0 24px #8b5cff;animation:ultraPulse 1.4s ease-in-out infinite alternate;font-weight:900}@keyframes ultraPulse{from{filter:brightness(1);transform:scale(1)}to{filter:brightness(1.45);transform:scale(1.035)}}.global-rank-row{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--card-stroke);border-radius:10px;background:var(--ctl)}.global-rank-row.mine{border-color:var(--accent)}.global-rank-pos{width:34px;font:800 18px/1 var(--font);text-align:center}.global-rank-main{min-width:0;flex:1}.global-rank-name{font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.global-rank-sub{font-size:11px;color:var(--muted);margin-top:2px}.global-rank-elo{font:800 16px/1 var(--font)}</style>
 </head>
 <body>
 
@@ -1820,6 +1904,9 @@
             </button>
             <button id="btn-dojo" class="btn btn-text has-icon" style="position:relative" onclick="openModal('dojo-modal')" title="段位道場" aria-label="段位道場">
                 <span class="ms">dojo</span><span class="lbl">段位道場</span><span id="dojo-new-dot" class="dot-new hidden"></span>
+            </button>
+            <button id="btn-elo-rank" class="btn btn-text has-icon" onclick="openEloRankModal()" title="ランク" aria-label="ランク">
+                <span class="ms">verified_user</span><span class="lbl">ランク</span>
             </button>
             <button id="btn-achievements" class="btn btn-text has-icon" onclick="openAchievements()" title="実績" aria-label="実績">
                 <span class="ms">emoji_events</span><span class="lbl">実績</span>
@@ -2971,6 +3058,79 @@
         </div>
     </div>
 
+    <!-- ===== ランク(ランダム曲・ELOによる段位) ===== -->
+    <div id="elo-rank-modal" class="scrim hidden" onclick="if (event.target === this) closeModal(this.id)">
+        <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="elo-rank-title" tabindex="-1" style="max-width:480px">
+            <div class="dlg-head"><span class="ms">verified_user</span><h2 id="elo-rank-title" class="dlg-title">ランク</h2></div>
+            <div class="dlg-body" style="display:flex;flex-direction:column;gap:14px">
+                <div id="elo-rank-logged-out" class="hidden" style="display:flex;flex-direction:column;gap:10px">
+                    <p class="t-body-s muted">ランクはアカウントに保存されます。ログインまたは新規登録してください。</p>
+                    <button type="button" class="btn btn-filled has-icon" onclick="closeModal('elo-rank-modal'); openAccountModal()"><span class="ms">person</span>ログイン / 新規登録</button>
+                </div>
+                <div id="elo-rank-logged-in" style="display:flex;flex-direction:column;gap:14px">
+                    <div id="elo-rank-placement-badge" class="hidden" style="font:600 12px/18px var(--font);color:var(--accent-text);background:color-mix(in srgb, var(--accent) 16%, transparent);border:1px solid color-mix(in srgb, var(--accent) 40%, transparent);border-radius:999px;padding:4px 10px;align-self:flex-start"></div>
+                    <div style="display:flex;align-items:center;gap:14px">
+                        <div id="elo-rank-tier-icon" class="ms" style="font-size:40px;line-height:1">verified_user</div>
+                        <div style="min-width:0">
+                            <div id="elo-rank-tier-name" style="font:700 20px/26px var(--font)">アイアン</div>
+                            <div id="elo-rank-elo" class="muted" style="font:600 13px/18px var(--font)">ELO 0</div>
+                        </div>
+                    </div>
+                    <div style="height:8px;border-radius:999px;background:var(--ctl);overflow:hidden">
+                        <div id="elo-rank-progress-bar" style="height:100%;width:0%;background:var(--accent);transition:width .3s"></div>
+                    </div>
+                    <div id="elo-rank-progress-label" class="t-body-s muted">次のランクまで -</div>
+                    <div id="elo-rank-stats" class="t-body-s muted">挑戦回数 0 ・ 昇格 0 ・ 降格 0</div>
+                    <div id="elo-rank-form-hint" class="t-body-s muted"></div>
+                    <div id="elo-admin-rank-panel" class="hidden" style="display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid var(--card-stroke);border-radius:8px;background:var(--ctl)">
+                        <div style="font:700 12px/18px var(--font)">管理者ランク設定</div>
+                        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+                            <select id="elo-admin-rank-select" class="input" style="flex:1;min-width:150px"></select>
+                            <input id="elo-admin-elo-input" class="input" type="number" min="0" max="9999" step="1" placeholder="ELO" style="width:110px">
+                            <button type="button" class="btn btn-filled" onclick="adminApplyEloRank()">変更</button>
+                        </div>
+                        <div class="t-body-s muted">管理者のみ使用可能。ランクを自由に変更できます。ELOを直接指定した場合は、その値からランクを決定します。</div>
+                    </div>
+                    <hr class="divider">
+                    <p class="t-body-s muted">最初の2回は段位決定戦(NORMAL程度の曲)。正確率はPERFECT/GREATの内訳とMISS数から計算します。以降は、ランクとは別の内部レート(直近5日間の調子)に応じた★の曲が選ばれ、内部レートも曲の★とELO方式で上下します。挑戦中は全画面表示になり、やめる以外の操作(一時停止・曲変更など)はできません。</p>
+                    <button type="button" id="elo-rank-start-btn" class="btn btn-filled has-icon" onclick="startEloRankMatch()"><span class="ms">auto_awesome</span>ランダムな曲に挑戦</button><div style="display:flex;gap:8px;flex-wrap:wrap"><button type="button" class="btn has-icon" onclick="openGlobalRankRanking()"><span class="ms">leaderboard</span>グローバルランキング</button><button type="button" class="btn has-icon" onclick="registerRankToGlobal()"><span class="ms">publish</span>登録</button></div>
+                </div>
+            </div>
+            <div class="dlg-foot"><button class="btn btn-text" onclick="closeModal('elo-rank-modal')" data-autofocus>閉じる</button></div>
+        </div>
+    </div>
+
+    <div id="global-rank-modal" class="scrim hidden" onclick="if(event.target===this)closeModal(this.id)"><div class="dialog" role="dialog" aria-modal="true" style="max-width:560px"><div class="dlg-head"><span class="ms">leaderboard</span><h2 class="dlg-title">ランク グローバルランキング</h2></div><div class="dlg-body" style="display:flex;flex-direction:column;gap:10px"><div id="global-rank-status" class="t-body-s muted">ロード中…</div><div id="global-rank-list" style="display:flex;flex-direction:column;gap:7px"></div></div><div class="dlg-foot"><button class="btn btn-text" onclick="closeModal('global-rank-modal')">閉じる</button></div></div></div>
+
+    <div id="elo-rank-result-modal" class="scrim hidden">
+        <div class="dialog" role="dialog" aria-modal="true" aria-label="ランク戦の結果" tabindex="-1" style="max-width:440px">
+            <div class="dlg-body" style="display:flex;flex-direction:column;gap:12px;padding-top:24px;text-align:center">
+                <div id="elo-rank-result-song" style="font-weight:700"></div>
+                <div id="elo-rank-result-delta" style="font:700 32px/40px var(--font)">-</div>
+                <div id="elo-rank-result-tier" class="muted"></div>
+                <div id="elo-rank-result-detail" class="t-body-s muted"></div>
+            </div>
+            <div class="dlg-foot">
+                <button class="btn btn-filled has-icon" onclick="closeModal('elo-rank-result-modal'); startEloRankMatch()"><span class="ms">auto_awesome</span>もう一度挑戦</button>
+                <button class="btn btn-text" onclick="closeModal('elo-rank-result-modal'); openModal('elo-rank-modal')">閉じる</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ランク戦: 曲探し〜ダウンロード中に出す演出付きローディング -->
+    <div id="elo-rank-loading-overlay" aria-hidden="true">
+        <div class="elo-rank-loading-card">
+            <div class="elo-rank-loading-ring-wrap">
+                <div class="elo-rank-loading-ring"></div>
+                <div class="elo-rank-loading-ring reverse"></div>
+                <div class="elo-rank-loading-icon ms">verified_user</div>
+            </div>
+            <div class="elo-rank-loading-text">読み込み中<span class="elo-rank-loading-dots"><span>.</span><span>.</span><span>.</span></span></div>
+            <div id="elo-rank-loading-sub" class="elo-rank-loading-sub">曲を探しています</div>
+        </div>
+    </div>
+
+
     <!-- ===== アプリ内の確認ダイアログ / イベント通知 ===== -->
     <div id="app-confirm-modal" class="scrim hidden" style="z-index:250">
         <div class="dialog sm" role="alertdialog" aria-modal="true" aria-labelledby="app-confirm-message" tabindex="-1">
@@ -3133,6 +3293,7 @@
 
         function switchMode(mode) {
             if (mode !== 'play' && dojoActive()) dojoAbort('段位道場を中断しました');
+            if (mode !== 'play' && eloRankActive) { showToast('ランク挑戦中は他の操作はできません。やめるには「ゲームをやめる」を選んでください', 'warning'); return; }
             currentMode = mode;
             const playContainer = document.getElementById('play-mode-container');
             const editorContainer = document.getElementById('editor-mode-container');
@@ -3249,6 +3410,13 @@
                 saveScoreAfterPlay();
                 handleRankingAfterPlay();
                 achvOnPlayEnd(lastResult);
+                if (eloRankActive) eloRankOnEndPlay(lastResult);
+            } else if (eloRankActive) {
+                // 曲を最後まで演奏せずに中断した場合は、ランク戦を不成立として扱う
+                eloRankActive = false;
+                eloRankContext = null;
+                unlockAutoPlayForRank();
+                showToast('演奏を中断したため、ランク戦は不成立になりました', 'warning');
             }
         }
 
@@ -3463,6 +3631,7 @@
         function isPauseUnavailable() {
             // 段位道場の挑戦中や、フレンドとのライブセッション中は他プレイヤーとの同期が崩れるため一時停止できない
             if (typeof dojoActive === 'function' && dojoActive()) return true;
+            if (eloRankActive) return true; // ランク挑戦中は中断(一時停止)できない。やめるのみ可能
             if (room && room.started) return true;
             if (playState && playState.isPlaying && getCurrentAudioTime() < 0) return true; // まだ曲が始まっていない猶予期間中
             return false;
@@ -3472,6 +3641,8 @@
             if (!isPauseUnavailable()) return false;
             if (typeof dojoActive === 'function' && dojoActive()) {
                 showToast('段位道場の挑戦中は一時停止できません', 'warning');
+            } else if (eloRankActive) {
+                showToast('ランク挑戦中は一時停止できません。やめるには「ゲームをやめる」を選んでください', 'warning');
             } else if (room && room.started) {
                 showToast('フレンドセッション中は一時停止できません', 'warning');
             } else {
@@ -3792,11 +3963,27 @@
             const lead = Math.max(0, delaySec || 0);
             const startAt = audioCtx.currentTime + lead;
             audioStartTime = startAt - (startOffset / audioPlaybackRate);
-            audioSource.start(startAt, startOffset);
+            // ランク戦は1曲最大90秒。90秒を超える音源でも、譜面は変更せず音源だけ90秒で停止する。
+            const rankMaxDuration = (typeof eloRankActive !== 'undefined' && eloRankActive) ? 90 : null;
+            const remainingDuration = rankMaxDuration !== null ? Math.max(0, rankMaxDuration - startOffset) : undefined;
+            if (remainingDuration !== undefined && remainingDuration <= 0) {
+                isAudioPlaying = false;
+                if (currentMode === 'play') endPlayGame(true);
+                return;
+            }
+            if (remainingDuration !== undefined) {
+                audioSource.start(startAt, startOffset, remainingDuration);
+            } else {
+                audioSource.start(startAt, startOffset);
+            }
             isAudioPlaying = true;
 
             if (hasMV && mvVideo) {
                 mvVideo.currentTime = startOffset;
+                // ランク戦ではMVも90秒地点を超えて再生しない
+                if (typeof eloRankActive !== 'undefined' && eloRankActive && mvVideo.duration) {
+                    mvVideo.currentTime = Math.min(startOffset, 90, Math.max(0, mvVideo.duration - 0.01));
+                }
                 mvVideo.playbackRate = audioPlaybackRate;
                 mvLastSeekAt = performance.now();
                 mvSeekStartedAt = 0;
@@ -3806,7 +3993,8 @@
             }
 
             audioSource.onended = () => {
-                if (isAudioPlaying && getCurrentAudioTime() >= audioBuffer.duration - 0.1) {
+                const endedAtRankLimit = (typeof eloRankActive !== 'undefined' && eloRankActive) && getCurrentAudioTime() >= 89.9;
+                if (isAudioPlaying && (endedAtRankLimit || getCurrentAudioTime() >= audioBuffer.duration - 0.1)) {
                     isAudioPlaying = false;
                     audioPauseOffset = 0;
                     if (currentMode === 'play') endPlayGame(true); else setEditorPlayIcon(false);
@@ -3881,7 +4069,7 @@
         }
 
         function loadDemoAudio(keepChart) {
-            if (dojoActive()) { showToast('段位道場の挑戦中は、曲や譜面を変更できません', 'warning'); return; }
+            if (dojoActive() || eloRankActive) { showToast(eloRankActive ? 'ランク挑戦中は、曲や譜面を変更できません' : '段位道場の挑戦中は、曲や譜面を変更できません', 'warning'); return; }
             initAudioContext();
             
             if (mvVideo) {
@@ -5487,7 +5675,7 @@
         function applyChartFromLibrary(index) {
             const entry = chartLibrary[index];
             if (!entry) return;
-            if (dojoActive()) return;
+            if (dojoActive() || eloRankActive) return;
             currentChart = entry.chart;
             const bpmInput = document.getElementById('editor-bpm');
             if (bpmInput && currentChart.bpm) bpmInput.value = currentChart.bpm;
@@ -5721,7 +5909,7 @@
         // ---------- ★レーティングの自動計算 ----------
         // 単純なノーツ数ではなく、「一か所に固まっているか、ばらけているか(集中度)」と
         // 「連打(同じレーンへの高速な連続入力)」を軸に、同時押し・ロング率・BPM・速度変化も
-        // 加味して星の数(0.00〜10.00)を機械的に見積もる。公式のような厳密な指標ではなく、
+        // 加味して星の数(0.00〜15.00)を機械的に見積もる。公式のような厳密な指標ではなく、
         // 「だいたいこれくらいの難しさ」を数値で比較できるようにするための目安。
         function computeStarRating(chart, difficultyKey) {
             const notes = (chart.notes || []).filter(n => n && Number.isFinite(n.time));
@@ -5793,8 +5981,8 @@
             const diffMultiplier = STAR_DIFF_MULTIPLIER[normalizeDifficulty(difficultyKey)] ?? 1;
             raw *= diffMultiplier;
 
-            // 上限を10に切り詰めず、10.00を超えて「明らかにもっと難しい」場合はそのまま超過した数値を返す
-            // (表示側で 10.00 を超えていたら "10+" と出す)
+            // 上限を15に切り詰めず、15.00を超えて「明らかにもっと難しい」場合はそのまま超過した数値を返す
+            // (表示側で 15.00 を超えていたら "15+" と出す)
             const stars = Math.max(0, Math.log2(raw + 1) * 2.1);
             return Math.round(stars * 100) / 100;
         }
@@ -5860,10 +6048,10 @@
             showToast(`難易度を ${DIFFICULTIES[distSuggestedDifficulty.key].label} に設定しました(目安 ★${formatStarRating(distSuggestedDifficulty.stars[distSuggestedDifficulty.key])})`, 'success');
         }
 
-        // ★の表示用フォーマット: 10.00を超えていたら "10+" とだけ出す
+        // ★の表示用フォーマット: 15.00を超えていたら "15+" とだけ出す
         function formatStarRating(v) {
             if (typeof v !== 'number' || !Number.isFinite(v)) return '';
-            return v >= 10 ? '10+' : v.toFixed(2);
+            return v >= 15 ? '15+' : v.toFixed(2);
         }
 
         const STAR_RATING_CACHE_KEY = 'beatpulse_star_ratings';
@@ -6002,6 +6190,25 @@
             };
         }
 
+        // 「index」に登録されている曲を、指定件数までさかのぼって取得する(refreshOnlineListの直近100件キャッシュとは別に、
+        // 決定戦でNORMALを探すときなど、母数を広げて探したい場合に使う)
+        async function fetchOnlineEntriesUpTo(limit) {
+            const data = await fbGetValue('index', { lastKeys: limit });
+            const entries = [];
+            if (data && typeof data === 'object') {
+                Object.keys(data).forEach(id => {
+                    if (isValidOnlineId(id) && data[id] && typeof data[id] === 'object') entries.push(normalizeOnlineEntry(id, data[id]));
+                });
+            }
+            entries.forEach(e => { // サーバー側に★が無くても、この端末で計算済みならキャッシュから復元する
+                if (e.starRating === null) {
+                    const cached = getCachedStarRating(e.id);
+                    if (cached !== null) { e.starRating = cached; e.starRatingLocal = true; }
+                }
+            });
+            return entries;
+        }
+
         async function refreshOnlineList() {
             const status = document.getElementById('online-status');
             const list = document.getElementById('online-list');
@@ -6127,15 +6334,15 @@
             });
         }
 
-        // ★の数値(0〜10)を色にする: 緑→黄→赤→紫のグラデーションで、8以上は赤紫の発光表示にする
+        // ★の数値(0〜15)を色にする: 緑→黄→赤→紫のグラデーションで、12以上は赤紫の発光表示にする
         function starRatingColor(v) {
-            v = Math.max(0, Math.min(10, Number(v) || 0));
+            v = Math.max(0, Math.min(15, Number(v) || 0));
             const stops = [
-                { at: 0, c: [34, 197, 94] },    // 緑   #22c55e (0〜5はほぼ緑のまま)
-                { at: 5.0, c: [250, 204, 21] }, // 黄   #facc15 (ここからようやく黄色になり始める)
-                { at: 7.0, c: [239, 68, 68] },  // 赤   #ef4444
-                { at: 8.5, c: [168, 85, 247] }, // 紫   #a855f7
-                { at: 10, c: [217, 70, 200] }   // 紫寄りの終点(発光の起点色として使う)
+                { at: 0, c: [34, 197, 94] },    // 緑   #22c55e (0〜7はほぼ緑のまま)
+                { at: 7.0, c: [250, 204, 21] }, // 黄   #facc15 (ここからようやく黄色になり始める)
+                { at: 10.0, c: [239, 68, 68] }, // 赤   #ef4444
+                { at: 12.5, c: [168, 85, 247] },// 紫   #a855f7
+                { at: 15, c: [217, 70, 200] }   // 紫寄りの終点(発光の起点色として使う)
             ];
             for (let i = 0; i < stops.length - 1; i++) {
                 const a = stops[i], b = stops[i + 1];
@@ -6150,7 +6357,7 @@
         }
 
         function applyStarRatingStyle(valueEl, rating) {
-            if (rating >= 8.5) { // 高難易度は赤×紫のグラデーション発光にする
+            if (rating >= 12.5) { // 高難易度は赤×紫のグラデーション発光にする
                 valueEl.classList.add('oc-star-extreme');
                 valueEl.style.color = '';
             } else {
@@ -6221,7 +6428,7 @@
 
         // ----- ダウンロード -----
         async function downloadOnlineChart(entry) {
-            if (dojoActive()) { showToast('段位道場の挑戦中は、曲や譜面を変更できません', 'warning'); return; }
+            if (dojoActive() || eloRankActive) { showToast(eloRankActive ? 'ランク挑戦中は、曲や譜面を変更できません' : '段位道場の挑戦中は、曲や譜面を変更できません', 'warning'); return; }
             if (onlineBusy || !isValidOnlineId(entry.id)) return;
             setOnlineBusy(true);
             try {
@@ -6368,6 +6575,42 @@
             openModal('rank-submit-modal');
         }
 
+        async function registerRankToGlobal(){
+            if(!account){showToast('ランクを登録するにはログインしてください','warning');return;}
+            const tier=tierForElo(eloRankState.elo), uid=currentFirebaseUid()||String(account.uid||'');
+            if(!uid){showToast('アカウントIDを取得できません','error');return;}
+            const name=String(account.key||account.id||getSavedPlayerName()||'Player').slice(0,16);
+            const rec={name,rank:tier.label,baseRank:tier.baseKey,division:tier.division,elo:Math.round(eloRankState.elo),plays:Number(eloRankState.plays)||0,updatedAt:Date.now()};
+            try{setOnlineBusy(true);await fbSetValue(`globalRankings/${uid}`,rec);showToast('グローバルランキングに登録しました！','success');await openGlobalRankRanking();}catch(e){showToast(describeOnlineError(e),'error');}finally{setOnlineBusy(false);}
+        }
+        async function openGlobalRankRanking(){
+            openModal('global-rank-modal');const status=byId('global-rank-status'),list=byId('global-rank-list');if(!status||!list)return;status.textContent='ロード中…';list.innerHTML='';
+            try{const data=await fbGetValue('globalRankings'),rows=[];if(data&&typeof data==='object')Object.keys(data).forEach(uid=>{const d=data[uid];if(d&&Number.isFinite(Number(d.elo))){ const rankText=String(d.rank||'未決定'); const m=rankText.match(/^(.*?)([123])$/); const baseLabel=m?m[1]:rankText; const division=m?Number(m[2]):0; const baseRank=(baseLabel==='ピューセ!'?'pluse':baseLabel); rows.push({uid,name:String(d.name||'???').slice(0,16),rank:rankText,baseRank,division,elo:Number(d.elo),updatedAt:Number(d.updatedAt)||0}); }});rows.sort((a,b)=>(b.elo-a.elo)||(b.updatedAt-a.updatedAt));
+                // 「そのランク」のTOP2を判定。ピューセ!1以上だけウルトラ化。
+                const rankTop2 = new Map();
+                for (const r of rows) {
+                    const key = r.rank;
+                    const count = rankTop2.get(key) || 0;
+                    r.rankPosition = count + 1;
+                    rankTop2.set(key, count + 1);
+                }
+                const me=currentFirebaseUid();status.textContent=rows.length?`全ランク共通・${rows.length}人登録`:'まだ登録者がいません';
+                rows.slice(0,100).forEach((r,i)=>{
+                    const item=el('div','global-rank-row'+(me&&r.uid===me?' mine':''));
+                    item.appendChild(el('div','global-rank-pos',String(i+1)));
+                    const main=el('div','global-rank-main');
+                    const n=el('div','global-rank-name',r.name);
+                    const isUltra = String(r.baseRank||'') === 'pluse' && Number(r.division||0) >= 1 && Number(r.rankPosition||99) <= 2;
+                    if(isUltra)n.classList.add('ultra-pluse');
+                    main.appendChild(n);
+                    main.appendChild(el('div','global-rank-sub',isUltra?'ウルトラピューセ!':r.rank));
+                    item.appendChild(main);
+                    item.appendChild(el('div','global-rank-elo',`ELO ${Math.round(r.elo)}`));
+                    list.appendChild(item);
+                });
+            }catch(e){status.textContent=describeOnlineError(e);}
+        }
+
         async function submitRanking() {
             if (onlineBusy || !rankResult) return;
             if (autoUsedThisRun) { // 念のため。通常はここに来ない
@@ -6483,6 +6726,479 @@
             } catch (err) {
                 status.textContent = describeOnlineError(err);
             }
+        }
+
+        // ---------- ランク(ランダムな曲・★とELOによる段位) ----------
+        const ELO_RANK_KEY = 'beatpulsezq_elo_rank';
+        const ELO_BASE_TIERS = [
+            { key: 'iron', label: 'アイアン', min: 0, color: '#9a9a9a' },
+            { key: 'bronze', label: 'ブロンズ', min: 900, color: '#cd7f32' },
+            { key: 'silver', label: 'シルバー', min: 1100, color: '#c9d2da' },
+            { key: 'gold', label: 'ゴールド', min: 1300, color: '#ffd54a' },
+            { key: 'platinum', label: 'プラチナ', min: 1500, color: '#5fe0c9' },
+            { key: 'diamond', label: 'ダイヤ', min: 1700, color: '#6cb6ff' },
+            { key: 'emerald', label: 'エメラルド', min: 1900, color: '#3ddc84' },
+            { key: 'pluse', label: 'ピューセ!', min: 2100, color: '#ff6ec7' }
+        ];
+        const ELO_TIERS = [];
+        for (let i = 0; i < ELO_BASE_TIERS.length; i++) {
+            const b = ELO_BASE_TIERS[i], next = ELO_BASE_TIERS[i + 1];
+            const start = b.min, end = next ? next.min - 1 : 9999;
+            const step = Math.ceil((end - start + 1) / 3);
+            // 1が一番下、2が中間、3が一番上
+            for (let div = 1; div <= 3; div++) {
+                const min = Math.min(end, start + (div - 1) * step);
+                ELO_TIERS.push({ key: `${b.key}${div}`, baseKey: b.key, label: `${b.label}${div}`, division: div, min, color: b.color, ultra: false });
+            }
+        };
+
+        const ELO_RANK_DEFAULT = 900; // 初期はブロンズの下限からスタート
+        const ELO_PLACEMENT_MATCHES = 2;         // 最初のランクは「段位決定戦」として2回のプレイで決める
+        const ELO_PLACEMENT_STAR = 3;            // 決定戦はいきなり難しい曲ではなく、NORMALくらいの★から
+        const ELO_PLACEMENT_STAR_TOLERANCE = 1.5;
+        const ELO_PLACEMENT_K = 80;              // 決定戦は大きく動かして早めに実力相応のELOに近づける
+        const ELO_NORMAL_K = 32;                 // 決定戦後、通常のランク(表示ELO)を動かす係数
+        const ELO_INTERNAL_K = 40;               // 内部レート(マッチメイキング専用)を動かす係数
+        const ELO_INTERNAL_WINDOW_DAYS = 5;      // 内部レートは直近何日分の成績で計算するか
+        const ELO_INTERNAL_WINDOW_MS = ELO_INTERNAL_WINDOW_DAYS * 24 * 60 * 60 * 1000;
+        const ELO_INTERNAL_STAR_TOLERANCE = 1.5; // 内部レートに応じて選ぶ曲の★の許容幅(足りなければ広げる)
+        const ELO_JUDGE_WEIGHT = { perfect: 1, great: 0.7, good: 0.35, miss: 0 }; // 正確率の計算に使う判定ごとの重み
+        let eloRankState = { elo: ELO_RANK_DEFAULT, plays: 0, promotions: 0, demotions: 0, internalRate: ELO_RANK_DEFAULT, history: [] };
+        let eloRankActive = false;
+        let eloRankContext = null; // { entryId, title, star, songElo, isPlacement }
+        let eloRankBusy = false;
+
+        function tierForElo(elo) {
+            let t = ELO_TIERS[0];
+            for (const tier of ELO_TIERS) { if (elo >= tier.min) t = tier; }
+            return t;
+        }
+        function nextTierForElo(elo) {
+            return ELO_TIERS.find(t => t.min > elo) || null;
+        }
+        // 曲の★難易度(0〜15)を、ELOと比較できるレーティングに変換する(1★ = 100ELO相当)
+        function starToEloRating(star) {
+            return 700 + Math.max(0, Number(star) || 0) * 100;
+        }
+        // starToEloRatingの逆算。内部レートに見合う★難易度の目安を出す
+        function starForRate(rate) {
+            return Math.max(0, (Number(rate) - 700) / 100);
+        }
+        // 内部レート(マッチメイキング専用)の履歴を、直近5日間だけに絞り込む
+        function pruneEloHistory(history) {
+            const now = Date.now();
+            return (Array.isArray(history) ? history : []).filter(h =>
+                h && Number.isFinite(h.t) && Number.isFinite(h.songElo) && Number.isFinite(h.accuracy) &&
+                (now - h.t) >= 0 && (now - h.t) <= ELO_INTERNAL_WINDOW_MS
+            );
+        }
+        // 直近5日間の履歴だけを使ってELO方式で内部レートを計算する。
+        // ランク(表示ELO)とは別の数値で、曲選びのためだけに使う。
+        // ELOの仕組みなので、実力より簡単な曲に成功しても期待値が高く、少ししか上がらない。
+        function computeInternalRate(history) {
+            let rate = ELO_RANK_DEFAULT;
+            const sorted = (Array.isArray(history) ? history : []).slice().sort((a, b) => a.t - b.t);
+            for (const h of sorted) {
+                const expected = 1 / (1 + Math.pow(10, (h.songElo - rate) / 400));
+                rate += ELO_INTERNAL_K * (h.accuracy - expected);
+            }
+            return Math.max(0, Math.round(rate));
+        }
+        // 履歴を刈り込んだうえで内部レートを再計算し、状態に反映する
+        function refreshInternalRate() {
+            eloRankState.history = pruneEloHistory(eloRankState.history);
+            eloRankState.internalRate = computeInternalRate(eloRankState.history);
+            return eloRankState.internalRate;
+        }
+        // PERFECT/GREAT/GOODの内訳とMISS数から正確率を計算する(スコアの倍率などに左右されない)
+        function judgmentAccuracy(result, noteCount) {
+            const total = Math.max(1, Number(noteCount) || 0);
+            const weighted =
+                (Number(result.perfect) || 0) * ELO_JUDGE_WEIGHT.perfect +
+                (Number(result.great) || 0) * ELO_JUDGE_WEIGHT.great +
+                (Number(result.good) || 0) * ELO_JUDGE_WEIGHT.good;
+            return Math.max(0, Math.min(1, weighted / total));
+        }
+        // 候補曲から目標★に近いものを優先して選ぶ。近い候補が無ければ範囲を広げていく
+        function pickSongNearStar(candidates, targetStar, tolerance) {
+            for (let tol = tolerance; tol <= 15; tol += 1.5) {
+                const near = candidates.filter(e => Math.abs(Number(e.starRating) - targetStar) <= tol);
+                if (near.length) return near[Math.floor(Math.random() * near.length)];
+            }
+            return candidates[Math.floor(Math.random() * candidates.length)];
+        }
+
+        // ランク戦では直近の曲を候補から外して、同じ曲が連続して出ないようにする。
+        // 候補が少なすぎる場合は、直前の曲だけは必ず避け、それ以外の履歴は解除する。
+        let eloRecentSongIds = [];
+        const ELO_RECENT_SONG_MEMORY = 5;
+
+        function pickRankSong(candidates, targetStar, tolerance) {
+            if (!Array.isArray(candidates) || !candidates.length) return null;
+            const recent = new Set(eloRecentSongIds);
+            let available = candidates.filter(e => !recent.has(String(e.id)));
+
+            // 同じ曲が連続することだけは必ず防ぐ。
+            if (!available.length && candidates.length > 1 && eloRecentSongIds.length) {
+                const lastId = String(eloRecentSongIds[eloRecentSongIds.length - 1]);
+                available = candidates.filter(e => String(e.id) !== lastId);
+            }
+            if (!available.length) available = candidates;
+
+            const picked = pickSongNearStar(available, targetStar, tolerance);
+            if (picked) {
+                const id = String(picked.id);
+                eloRecentSongIds = eloRecentSongIds.filter(x => x !== id);
+                eloRecentSongIds.push(id);
+                if (eloRecentSongIds.length > ELO_RECENT_SONG_MEMORY) {
+                    eloRecentSongIds.splice(0, eloRecentSongIds.length - ELO_RECENT_SONG_MEMORY);
+                }
+            }
+            return picked;
+        }
+
+        function eloRankStorageKey() {
+            return account ? `beatpulsezq_elo_rank_${account.key}` : ELO_RANK_KEY;
+        }
+        // 保存されている内部レート履歴を検証・整形する(壊れたデータや古すぎる記録を除く)
+        function sanitizeEloHistory(list) {
+            if (!Array.isArray(list)) return [];
+            return pruneEloHistory(list
+                .filter(h => h && Number.isFinite(Number(h.t)) && Number.isFinite(Number(h.songElo)) && Number.isFinite(Number(h.accuracy)))
+                .map(h => ({ t: Math.round(Number(h.t)), songElo: Math.round(Number(h.songElo)), accuracy: Math.max(0, Math.min(1, Number(h.accuracy))) })))
+                .slice(-200);
+        }
+        function loadEloRankLocal() {
+            try {
+                const raw = localStorage.getItem(eloRankStorageKey());
+                if (!raw) return null;
+                const d = JSON.parse(raw);
+                if (!d || !Number.isFinite(Number(d.elo))) return null;
+                return {
+                    elo: Math.max(0, Math.round(Number(d.elo))),
+                    plays: Math.max(0, Math.floor(Number(d.plays) || 0)),
+                    promotions: Math.max(0, Math.floor(Number(d.promotions) || 0)),
+                    demotions: Math.max(0, Math.floor(Number(d.demotions) || 0)),
+                    internalRate: Number.isFinite(Number(d.internalRate)) ? Math.max(0, Math.round(Number(d.internalRate))) : ELO_RANK_DEFAULT,
+                    history: sanitizeEloHistory(d.history)
+                };
+            } catch (e) { return null; }
+        }
+        function saveEloRankLocal() {
+            try { localStorage.setItem(eloRankStorageKey(), JSON.stringify(eloRankState)); } catch (e) {}
+        }
+        async function loadEloRank() {
+            const local = loadEloRankLocal();
+            if (local) eloRankState = local;
+            else eloRankState = { elo: ELO_RANK_DEFAULT, plays: 0, promotions: 0, demotions: 0, internalRate: ELO_RANK_DEFAULT, history: [] };
+            if (account) {
+                try {
+                    const cloud = await fbGetValue(`users/${account.uid}/eloRank`);
+                    if (cloud && typeof cloud === 'object' && Number.isFinite(Number(cloud.elo))) {
+                        eloRankState = {
+                            elo: Math.max(0, Math.round(Number(cloud.elo))),
+                            plays: Math.max(0, Math.floor(Number(cloud.plays) || 0)),
+                            promotions: Math.max(0, Math.floor(Number(cloud.promotions) || 0)),
+                            demotions: Math.max(0, Math.floor(Number(cloud.demotions) || 0)),
+                            internalRate: Number.isFinite(Number(cloud.internalRate)) ? Math.max(0, Math.round(Number(cloud.internalRate))) : ELO_RANK_DEFAULT,
+                            history: sanitizeEloHistory(cloud.history)
+                        };
+                        saveEloRankLocal();
+                    }
+                } catch (e) {}
+            }
+            refreshInternalRate();
+            renderEloRankModal();
+        }
+        async function saveEloRank() {
+            saveEloRankLocal();
+            if (account) {
+                try { await fbSetValue(`users/${account.uid}/eloRank`, eloRankState); } catch (e) {}
+            }
+        }
+
+        function openEloRankModal() {
+            renderEloRankModal();
+            openModal('elo-rank-modal');
+        }
+
+        async function updateLocalUltraRank(tier) {
+            const nameEl = byId('elo-rank-tier-name');
+            const icon = byId('elo-rank-tier-icon');
+            const loggedIn = byId('elo-rank-logged-in');
+            if (!nameEl || !icon || !loggedIn) return;
+            nameEl.classList.remove('ultra-pluse');
+            loggedIn.classList.remove('ultra-rank-panel');
+            if (!tier || tier.baseKey !== 'pluse') return;
+            try {
+                const data = await fbGetValue('globalRankings');
+                const rows = [];
+                if (data && typeof data === 'object') {
+                    Object.keys(data).forEach(uid => {
+                        const d = data[uid];
+                        if (!d || !Number.isFinite(Number(d.elo))) return;
+                        const rankText = String(d.rank || '');
+                        const m = rankText.match(/^(.*?)([123])$/);
+                        const baseLabel = m ? m[1] : rankText;
+                        const baseRank = baseLabel === 'ピューセ!' ? 'pluse' : baseLabel;
+                        if (baseRank === 'pluse') rows.push({ uid, elo:Number(d.elo), rank:rankText });
+                    });
+                }
+                rows.sort((a,b) => b.elo-a.elo);
+                const me = currentFirebaseUid();
+                const mine = rows.find(r => r.uid === me);
+                if (mine && rows.indexOf(mine) < 2) {
+                    nameEl.textContent = 'ウルトラピューセ!';
+                    nameEl.classList.add('ultra-pluse');
+                    icon.classList.add('ultra-pluse');
+                    loggedIn.classList.add('ultra-rank-panel');
+                }
+            } catch (e) { /* ローカルランク表示はオンライン取得失敗時も通常表示 */ }
+        }
+
+        function renderEloRankModal() {
+            const loggedOut = byId('elo-rank-logged-out');
+            const loggedIn = byId('elo-rank-logged-in');
+            if (loggedOut) loggedOut.classList.toggle('hidden', !!account);
+            if (loggedIn) loggedIn.classList.toggle('hidden', !account);
+            if (!account) return;
+
+            const isPlacement = eloRankState.plays < ELO_PLACEMENT_MATCHES;
+            const tier = tierForElo(eloRankState.elo);
+            const next = nextTierForElo(eloRankState.elo);
+            const nameEl = byId('elo-rank-tier-name');
+            const icon = byId('elo-rank-tier-icon');
+            const eloEl = byId('elo-rank-elo');
+            const bar = byId('elo-rank-progress-bar');
+            const progLabel = byId('elo-rank-progress-label');
+            const stats = byId('elo-rank-stats');
+            const startBtn = byId('elo-rank-start-btn');
+            const placementBadge = byId('elo-rank-placement-badge');
+            const formHint = byId('elo-rank-form-hint');
+            const adminPanel = byId('elo-admin-rank-panel');
+            const adminSelect = byId('elo-admin-rank-select');
+            const adminElo = byId('elo-admin-elo-input');
+
+            if (adminPanel) adminPanel.classList.toggle('hidden', !isAdmin());
+            if (isAdmin() && adminSelect) {
+                const currentKey = tier.key;
+                adminSelect.innerHTML = ELO_TIERS.map(t => `<option value="${t.key}"${t.key === currentKey ? ' selected' : ''}>${t.label} (ELO ${t.min}+)</option>`).join('');
+                if (adminElo && document.activeElement !== adminElo) adminElo.value = Math.round(eloRankState.elo);
+            }
+
+            if (placementBadge) {
+                placementBadge.classList.toggle('hidden', !isPlacement);
+                if (isPlacement) placementBadge.textContent = `段位決定戦 ${eloRankState.plays}/${ELO_PLACEMENT_MATCHES} ・ まずは${ELO_PLACEMENT_MATCHES}回プレイして初期ランクを決めよう`;
+            }
+            if (nameEl) { nameEl.textContent = isPlacement ? '未決定' : tier.label; nameEl.style.color = isPlacement ? '' : tier.color; nameEl.classList.toggle('ultra-pluse', !isPlacement && tier.baseKey === 'pluse'); }
+            if (icon) icon.style.color = isPlacement ? '' : tier.color;
+            if (!isPlacement) updateLocalUltraRank(tier);
+            if (eloEl) eloEl.textContent = isPlacement ? '段位決定戦中' : `ELO ${Math.round(eloRankState.elo)}`;
+            if (bar) {
+                const span = next ? (next.min - tier.min) : 200;
+                const pct = isPlacement ? 0 : (next ? Math.max(0, Math.min(100, ((eloRankState.elo - tier.min) / span) * 100)) : 100);
+                bar.style.width = `${pct}%`;
+                bar.style.background = tier.color;
+            }
+            if (progLabel) progLabel.textContent = isPlacement
+                ? `あと ${ELO_PLACEMENT_MATCHES - eloRankState.plays} 回で決定`
+                : (next ? `次の ${next.label} まで あと ${Math.max(0, next.min - eloRankState.elo)} ELO` : '最高ランクです！');
+            if (stats) stats.textContent = `挑戦回数 ${eloRankState.plays} ・ 昇格 ${eloRankState.promotions} ・ 降格 ${eloRankState.demotions}`;
+            if (formHint) {
+                const rate = refreshInternalRate();
+                formHint.textContent = isPlacement
+                    ? `次の曲の目安: ★${formatStarRating(ELO_PLACEMENT_STAR)} 前後(決定戦はNORMAL程度から)`
+                    : `次に来る曲の目安: ★${formatStarRating(starForRate(rate))} 前後(直近${ELO_INTERNAL_WINDOW_DAYS}日間の調子で変動)`;
+            }
+            if (startBtn) startBtn.disabled = eloRankBusy || eloRankActive;
+        }
+
+        // ランダムに、★が判明しているオンラインの曲を選んで読み込む
+        // ランク挑戦中は、オート演奏を強制的にOFFにしてトグル自体も操作できなくする(管理者は例外で使用可能)
+        function lockAutoPlayForRank() {
+            if (isAdmin()) return; // 管理者はランク中もオート演奏を使える
+            if (autoPlayEnabled) setAutoPlay(false);
+            document.querySelectorAll('.auto-toggle').forEach(cb => { cb.disabled = true; });
+        }
+        function unlockAutoPlayForRank() {
+            document.querySelectorAll('.auto-toggle').forEach(cb => { cb.disabled = false; });
+        }
+
+        // ランク戦: 曲探し〜ダウンロード中に出す演出付きローディング
+        function showEloRankLoading(sub) {
+            const ov = byId('elo-rank-loading-overlay');
+            if (!ov) return;
+            const subEl = byId('elo-rank-loading-sub');
+            if (subEl) subEl.textContent = sub || '曲を探しています';
+            ov.classList.add('show');
+        }
+        function updateEloRankLoading(sub) {
+            const subEl = byId('elo-rank-loading-sub');
+            if (subEl) subEl.textContent = sub;
+        }
+        function hideEloRankLoading() {
+            const ov = byId('elo-rank-loading-overlay');
+            if (ov) ov.classList.remove('show');
+        }
+
+        async function adminApplyEloRank() {
+            if (!isAdmin()) { showToast('管理者のみ変更できます', 'warning'); return; }
+            const select = byId('elo-admin-rank-select');
+            const input = byId('elo-admin-elo-input');
+            if (!select || !input) return;
+            const typed = Number(input.value);
+            const tier = ELO_TIERS.find(t => t.key === select.value) || ELO_TIERS[0];
+            const nextElo = Number.isFinite(typed) && input.value.trim() !== ''
+                ? Math.max(0, Math.min(9999, Math.round(typed)))
+                : tier.min;
+            eloRankState.elo = nextElo;
+            eloRankState.plays = Math.max(ELO_PLACEMENT_MATCHES, Number(eloRankState.plays) || 0);
+            eloRankState.internalRate = nextElo;
+            eloRankState.history = Array.isArray(eloRankState.history) ? eloRankState.history : [];
+            saveEloRank();
+            try { if (account) await fbSetValue(`users/${account.uid}/eloRank`, eloRankState); } catch (e) {}
+            renderEloRankModal();
+            showToast(`管理者設定: ${tierForElo(nextElo).label} / ELO ${nextElo}`, 'success');
+        }
+
+        async function startEloRankMatch() {
+            if (eloRankBusy || eloRankActive) return;
+            if (!account) { showToast('ランクに挑戦するにはログインしてください', 'warning'); return; }
+            if (dojoActive()) { showToast('段位道場の挑戦中は、ランクに挑戦できません', 'warning'); return; }
+            if (room) { showToast('フレンドとのセッション中は、ランクに挑戦できません', 'warning'); return; }
+            eloRankBusy = true;
+            renderEloRankModal();
+            showEloRankLoading('曲を探しています');
+            try {
+                if (!onlineEntries.length) await refreshOnlineList();
+                let candidates = onlineEntries.filter(e => Number.isFinite(e.starRating));
+                if (!candidates.length) {
+                    showToast('ランクに使える曲が見つかりませんでした。時間をおいて試してください', 'warning');
+                    return;
+                }
+                // 最初の2戦は「段位決定戦」。いきなり難しい曲を出さず、必ずNORMAL表記の曲を選ぶ
+                const isPlacement = eloRankState.plays < ELO_PLACEMENT_MATCHES;
+                let entry;
+                if (isPlacement) {
+                    let normals = candidates.filter(e => normalizeDifficulty(e.difficulty) === 'normal');
+                    if (!normals.length) {
+                        // 直近100件のキャッシュにNORMALが無いだけの場合がある(同じ曲名でHARDなど別難易度だけが
+                        // 直近アップロード分に含まれ、NORMALはそれより古い場合など)。母数を広げて探し直す
+                        updateEloRankLoading('NORMALの曲をさらに探しています');
+                        try {
+                            const deepEntries = await fetchOnlineEntriesUpTo(2000);
+                            let deepCandidates = deepEntries.filter(e => Number.isFinite(e.starRating));
+                            normals = deepCandidates.filter(e => normalizeDifficulty(e.difficulty) === 'normal');
+                        } catch (e) {}
+                    }
+                    if (!normals.length) {
+                        showToast('NORMAL表記の曲が見つからないため、ランクに挑戦できません。時間をおいて試してください', 'warning');
+                        return;
+                    }
+                    // 決定戦(最初の2回)は必ずNORMAL表記の曲の中からのみ選ぶ(他難易度へのフォールバックはしない)
+                    entry = pickRankSong(normals, ELO_PLACEMENT_STAR, 15);
+                } else {
+                    entry = pickRankSong(candidates, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE);
+                }
+                closeModal('elo-rank-modal');
+                updateEloRankLoading('譜面をダウンロードしています');
+                await downloadOnlineChart(entry);
+                eloRankActive = true;
+                lockAutoPlayForRank(); // ランク挑戦中はオート演奏を使えないようにする
+                eloRankContext = {
+                    entryId: entry.id,
+                    title: entry.title,
+                    star: entry.starRating,
+                    songElo: starToEloRating(entry.starRating),
+                    isPlacement: isPlacement
+                };
+                const placementNote = isPlacement ? `段位決定戦 ${eloRankState.plays + 1}/${ELO_PLACEMENT_MATCHES}！` : '';
+                showToast(`${placementNote}ランク戦スタート！「${entry.title}」(★${formatStarRating(entry.starRating)})。準備ができたらプレイを開始しよう`, 'success');
+            } catch (err) {
+                showToast(describeOnlineError(err), 'error');
+            } finally {
+                eloRankBusy = false;
+                renderEloRankModal();
+                hideEloRankLoading();
+            }
+        }
+
+        // プレイ終了時に呼ばれる。ランク戦中でなければ何もしない
+        function eloRankOnEndPlay(result) {
+            if (!eloRankActive) return;
+            const ctx = eloRankContext;
+            eloRankActive = false;
+            eloRankContext = null;
+            unlockAutoPlayForRank();
+            if (!ctx) return;
+            if (!account) return;
+            if (result.auto && !isAdmin()) {
+                showToast('オート演奏を使ったため、ランク戦の結果は反映されません', 'warning');
+                return;
+            }
+            const chart = currentChart;
+            if (!chart || !chart.online || chart.online.id !== ctx.entryId) {
+                showToast('曲が変更されたため、ランク戦の結果は反映されません', 'warning');
+                return;
+            }
+            const noteCount = Math.max(1, chart.notes.length);
+            // 正確率はスコアではなく、PERFECT/GREAT/GOODの内訳とMISS数から判断する
+            const accuracy = judgmentAccuracy(result, noteCount);
+
+            const isPlacement = !!ctx.isPlacement;
+            const before = eloRankState.elo;
+            const beforeTier = tierForElo(before);
+            const expected = 1 / (1 + Math.pow(10, (ctx.songElo - before) / 400));
+            const K = isPlacement ? ELO_PLACEMENT_K : ELO_NORMAL_K; // 決定戦は大きく動かして早く実力相応の値に近づける
+            const delta = Math.round(K * (accuracy - expected));
+            const after = Math.max(0, before + delta);
+            const afterTier = tierForElo(after);
+
+            eloRankState.elo = after;
+            eloRankState.plays = (eloRankState.plays || 0) + 1;
+            const justPlaced = isPlacement && eloRankState.plays >= ELO_PLACEMENT_MATCHES;
+            if (!isPlacement) {
+                if (afterTier.min > beforeTier.min) eloRankState.promotions = (eloRankState.promotions || 0) + 1;
+                else if (afterTier.min < beforeTier.min) eloRankState.demotions = (eloRankState.demotions || 0) + 1;
+            }
+
+            // 内部レート(マッチメイキング専用・ランクとは別)は、直近5日間の履歴に今回の結果を加えて再計算する。
+            // ELOの仕組みなので、実力より簡単な曲に成功しても期待値が高く、少ししか上がらない
+            eloRankState.history = pruneEloHistory(eloRankState.history);
+            eloRankState.history.push({ t: Date.now(), songElo: ctx.songElo, accuracy });
+            eloRankState.history = eloRankState.history.slice(-200);
+            eloRankState.internalRate = computeInternalRate(eloRankState.history);
+
+            saveEloRank();
+            showEloRankResult(ctx, { accuracy, delta, before, after, beforeTier, afterTier, isPlacement, justPlaced });
+        }
+
+        function showEloRankResult(ctx, r) {
+            const songEl = byId('elo-rank-result-song');
+            const deltaEl = byId('elo-rank-result-delta');
+            const tierEl = byId('elo-rank-result-tier');
+            const detailEl = byId('elo-rank-result-detail');
+            if (songEl) songEl.textContent = `${ctx.title}(★${formatStarRating(ctx.star)})`;
+            if (deltaEl) {
+                deltaEl.textContent = `${r.delta >= 0 ? '+' : ''}${r.delta} ELO`;
+                deltaEl.style.color = r.delta >= 0 ? 'var(--success)' : 'var(--critical)';
+            }
+            if (tierEl) {
+                if (r.isPlacement && !r.justPlaced) {
+                    tierEl.textContent = `段位決定戦 ${eloRankState.plays}/${ELO_PLACEMENT_MATCHES} ・ もう${ELO_PLACEMENT_MATCHES - eloRankState.plays}回プレイしよう`;
+                    tierEl.style.color = '';
+                } else {
+                    const changed = r.afterTier.key !== r.beforeTier.key;
+                    const prefix = r.justPlaced ? '初期ランクが決定しました！ ' : '';
+                    tierEl.textContent = prefix + (changed
+                        ? `${r.beforeTier.label} → ${r.afterTier.label}${r.afterTier.min > r.beforeTier.min ? '(昇格！)' : '(降格)'}`
+                        : `${r.afterTier.label}(ELO ${Math.round(r.after)})`);
+                    tierEl.style.color = r.afterTier.color;
+                }
+            }
+            if (detailEl) detailEl.textContent = `正確率 ${(r.accuracy * 100).toFixed(1)}% ・ ELO ${Math.round(r.before)} → ${Math.round(r.after)}`;
+            renderEloRankModal();
+            openModal('elo-rank-result-modal');
         }
 
         // ---------- 既存のオンライン版から移植したロジック(アカウント / アップロード / 管理 / ドロップ) ----------
@@ -6745,9 +7461,34 @@
         }
 
         async function loadFiles(files) {
-            if (dojoActive()) { showToast('段位道場の挑戦中は、曲や譜面を変更できません', 'warning'); return; }
             const charts = files.filter(isChartFile);
             const medias = files.filter(f => !isChartFile(f) && isMediaFile(f));
+
+            // 段位道場中は従来どおり曲・譜面とも変更不可。
+            if (dojoActive()) {
+                showToast('段位道場の挑戦中は、曲や譜面を変更できません', 'warning');
+                return;
+            }
+
+            // ランク戦中は「譜面」は固定するが、「曲」だけ差し替え可能にする。
+            // オンライン側に音源が無い譜面でも、プレイヤーがローカルのMP3/WAV/MP4等を
+            // 選べるようにする。これにより現在のランク戦用譜面は一切変更されない。
+            if (eloRankActive) {
+                if (!charts.length && !medias.length) {
+                    showToast('曲ファイル(MP3/WAV/OGG/MP4など)を選んでください。ランク戦中は譜面JSONは変更できません', 'warning');
+                    return;
+                }
+                if (charts.length) {
+                    showToast('ランク戦中は譜面を変更できません。選択した曲ファイルだけ読み込みます', 'warning');
+                }
+                if (medias.length) {
+                    await loadAudioFile(medias[0]);
+                    showToast('ランク戦の譜面はそのまま、曲だけ差し替えました', 'success');
+                }
+                closeModal('chart-import-export-modal');
+                return;
+            }
+
             if (!charts.length && !medias.length) {
                 showToast('対応していないファイルです(曲・MV・譜面JSONを選んでください)', 'warning');
                 return;
@@ -10879,6 +11620,10 @@
             stopBanWatch();
             account = null;
             myRank = '';
+            eloRankActive = false;
+            eloRankContext = null;
+            unlockAutoPlayForRank();
+            eloRankState = loadEloRankLocal() || { elo: ELO_RANK_DEFAULT, plays: 0, promotions: 0, demotions: 0 };
             deleteCookie(SESSION_KEY);
             settings.beta = false;
             saveLocalSettings();
@@ -10935,6 +11680,7 @@
             } catch (e) {}
 
             await loadMyRank();
+            await loadEloRank();
             updateAccountUI();
             if (betaEnabled()) startBetaListeners();
             startDojoInbox();
@@ -11052,7 +11798,7 @@
 
         // ---------- Icons: Fluent System Icons (インラインSVG) ----------
         // マークアップ側は <span class="ms">名前</span> のまま。名前を SVG に置き換える(動的に追加された要素も対象)
-        const ICONS = {"add":["<path d=\"M10 2.5c.28 0 .5.22.5.5v6.5H17a.5.5 0 0 1 0 1h-6.5V17a.5.5 0 0 1-1 0v-6.5H3a.5.5 0 0 1 0-1h6.5V3c0-.28.22-.5.5-.5\"/>","<path d=\"M10 2.25c.41 0 .75.34.75.75v6.25H17a.75.75 0 0 1 0 1.5h-6.25V17a.75.75 0 0 1-1.5 0v-6.25H3a.75.75 0 0 1 0-1.5h6.25V3c0-.41.34-.75.75-.75\"/>"],"archive":["<path d=\"M8.5 10a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM2 4.75C2 3.78 2.78 3 3.75 3h12.5c.97 0 1.75.78 1.75 1.75v1.5c0 .7-.4 1.3-1 1.58V14a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7.83c-.6-.28-1-.88-1-1.58zM3.75 4a.75.75 0 0 0-.75.75v1.5c0 .41.34.75.75.75h12.5c.41 0 .75-.34.75-.75v-1.5a.75.75 0 0 0-.75-.75zM4 8v6c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V8z\"/>","<path d=\"M2 4.25C2 3.56 2.56 3 3.25 3h13.5c.69 0 1.25.56 1.25 1.25v1.5C18 6.44 17.44 7 16.75 7H3.25C2.56 7 2 6.44 2 5.75zM3 8h14v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3zm5.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z\"/>"],"auto_awesome":["<path d=\"M7.4 12.8a1.04 1.04 0 0 0 1.59-.51l.45-1.37a2.3 2.3 0 0 1 1.47-1.48l1.4-.45A1.04 1.04 0 0 0 12.25 7l-1.37-.45A2.3 2.3 0 0 1 9.4 5.08L8.95 3.7a1 1 0 0 0-.82-.68 1.04 1.04 0 0 0-1.15.7l-.46 1.4a2.3 2.3 0 0 1-1.44 1.45L3.7 7a1.04 1.04 0 0 0 .02 1.97l1.37.45a2.3 2.3 0 0 1 1.48 1.48l.46 1.4q.1.3.38.5m.08-7.4.53-1.38.44 1.37a3.3 3.3 0 0 0 2.12 2.12l1.4.53-1.38.45a3.3 3.3 0 0 0-2.11 2.11l-.53 1.38-.45-1.38a3.3 3.3 0 0 0-2.1-2.12L4 7.96 5.4 7.5a3.4 3.4 0 0 0 2.08-2.12m6.06 11.45a.8.8 0 0 0 1.22-.4l.25-.76a1.1 1.1 0 0 1 .68-.68l.77-.25a.8.8 0 0 0-.02-1.52l-.77-.25a1.1 1.1 0 0 1-.68-.68l-.25-.77a.8.8 0 0 0-1.52.01l-.24.76a1.1 1.1 0 0 1-.67.68l-.77.25a.8.8 0 0 0 0 1.52l.77.25a1.1 1.1 0 0 1 .68.68l.25.77q.09.25.3.4m-.92-2.8-.18-.05.19-.06a2.1 2.1 0 0 0 1.3-1.32l.06-.18.05.18a2 2 0 0 0 1.32 1.32l.2.06-.18.06a2 2 0 0 0-1.32 1.32l-.06.18-.06-.18a2 2 0 0 0-1.32-1.32\"/>","<path d=\"M7.4 12.8a1.04 1.04 0 0 0 1.59-.51l.45-1.37a2.3 2.3 0 0 1 1.47-1.48l1.4-.45A1.04 1.04 0 0 0 12.25 7l-1.37-.45A2.3 2.3 0 0 1 9.4 5.08L8.95 3.7a1 1 0 0 0-.82-.68 1.04 1.04 0 0 0-1.15.7l-.46 1.4a2.3 2.3 0 0 1-1.44 1.45L3.7 7a1.04 1.04 0 0 0 .02 1.97l1.37.45a2.3 2.3 0 0 1 1.48 1.48l.46 1.4q.1.3.38.5m6.14 4.05a.8.8 0 0 0 1.22-.4l.25-.76a1.1 1.1 0 0 1 .68-.68l.77-.25a.8.8 0 0 0-.02-1.52l-.77-.25a1.1 1.1 0 0 1-.68-.68l-.25-.77a.8.8 0 0 0-1.52.01l-.24.76a1.1 1.1 0 0 1-.67.68l-.77.25a.8.8 0 0 0 0 1.52l.77.25a1.1 1.1 0 0 1 .68.68l.25.77q.09.25.3.4\"/>"],"auto_fix_high":["<path d=\"M16.5 2c.28 0 .5.22.5.5V3h.5a.5.5 0 0 1 0 1H17v.5a.5.5 0 0 1-1 0V4h-.5a.5.5 0 1 1 0-1h.5v-.5c0-.28.22-.5.5-.5m-10 4a.5.5 0 0 0 0-1H6v-.5a.5.5 0 0 0-1 0V5h-.5a.5.5 0 0 0 0 1H5v.5a.5.5 0 0 0 1 0V6zm9 9a.5.5 0 0 0 0-1H15v-.5a.5.5 0 0 0-1 0v.5h-.5a.5.5 0 1 0 0 1h.5v.5a.5.5 0 1 0 1 0V15zm-2.07-8.43a1.9 1.9 0 0 0-2.7 0l-8.17 8.16a1.91 1.91 0 1 0 2.7 2.7l8.17-8.16c.75-.74.75-1.96 0-2.7m-2 .7a.91.91 0 0 1 1.3 1.3l-.48.47-1.3-1.29zm-1.18 1.19 1.3 1.29-6.99 6.98a.91.91 0 0 1-1.3-1.29z\"/>","<path d=\"M17 2.5a.5.5 0 0 0-1 0V3h-.5a.5.5 0 0 0 0 1h.5v.5a.5.5 0 0 0 1 0V4h.5a.5.5 0 0 0 0-1H17zm-10 3a.5.5 0 0 1-.5.5H6v.5a.5.5 0 0 1-1 0V6h-.5a.5.5 0 0 1 0-1H5v-.5a.5.5 0 0 1 1 0V5h.5c.28 0 .5.22.5.5m9 9a.5.5 0 0 1-.5.5H15v.5a.5.5 0 0 1-1 0V15h-.5a.5.5 0 0 1 0-1h.5v-.5a.5.5 0 0 1 1 0v.5h.5c.28 0 .5.22.5.5m-2.57-7.93a1.9 1.9 0 0 0-2.7 0l-.48.47 2.7 2.71.48-.48c.75-.74.75-1.96 0-2.7m-1.18 3.89-2.7-2.71-6.99 6.98a1.91 1.91 0 1 0 2.7 2.7z\"/>"],"check":["<path d=\"M3.37 10.17a.5.5 0 0 0-.74.66l4 4.5c.19.22.52.23.72.02l10.5-10.5a.5.5 0 0 0-.7-.7L7.02 14.27z\"/>","<path d=\"M7.03 13.9 3.56 10a.75.75 0 0 0-1.12 1l4 4.5c.29.32.79.34 1.09.03l10.5-10.5a.75.75 0 0 0-1.06-1.06z\"/>"],"check_circle":["<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 1a7 7 0 1 0 0 14 7 7 0 0 0 0-14m3.36 4.65c.17.17.2.44.06.63l-.06.07-4 4a.5.5 0 0 1-.64.07l-.07-.06-2-2a.5.5 0 0 1 .63-.77l.07.06L9 11.3l3.65-3.65c.2-.2.51-.2.7 0\"/>","<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m3.36 5.65a.5.5 0 0 0-.64-.06l-.07.06L9 11.3 7.35 9.65l-.07-.06a.5.5 0 0 0-.7.7l.07.07 2 2 .07.06c.17.11.4.11.56 0l.07-.06 4-4 .07-.08a.5.5 0 0 0-.06-.63\"/>"],"close":["<path d=\"m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07z\"/>","<path d=\"m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08z\"/>"],"content_copy":["<path d=\"M7 7H5.5C4.67 7 4 7.67 4 8.5v6c0 .83.67 1.5 1.5 1.5h4c.65 0 1.2-.42 1.41-1h1.04a2.5 2.5 0 0 1-2.45 2h-4A2.5 2.5 0 0 1 3 14.5v-6A2.5 2.5 0 0 1 5.5 6H7zm7.5-4A2.5 2.5 0 0 1 17 5.5v6a2.5 2.5 0 0 1-2.5 2.5h-4A2.5 2.5 0 0 1 8 11.5v-6A2.5 2.5 0 0 1 10.5 3zm-4 1C9.67 4 9 4.67 9 5.5v6c0 .83.67 1.5 1.5 1.5h4c.83 0 1.5-.67 1.5-1.5v-6c0-.83-.67-1.5-1.5-1.5z\"/>","<path d=\"M7 11.5a3.5 3.5 0 0 0 3.5 3.5h1.45a2.5 2.5 0 0 1-2.45 2h-4A2.5 2.5 0 0 1 3 14.5v-6A2.5 2.5 0 0 1 5.5 6H7zM14.5 3A2.5 2.5 0 0 1 17 5.5v6a2.5 2.5 0 0 1-2.5 2.5h-4A2.5 2.5 0 0 1 8 11.5v-6A2.5 2.5 0 0 1 10.5 3z\"/>"],"dark_mode":["<path d=\"M15.5 13.5A6.98 6.98 0 0 1 4 14.39c2.83-1.09 4.56-2.42 5.6-4.4 1.04-2 1.33-4.16.75-6.9q1.36.17 2.58.87a7 7 0 0 1 2.55 9.54M5.45 16.92A7.98 7.98 0 1 0 9.88 2.04a.6.6 0 0 0-.61.73c.69 2.82.43 4.88-.55 6.76-.94 1.78-2.55 3.03-5.55 4.1a.6.6 0 0 0-.3.9 8 8 0 0 0 2.59 2.39\"/>","<path d=\"M16.36 14a7.98 7.98 0 0 1-13.48.54.6.6 0 0 1 .29-.9c3-1.08 4.61-2.33 5.55-4.11.98-1.88 1.24-3.94.55-6.76a.6.6 0 0 1 .61-.73A7.98 7.98 0 0 1 16.36 14\"/>"],"data_object":["<path d=\"M6.5 3A2.5 2.5 0 0 0 4 5.5v2.88c0 .5-.28.95-.72 1.17a.5.5 0 0 0 0 .9c.44.22.72.68.72 1.17v2.88A2.5 2.5 0 0 0 6.5 17a.5.5 0 0 0 0-1A1.5 1.5 0 0 1 5 14.5v-2.88c0-.62-.24-1.2-.66-1.62.42-.42.66-1 .66-1.62V5.5C5 4.67 5.67 4 6.5 4a.5.5 0 0 0 0-1m7 0A2.5 2.5 0 0 1 16 5.5v2.88c0 .5.28.95.72 1.17a.5.5 0 0 1 0 .9 1.3 1.3 0 0 0-.72 1.17v2.88a2.5 2.5 0 0 1-2.5 2.5.5.5 0 0 1 0-1c.83 0 1.5-.67 1.5-1.5v-2.88c0-.62.24-1.2.66-1.62A2.3 2.3 0 0 1 15 8.38V5.5c0-.83-.67-1.5-1.5-1.5a.5.5 0 0 1 0-1\"/>","<path d=\"M3.5 5.75A2.75 2.75 0 0 1 6.23 3a.75.75 0 0 1 0 1.5C5.55 4.5 5 5.06 5 5.75L5 8.38c0 .6-.21 1.17-.58 1.62.37.45.58 1.02.58 1.62v2.63c0 .7.56 1.25 1.25 1.25a.75.75 0 1 1 0 1.5 2.75 2.75 0 0 1-2.75-2.75v-2.63c0-.4-.22-.76-.57-.94a.75.75 0 0 1 0-1.36c.35-.18.57-.54.57-.94zm13 0A2.75 2.75 0 0 0 13.77 3a.75.75 0 0 0 0 1.5c.69 0 1.25.56 1.25 1.25L15 8.38c0 .6.21 1.17.58 1.62a2.6 2.6 0 0 0-.58 1.62v2.63c0 .7-.56 1.25-1.25 1.25a.75.75 0 1 0 0 1.5 2.75 2.75 0 0 0 2.75-2.75v-2.63c0-.4.22-.76.57-.94a.75.75 0 0 0 0-1.36 1.1 1.1 0 0 1-.57-.94z\"/>"],"delete":["<path d=\"M8.5 4h3a1.5 1.5 0 0 0-3 0m-1 0a2.5 2.5 0 0 1 5 0h5a.5.5 0 0 1 0 1h-1.05l-1.2 10.34A3 3 0 0 1 12.27 18H7.73a3 3 0 0 1-2.98-2.66L3.55 5H2.5a.5.5 0 0 1 0-1zM5.74 15.23A2 2 0 0 0 7.73 17h4.54a2 2 0 0 0 1.99-1.77L15.44 5H4.56zM8.5 7.5c.28 0 .5.22.5.5v6a.5.5 0 0 1-1 0V8c0-.28.22-.5.5-.5M12 8a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z\"/>","<path d=\"M8.5 4h3a1.5 1.5 0 0 0-3 0m-1 0a2.5 2.5 0 0 1 5 0h5a.5.5 0 0 1 0 1h-1.05l-1.2 10.34A3 3 0 0 1 12.27 18H7.73a3 3 0 0 1-2.98-2.66L3.55 5H2.5a.5.5 0 0 1 0-1zM9 8a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0zm2.5-.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 1 0V8a.5.5 0 0 0-.5-.5\"/>"],"download":["<path d=\"M15.5 17a.5.5 0 0 1 .09 1H4.5a.5.5 0 0 1-.09-1H15.5M10 2a.5.5 0 0 1 .5.41V14.3l3.64-3.65a.5.5 0 0 1 .64-.06l.07.06c.17.17.2.44.06.63l-.06.07-4.5 4.5a.5.5 0 0 1-.25.14L10 16a.5.5 0 0 1-.4-.2l-4.46-4.45a.5.5 0 0 1 .64-.76l.07.06 3.65 3.64V2.5c0-.27.22-.5.5-.5\"/>","<path d=\"M15.24 16.5a.75.75 0 0 1 .1 1.5H4.76a.75.75 0 0 1-.1-1.5h10.6M10 2c.38 0 .7.28.75.65v10.3l2.97-2.98c.27-.26.68-.29.98-.07l.08.07c.27.27.3.68.07.98l-.07.08-4.24 4.25-.07.07-.1.05-.03.03-.1.03-.11.03-.07.01H10l-.15-.01-.08-.03a1 1 0 0 1-.26-.14l-4.29-4.29A.75.75 0 0 1 6.2 9.9l.08.07 2.97 2.97V2.75c0-.41.34-.75.75-.75\"/>"],"edit_note":["<path d=\"M11.5 8H16v-.59a2 2 0 0 0-.06-.4V7a1.5 1.5 0 0 0-.38-.65l-3.91-3.91A1.5 1.5 0 0 0 10.59 2H6a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2.22l-.01-.03A2 2 0 0 1 8 17H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h4v3.5c0 .83.67 1.5 1.5 1.5m0-1a.5.5 0 0 1-.5-.5V3.2L14.8 7zm3.3 2.55a1.87 1.87 0 1 1 2.65 2.64l-4.83 4.83a2 2 0 0 1-1.02.58l-1.5.37a.9.9 0 0 1-1.07-1.07l.37-1.5q.15-.6.58-1.02z\"/>","<path d=\"M10 6.5V2H5.5C4.67 2 4 2.67 4 3.5v13c0 .83.67 1.5 1.5 1.5h2.72a2 2 0 0 1-.16-1.35l.37-1.5a3 3 0 0 1 .84-1.48l4.83-4.83c.53-.53 1.21-.8 1.9-.84h-4.5A1.5 1.5 0 0 1 10 6.5m1 0V2.25L15.75 7H11.5a.5.5 0 0 1-.5-.5m6.45 3.05a1.87 1.87 0 0 0-2.64 0l-4.83 4.83a2 2 0 0 0-.58 1.02l-.37 1.5a.9.9 0 0 0 1.08 1.07l1.5-.37q.58-.16 1.01-.58l4.83-4.83c.73-.73.73-1.91 0-2.64\"/>"],"emoji_events":["<path d=\"M3 7a3 3 0 0 0 2.6 2.97 4.5 4.5 0 0 0 3.9 3.5v1.5h-2a2 2 0 0 0-2 2v.5c0 .27.23.5.5.5h8a.5.5 0 0 0 .5-.5v-.5a2 2 0 0 0-2-2h-2v-1.5a4.5 4.5 0 0 0 3.9-3.5A3 3 0 0 0 17 7V5.5c0-.83-.68-1.5-1.5-1.5h-1a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2h-1C3.67 4 3 4.67 3 5.5zm1.5-2h1v3.93A2 2 0 0 1 4 7V5.5c0-.28.22-.5.5-.5m10 0h1c.27 0 .5.22.5.5V7a2 2 0 0 1-1.5 1.94zm-1-1v5a3.5 3.5 0 0 1-7 .16V4a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1m-7 12.97a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1z\"/>","<path d=\"M5.5 4c0-1.1.9-2 2-2h5a2 2 0 0 1 2 2h1c.82 0 1.5.67 1.5 1.5V7a3 3 0 0 1-2.6 2.97 4.5 4.5 0 0 1-3.9 3.5v1.5h2a2 2 0 0 1 2 2v.5a.5.5 0 0 1-.5.5H6a.5.5 0 0 1-.5-.5v-.5c0-1.1.9-2 2-2h2v-1.5a4.5 4.5 0 0 1-3.9-3.5A3 3 0 0 1 3 7V5.5C3 4.67 3.67 4 4.5 4zm9 4.94A2 2 0 0 0 16 7V5.5a.5.5 0 0 0-.5-.5h-1zM5.5 5h-1a.5.5 0 0 0-.5.5V7a2 2 0 0 0 1.5 1.93z\"/>"],"error":["<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 1a7 7 0 1 0 0 14 7 7 0 0 0 0-14m0 9.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5M10 6a.5.5 0 0 1 .5.41V11a.5.5 0 0 1-1 .09V6.5c0-.28.22-.5.5-.5\"/>","<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 10.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5M10 6a.5.5 0 0 0-.5.41v4.68a.5.5 0 0 0 1 0V6.41A.5.5 0 0 0 10 6\"/>"],"fiber_manual_record":["<path d=\"M10 14.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16m-7 8a7 7 0 1 1 14 0 7 7 0 0 1-14 0\"/>","<path d=\"M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0m8 4.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9\"/>"],"folder_open":["<path d=\"M3 5.5v6.6l1.5-2.6A3 3 0 0 1 7.1 8H15v-.5c0-.83-.67-1.5-1.5-1.5h-4a.5.5 0 0 1-.35-.15l-1.71-1.7A.5.5 0 0 0 7.09 4H4.5C3.67 4 3 4.67 3 5.5m1.28 10.48.22.02h9.4a2 2 0 0 0 1.73-1l2.17-3.75A1.5 1.5 0 0 0 16.5 9H7.1a2 2 0 0 0-1.73 1L3.2 13.75a1.5 1.5 0 0 0 1.08 2.23M2 14.46V5.5A2.5 2.5 0 0 1 4.5 3h2.59c.4 0 .78.16 1.06.44L9.7 5h3.79A2.5 2.5 0 0 1 16 7.5V8h.5a2.5 2.5 0 0 1 2.16 3.75L16.5 15.5a3 3 0 0 1-2.6 1.5H4.5a2.5 2.5 0 0 1-1.62-.6A2.5 2.5 0 0 1 2 14.46\"/>","<path d=\"M4.5 3A2.5 2.5 0 0 0 2 5.5v6.97l1.57-2.72A3.5 3.5 0 0 1 6.6 8H16v-.5A2.5 2.5 0 0 0 13.5 5H9.7L8.16 3.44A1.5 1.5 0 0 0 7.09 3zm-.07 7.25A2.5 2.5 0 0 1 6.6 9H17a2 2 0 0 1 1.73 3l-2.16 3.75A2.5 2.5 0 0 1 14.4 17H4a2 2 0 0 1-1.73-3z\"/>"],"grid_on":["<path d=\"M7.5 11c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4A1.5 1.5 0 0 1 2 16.5v-4c0-.83.67-1.5 1.5-1.5zm9 0c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4a1.5 1.5 0 0 1-1.5-1.5v-4c0-.83.67-1.5 1.5-1.5zm-9 1h-4a.5.5 0 0 0-.5.5v4c0 .28.22.5.5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5m9 0h-4a.5.5 0 0 0-.5.5v4c0 .28.22.5.5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5m-9-10C8.33 2 9 2.67 9 3.5v4C9 8.33 8.33 9 7.5 9h-4A1.5 1.5 0 0 1 2 7.5v-4C2 2.67 2.67 2 3.5 2zm9 0c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4A1.5 1.5 0 0 1 11 7.5v-4c0-.83.67-1.5 1.5-1.5zm-9 1h-4a.5.5 0 0 0-.5.5v4c0 .28.22.5.5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5m9 0h-4a.5.5 0 0 0-.5.5v4c0 .28.22.5.5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5\"/>","<path d=\"M7.5 11c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4A1.5 1.5 0 0 1 2 16.5v-4c0-.83.67-1.5 1.5-1.5zm9 0c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4a1.5 1.5 0 0 1-1.5-1.5v-4c0-.83.67-1.5 1.5-1.5zm-9-9C8.33 2 9 2.67 9 3.5v4C9 8.33 8.33 9 7.5 9h-4A1.5 1.5 0 0 1 2 7.5v-4C2 2.67 2.67 2 3.5 2zm9 0c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4A1.5 1.5 0 0 1 11 7.5v-4c0-.83.67-1.5 1.5-1.5z\"/>"],"help":["<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 1a7 7 0 1 0 0 14 7 7 0 0 0 0-14m0 10.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5m0-8a2.5 2.5 0 0 1 1.65 4.38l-.15.12-.22.17-.09.07-.16.15c-.33.36-.53.85-.53 1.61a.5.5 0 0 1-1 0 3.2 3.2 0 0 1 1.16-2.62l.25-.19.12-.1A1.5 1.5 0 0 0 10 6.5c-.83 0-1.5.67-1.5 1.5a.5.5 0 0 1-1 0A2.5 2.5 0 0 1 10 5.5\"/>","<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 11.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5m0-8A2.5 2.5 0 0 0 7.5 8a.5.5 0 0 0 1 0 1.5 1.5 0 1 1 2.63.98l-.1.11-.12.1-.25.19q-.19.14-.35.32A3.2 3.2 0 0 0 9.5 12a.5.5 0 0 0 1 0c0-.76.2-1.25.53-1.61l.08-.08.08-.07.09-.07.22-.17.15-.12A2.5 2.5 0 0 0 10 5.5\"/>"],"info":["<path d=\"M10.5 8.91a.5.5 0 0 0-1 .09v4.6a.5.5 0 0 0 1-.1V8.91m.3-2.16a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0M18 10a8 8 0 1 0-16 0 8 8 0 0 0 16 0M3 10a7 7 0 1 1 14 0 7 7 0 0 1-14 0\"/>","<path d=\"M18 10a8 8 0 1 0-16 0 8 8 0 0 0 16 0M9.5 8.91a.5.5 0 0 1 1 0v4.69a.5.5 0 0 1-1 0V8.9m-.25-2.16a.75.75 0 1 1 1.5 0 .75.75 0 0 1-1.5 0\"/>"],"inventory_2":["<path d=\"M11.3 2.48a3.5 3.5 0 0 0-2.6 0l-5.76 2.3A1.5 1.5 0 0 0 2 6.18v7.64c0 .62.37 1.17.94 1.4l5.76 2.3a3.5 3.5 0 0 0 2.6 0l5.76-2.3c.57-.23.94-.78.94-1.4V6.18a1.5 1.5 0 0 0-.94-1.4zm-2.23.93a2.5 2.5 0 0 1 1.86 0l5.22 2.09-2.27.91-6.16-2.46zm-2.7 1.08 6.16 2.46L10 7.96 3.85 5.5zm4.13 4.35 6.5-2.6v7.58a.5.5 0 0 1-.31.47l-5.76 2.3q-.2.09-.43.13zm-1 0v7.88a3 3 0 0 1-.43-.13l-5.76-2.3a.5.5 0 0 1-.31-.47V6.24z\"/>","<path d=\"m10 7.96 3.03-1.21-7.5-3-2.59 1.03a2 2 0 0 0-.36.21zm-7.96-2.1Q2 6 2 6.17v7.64c0 .62.37 1.17.94 1.4l5.76 2.3q.4.15.8.21v-8.9zm8.46 11.87q.4-.05.8-.21l5.76-2.3c.57-.23.94-.78.94-1.4V6.18q0-.17-.04-.33L10.5 8.84zM17.42 5l-3.04 1.22-7.5-3 1.82-.73a3.5 3.5 0 0 1 2.6 0l5.76 2.3q.2.09.36.21\"/>"],"keyboard":["<path d=\"M5 12.5c0-.28.22-.5.5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M11.5 8a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5m3.75-.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0M5.5 8a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5m2.25 1.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m2.25.75A.75.75 0 1 0 10 9a.75.75 0 0 0 0 1.5m3.76-.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0M8.5 8a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M2 5.5C2 4.67 2.67 4 3.5 4h13c.83 0 1.5.67 1.5 1.5v8c0 .83-.67 1.5-1.5 1.5h-13A1.5 1.5 0 0 1 2 13.5zM3.5 5a.5.5 0 0 0-.5.5v8c0 .28.22.5.5.5h13a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5z\"/>","<path d=\"M3.5 4C2.67 4 2 4.67 2 5.5v8c0 .83.67 1.5 1.5 1.5h13c.83 0 1.5-.67 1.5-1.5v-8c0-.83-.67-1.5-1.5-1.5zm2.75 3.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m6 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0M5 12.5c0-.28.22-.5.5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M14.5 8a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5M7 10.5A.75.75 0 1 1 7 9a.75.75 0 0 1 0 1.5m3.75-.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m2.26.75A.75.75 0 1 1 13 9a.75.75 0 0 1 0 1.5M9.25 7.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0\"/>"],"keyboard_double_arrow_down":["<path d=\"M15.15 9.65a.5.5 0 1 1 .7.7l-5.5 5.5a.5.5 0 0 1-.7 0l-5.5-5.5a.5.5 0 1 1 .7-.7L10 14.79zm0-5a.5.5 0 1 1 .7.7l-5.5 5.5a.5.5 0 0 1-.7 0l-5.5-5.5a.5.5 0 1 1 .7-.7L10 9.79z\"/>","<path d=\"M14.72 9.97a.75.75 0 1 1 1.06 1.06l-5.25 5.25c-.3.3-.77.3-1.06 0l-5.25-5.25a.75.75 0 1 1 1.06-1.06L10 14.69zm0-5.5a.75.75 0 1 1 1.06 1.06l-5.25 5.25c-.3.3-.77.3-1.06 0L4.22 5.53a.75.75 0 1 1 1.06-1.06L10 9.19z\"/>"],"library_music":["<path d=\"M14.7 2.23a1 1 0 0 1 1.3.95V13.5a2.5 2.5 0 1 1-1-2V6.18L8 8.37v7.13a2.5 2.5 0 1 1-1-2V5.37a1 1 0 0 1 .7-.96zM8 7.32l7-2.19V3.18L8 5.37zM5.5 14a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m6.5-.5a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0\"/>","<path d=\"M15.99 3.02a1 1 0 0 0-1.29-.8l-7 2.2a1 1 0 0 0-.7.95v8.13q-.64-.48-1.5-.5A2.5 2.5 0 1 0 8 15.5V8.37l7-2.19v5.32q-.64-.48-1.5-.5a2.5 2.5 0 1 0 2.5 2.5V3.18z\"/>"],"light_mode":["<path d=\"M10 2c.28 0 .5.22.5.5v1a.5.5 0 0 1-1 0v-1c0-.28.22-.5.5-.5m0 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8m0-1a3 3 0 1 1 0-6 3 3 0 0 1 0 6m7.5-2.5a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1zM10 16c.28 0 .5.22.5.5v1a.5.5 0 0 1-1 0v-1c0-.28.22-.5.5-.5m-6.5-5.5a.5.5 0 0 0 0-1H2.46a.5.5 0 0 0 0 1zm.65-6.35c.2-.2.5-.2.7 0l1 1a.5.5 0 1 1-.7.7l-1-1a.5.5 0 0 1 0-.7m.7 11.7a.5.5 0 0 1-.7-.7l1-1a.5.5 0 0 1 .7.7zm11-11.7a.5.5 0 0 0-.7 0l-1 1a.5.5 0 0 0 .7.7l1-1a.5.5 0 0 0 0-.7m-.7 11.7a.5.5 0 0 0 .7-.7l-1-1a.5.5 0 0 0-.7.7z\"/>","<path d=\"M10 2c.28 0 .5.22.5.5v1a.5.5 0 0 1-1 0v-1c0-.28.22-.5.5-.5m4 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0m3.5.5a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1zM10 16c.28 0 .5.22.5.5v1a.5.5 0 0 1-1 0v-1c0-.28.22-.5.5-.5m-6.5-5.5a.5.5 0 0 0 0-1H2.46a.5.5 0 0 0 0 1zm.65-6.35c.2-.2.5-.2.7 0l1 1a.5.5 0 1 1-.7.7l-1-1a.5.5 0 0 1 0-.7m.7 11.7a.5.5 0 0 1-.7-.7l1-1a.5.5 0 0 1 .7.7zm11-11.7a.5.5 0 0 0-.7 0l-1 1a.5.5 0 0 0 .7.7l1-1a.5.5 0 0 0 0-.7m-.7 11.7a.5.5 0 0 0 .7-.7l-1-1a.5.5 0 0 0-.7.7z\"/>"],"movie":["<path d=\"M5 4a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h5a3 3 0 0 0 3-3v-.32l3.04 2.1c.83.57 1.96-.03 1.96-1.03v-7.5c0-1-1.13-1.6-1.96-1.03L13 7.32V7a3 3 0 0 0-3-3zm8 4.54 3.6-2.5c.17-.1.4.01.4.21v7.5c0 .2-.23.32-.4.2L13 11.46zM3 7c0-1.1.9-2 2-2h5a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","<path d=\"M2 7a3 3 0 0 1 3-3h5a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3zm14.04 7.78L14 13.37V6.63l2.04-1.4c.83-.58 1.96.01 1.96 1.02v7.5c0 1-1.13 1.6-1.96 1.03\"/>"],"opacity":["<path d=\"M9.65 2.15c.2-.2.5-.2.7 0 .54.53 1.8 2.06 2.95 3.9 1.13 1.82 2.2 4.05 2.2 5.95 0 1.84-.53 3.35-1.5 4.4a5.3 5.3 0 0 1-4 1.6c-1.61 0-3-.54-4-1.6A6.3 6.3 0 0 1 4.5 12c0-1.9 1.07-4.13 2.2-5.95a25 25 0 0 1 2.95-3.9m-2.1 4.43C6.43 8.38 5.5 10.4 5.5 12c0 1.66.47 2.9 1.24 3.72A4.3 4.3 0 0 0 10 17a4.3 4.3 0 0 0 3.26-1.28A5.3 5.3 0 0 0 14.5 12c0-1.6-.93-3.62-2.05-5.42A27 27 0 0 0 10 3.24c-.59.67-1.56 1.9-2.45 3.34\"/>","<path d=\"M9.65 2.15c.2-.2.5-.2.7 0 .54.53 1.8 2.06 2.95 3.9 1.13 1.82 2.2 4.05 2.2 5.95 0 1.84-.53 3.35-1.5 4.4a5.3 5.3 0 0 1-4 1.6c-1.61 0-3-.54-4-1.6A6.3 6.3 0 0 1 4.5 12c0-1.9 1.07-4.13 2.2-5.95a25 25 0 0 1 2.95-3.9\"/>"],"pause":["<path d=\"M5 2a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM4 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zm9-2a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z\"/>","<path d=\"M5 2a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm8 0a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z\"/>"],"play_arrow":["<path d=\"M17.22 8.69a1.5 1.5 0 0 1 0 2.62l-10 5.5A1.5 1.5 0 0 1 5 15.5v-11A1.5 1.5 0 0 1 7.22 3.2zm-.48 1.75a.5.5 0 0 0 0-.88l-10-5.5A.5.5 0 0 0 6 4.5v11c0 .38.4.62.74.44z\"/>","<path d=\"M17.22 8.68a1.5 1.5 0 0 1 0 2.63l-10 5.5A1.5 1.5 0 0 1 5 15.5v-11A1.5 1.5 0 0 1 7.22 3.2z\"/>"],"remove":["<path d=\"M3 10c0-.28.22-.5.5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 3 10\"/>","<path d=\"M3 10c0-.41.34-.75.75-.75h12.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 10\"/>"],"restart_alt":["<path d=\"M16 10A6 6 0 0 0 5.53 6H7.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 1 0v1.6a7 7 0 1 1-1.98 4.36.5.5 0 0 1 1 .08L4 10a6 6 0 0 0 12 0\"/>","<path d=\"M16 10a6 6 0 0 0-9.97-4.5h1.22a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1-.75-.75v-3a.75.75 0 0 1 1.5 0v1.16a7.5 7.5 0 1 1-2.5 5.31.75.75 0 1 1 1.5.06V10a6 6 0 0 0 12 0\"/>"],"speed":["<path d=\"M10 2a8 8 0 0 1 5.44 13.87l-.08.06a.5.5 0 0 1-.6-.8l.25-.24a7 7 0 0 0 1.97-4.39h-1.5A.5.5 0 0 1 15 10c0-.27.2-.5.48-.5h1.5a7 7 0 0 0-6.48-6.48v1.5A.5.5 0 0 1 10 5c-.27 0-.5-.2-.5-.48v-1.5A7 7 0 0 0 5.42 4.7l1.06 1.06c.2.2.17.5-.02.7-.18.18-.5.2-.69.01L4.71 5.42A7 7 0 0 0 3.02 9.5h1.5c.27 0 .48.23.48.5s-.2.5-.48.5h-1.5c.12 1.7.85 3.24 1.97 4.39l.25.24.07.08a.5.5 0 0 1-.75.66A8 8 0 0 1 10 2m3.2 4.1a.5.5 0 0 1 .74.64l-.01.01-.02.04-.08.14a195 195 0 0 1-2.1 3.64l-.37.6q-.15.24-.3.39a1.5 1.5 0 0 1-2.12-2.12c.12-.12.46-.4.86-.72a153 153 0 0 1 3.23-2.5q.08-.05.12-.09l.04-.02\"/>","<path d=\"M10 2a8 8 0 0 1 5.52 13.8.75.75 0 0 1-1.04-1.1 6.5 6.5 0 0 0 1.94-3.7h-1.17a.75.75 0 0 1 0-1.5h1.23a6.5 6.5 0 0 0-5.73-5.96v1.27c0 .4-.36.69-.75.69-.4 0-.75-.3-.75-.69V3.54A6.5 6.5 0 0 0 5.97 4.9l.8.82a.75.75 0 0 1-1.05 1.06l-.81-.82A6.5 6.5 0 0 0 3.52 9.5h1.3a.75.75 0 0 1 0 1.5H3.58c.2 1.34.82 2.54 1.71 3.48l.23.23.05.05a.75.75 0 0 1-1.09 1.03A8 8 0 0 1 10 2m3.2 4.1a.5.5 0 0 1 .74.64l-.01.01-.02.04-.08.14a195 195 0 0 1-2.1 3.64l-.37.6q-.15.24-.3.39a1.5 1.5 0 0 1-2.12-2.12c.12-.12.46-.4.86-.72a153 153 0 0 1 3.23-2.5q.08-.05.12-.09l.04-.02\"/>"],"sports_esports":["<path d=\"M8.33 4.71a2 2 0 0 0-1.35-.17l-.9.17c-.7.14-1.32.6-1.66 1.25-1.1 2.16-1.94 3.93-2.27 5.43a4.5 4.5 0 0 0 .82 4.06c.66.82 1.8.65 2.4-.02l1.51-1.73A2 2 0 0 1 8.4 13h3.19a2 2 0 0 1 1.52.7c.51.6 1.04 1.2 1.51 1.73.6.67 1.75.84 2.4.02a4.5 4.5 0 0 0 .82-4.06c-.33-1.5-1.16-3.27-2.27-5.43a2.4 2.4 0 0 0-1.66-1.25l-.9-.17a2 2 0 0 0-1.35.17l-.06.03Q11.11 5 10.6 5H9.4q-.53-.01-1.02-.26zm-1.16.81q.4-.07.72.08l.05.03Q8.6 6 9.4 6h1.18q.79-.01 1.47-.37l.05-.03q.31-.15.71-.08l.9.17c.41.08.77.35.96.72 1.12 2.18 1.89 3.84 2.18 5.2.29 1.31.12 2.3-.62 3.22-.18.22-.59.26-.87-.06l-1.5-1.73A3 3 0 0 0 11.59 12H8.4a3 3 0 0 0-2.27 1.04l-1.5 1.73c-.3.32-.7.28-.88.06-.73-.92-.9-1.9-.62-3.22.3-1.36 1.06-3.02 2.18-5.2.2-.37.55-.64.97-.72zM10 8.5A.75.75 0 1 0 10 7a.75.75 0 0 0 0 1.5\"/>","<path d=\"M8.33 4.71a2 2 0 0 0-1.35-.17l-.9.17c-.7.14-1.32.6-1.66 1.25-1.1 2.16-1.94 3.93-2.27 5.43a4.5 4.5 0 0 0 .82 4.06c.66.82 1.8.65 2.4-.02L6.9 13.7A2 2 0 0 1 8.4 13h3.2a2 2 0 0 1 1.51.7l1.51 1.73c.6.67 1.75.84 2.4.02a4.5 4.5 0 0 0 .82-4.06c-.32-1.5-1.16-3.27-2.27-5.43a2.4 2.4 0 0 0-1.66-1.25l-.9-.17a2 2 0 0 0-1.35.17l-.06.03Q11.11 5 10.6 5H9.4q-.53-.01-1.02-.26zM10 8.5A.75.75 0 1 1 10 7a.75.75 0 0 1 0 1.5\"/>"],"upload_file":["<path d=\"M6 2a2 2 0 0 0-2 2v5.2q.49-.13 1-.18V4a1 1 0 0 1 1-1h4v3.5c0 .83.67 1.5 1.5 1.5H15v8a1 1 0 0 1-1 1h-3.6q-.27.54-.66 1H14a2 2 0 0 0 2-2V7.41c0-.4-.16-.78-.44-1.06l-3.91-3.91A1.5 1.5 0 0 0 10.59 2zm8.8 5h-3.3a.5.5 0 0 1-.5-.5V3.2zM5.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9m2.35-4.85a.5.5 0 1 1-.7.7L6 13.71v2.79a.5.5 0 0 1-1 0v-2.8l-1.15 1.15a.5.5 0 1 1-.7-.7l2-2A.5.5 0 0 1 5.5 12a.5.5 0 0 1 .35.14z\"/>","<path d=\"M10 2v4.5c0 .83.67 1.5 1.5 1.5H16v8.5c0 .83-.67 1.5-1.5 1.5H9.74A5.5 5.5 0 0 0 4 9.2V3.5C4 2.67 4.67 2 5.5 2zm1 .25V6.5c0 .28.22.5.5.5h4.25zM5.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9m2.35-4.85a.5.5 0 1 1-.7.7L6 13.71v2.79a.5.5 0 0 1-1 0v-2.8l-1.15 1.15a.5.5 0 1 1-.7-.7l2-2A.5.5 0 0 1 5.5 12a.5.5 0 0 1 .35.14z\"/>"],"warning":["<path d=\"M7.37 3.56a3 3 0 0 1 5.26 0l5.5 10A3 3 0 0 1 15.5 18h-11a3 3 0 0 1-2.63-4.44zm4.38.48a2 2 0 0 0-3.5 0l-5.5 10A2 2 0 0 0 4.5 17h11a2 2 0 0 0 1.75-2.96zM10 12.75a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5m0-6.25c.28 0 .5.22.5.5v4a.5.5 0 0 1-1 0V7c0-.28.22-.5.5-.5\"/>","<path d=\"M7.37 3.56a3 3 0 0 1 5.26 0l5.5 10A3 3 0 0 1 15.5 18h-11a3 3 0 0 1-2.63-4.44zM10 12.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5m0-6.25a.5.5 0 0 0-.5.5v4a.5.5 0 0 0 1 0V7a.5.5 0 0 0-.5-.5\"/>"],"zoom_in":["<path d=\"M8.5 5.5c.28 0 .5.22.5.5v2h2a.5.5 0 0 1 0 1H9v2a.5.5 0 0 1-1 0V9H6a.5.5 0 0 1 0-1h2V6c0-.28.22-.5.5-.5m0-3.5a6.5 6.5 0 0 1 4.94 10.73l3.41 3.42a.5.5 0 0 1-.63.76l-.07-.06-3.42-3.41A6.5 6.5 0 1 1 8.5 2m0 1a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11\"/>","<path d=\"M8.5 2a6.5 6.5 0 0 1 4.94 10.73l3.41 3.42a.5.5 0 0 1-.63.76l-.07-.06-3.42-3.41A6.5 6.5 0 1 1 8.5 2m0 3.5A.5.5 0 0 0 8 6v2H6a.5.5 0 0 0 0 1h2v2a.5.5 0 0 0 1 0V9h2a.5.5 0 0 0 0-1H9V6a.5.5 0 0 0-.5-.5\"/>"],"cloud":["<path d=\"M10 4c2.82 0 4.41 1.92 4.65 4.25h.07A3.33 3.33 0 0 1 18 11.62 3.33 3.33 0 0 1 14.72 15H5.28A3.33 3.33 0 0 1 2 11.62c0-1.8 1.37-3.27 3.1-3.37h.25C5.6 5.9 7.18 4 10 4m0 1C7.89 5 6.55 6.32 6.35 8.35a1 1 0 0 1-1 .9h-.07A2.33 2.33 0 0 0 3 11.62 2.33 2.33 0 0 0 5.28 14h9.44A2.33 2.33 0 0 0 17 11.62a2.33 2.33 0 0 0-2.28-2.37h-.07a1 1 0 0 1-1-.9C13.45 6.32 12.11 5 10 5\"/>","<path d=\"M10 4c2.82 0 4.41 1.92 4.65 4.25h.07A3.33 3.33 0 0 1 18 11.62 3.33 3.33 0 0 1 14.72 15H5.28A3.33 3.33 0 0 1 2 11.62a3.33 3.33 0 0 1 3.28-3.37h.07C5.6 5.9 7.18 4 10 4\"/>"],"sync":["<path d=\"M11.41 3.64a.5.5 0 0 0 0-.71L9.3.8a.5.5 0 0 0-.7.7l1 1a7.5 7.5 0 0 0-4.08 13.5.5.5 0 0 0 .6-.8A6.5 6.5 0 0 1 10.14 3.5L8.59 5.04a.5.5 0 0 0 .7.7zM8.6 16.36a.5.5 0 0 0 0 .71l2.12 2.12a.5.5 0 0 0 .7-.7l-1-1a7.5 7.5 0 0 0 4.07-13.5.5.5 0 1 0-.59.8q.37.28.7.61a6.5 6.5 0 0 1-4.73 11.1l1.55-1.55a.5.5 0 1 0-.7-.7z\"/>","<path d=\"M9.89 3.75a6.25 6.25 0 0 0-3.63 11.26.75.75 0 0 1-.9 1.2q-.44-.34-.84-.73a7.75 7.75 0 0 1 4.83-13.2l-.59-.59A.75.75 0 0 1 9.82.63l2.12 2.12c.3.3.3.77 0 1.06L9.82 5.93a.75.75 0 0 1-1.06-1.06zm.22 12.5a6.25 6.25 0 0 0 3.63-11.26.75.75 0 0 1 .9-1.2q.44.33.84.73a7.75 7.75 0 0 1-4.83 13.2l.59.59a.75.75 0 1 1-1.06 1.06l-2.12-2.12a.75.75 0 0 1 0-1.06l2.12-2.13a.75.75 0 1 1 1.06 1.07z\"/>"],"search":["<path d=\"M13.73 14.44a6.5 6.5 0 1 1 .7-.7l3.42 3.4a.5.5 0 0 1-.63.77l-.07-.06zm-.71-.71A5.5 5.5 0 0 0 15 9.5a5.5 5.5 0 1 0-1.98 4.23\"/>","<path d=\"M13.54 14.6a6.5 6.5 0 1 1 1.06-1.06l3.43 3.43a.75.75 0 0 1-.98 1.13l-.08-.07zm.96-5.1a5 5 0 1 0-10 0 5 5 0 0 0 10 0\"/>"],"flag":["<path d=\"M5 13h11.5a.5.5 0 0 0 .42-.78L14.1 8l2.82-4.22A.5.5 0 0 0 16.5 3h-12a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 1 0zm0-1V4h10.57l-2.49 3.72a.5.5 0 0 0 0 .56L15.57 12z\"/>","<path d=\"M5 13h11.5a.5.5 0 0 0 .42-.78L14.1 8l2.82-4.22A.5.5 0 0 0 16.5 3h-12a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 1 0z\"/>"],"straighten":["<path d=\"M12.5 2c.83 0 1.5.67 1.5 1.5v13c0 .83-.67 1.5-1.5 1.5h-5A1.5 1.5 0 0 1 6 16.5v-13C6 2.67 6.67 2 7.5 2zm-5 1a.5.5 0 0 0-.5.5v1h2.5a.5.5 0 0 1 0 1H7V7h3.5a.5.5 0 0 1 0 1H7v1.5h2.5a.5.5 0 0 1 0 1H7V12h3.5a.5.5 0 0 1 0 1H7v1.5h2.5a.5.5 0 0 1 0 1H7v1c0 .28.22.5.5.5h5a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5z\"/>","<path d=\"M12.5 2c.83 0 1.5.67 1.5 1.5v13c0 .83-.67 1.5-1.5 1.5h-5A1.5 1.5 0 0 1 6 16.5v-13C6 2.67 6.67 2 7.5 2zM7 15.5h2.5a.5.5 0 0 0 0-1H7zM7 13h3.5a.5.5 0 0 0 0-1H7zm0-2.5h2.5a.5.5 0 0 0 0-1H7zM7 8h3.5a.5.5 0 0 0 0-1H7zm0-2.5h2.5a.5.5 0 0 0 0-1H7z\"/>"],"music_note":["<path d=\"M10.15 2.02a.5.5 0 0 0-.65.48v9.9A3.24 3.24 0 0 0 4 14.75a3.25 3.25 0 1 0 6.5-.25V7.18l5.85 1.8A.5.5 0 0 0 17 8.5V5.98a2.5 2.5 0 0 0-1.76-2.4zM16 7.82l-5.5-1.69V3.18l4.44 1.36c.63.2 1.06.78 1.06 1.44zM5 14.75a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0\"/>","<path d=\"M10.15 2.02a.5.5 0 0 0-.65.48v9.9A3.24 3.24 0 0 0 4 14.75a3.25 3.25 0 1 0 6.5-.25V7.18l5.85 1.8A.5.5 0 0 0 17 8.5V5.98a2.5 2.5 0 0 0-1.76-2.4z\"/>"],"person":["<path d=\"M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8M7 6a3 3 0 1 1 6 0 3 3 0 0 1-6 0m-2 5a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9 9 0 0 0 10 18c1.85 0 3.58-.39 4.87-1.2A4.4 4.4 0 0 0 17 13a2 2 0 0 0-2-2zm-1 2a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1c0 1.3-.62 2.28-1.67 2.95A8 8 0 0 1 10 17a8 8 0 0 1-4.33-1.05A3.4 3.4 0 0 1 4 13\"/>","<path d=\"M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8m-5 9a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9 9 0 0 0 10 18c1.85 0 3.58-.39 4.87-1.2A4.4 4.4 0 0 0 17 13a2 2 0 0 0-2-2z\"/>"],"settings":["<path d=\"M1.91 7.38A8.5 8.5 0 0 1 3.7 4.3a.5.5 0 0 1 .54-.13l1.92.68a1 1 0 0 0 1.32-.76l.36-2a.5.5 0 0 1 .4-.4 9 9 0 0 1 3.55 0q.32.08.38.4l.37 2a1 1 0 0 0 1.32.76l1.92-.68a.5.5 0 0 1 .54.13 8.5 8.5 0 0 1 1.78 3.08q.08.31-.15.54l-1.56 1.32a1 1 0 0 0 0 1.52l1.56 1.32a.5.5 0 0 1 .15.54 8.5 8.5 0 0 1-1.78 3.08.5.5 0 0 1-.54.13l-1.92-.68a1 1 0 0 0-1.32.76l-.37 2a.5.5 0 0 1-.38.4 8.5 8.5 0 0 1-3.56 0 .5.5 0 0 1-.39-.4l-.36-2a1 1 0 0 0-1.32-.76l-1.92.68a.5.5 0 0 1-.54-.13 8.5 8.5 0 0 1-1.78-3.08.5.5 0 0 1 .15-.54l1.56-1.32a1 1 0 0 0 0-1.52L2.06 7.92a.5.5 0 0 1-.15-.54m1.06 0 1.3 1.1a2 2 0 0 1 0 3.04l-1.3 1.1q.45 1.19 1.25 2.16l1.6-.58a2 2 0 0 1 2.63 1.53l.3 1.67a8 8 0 0 0 2.5 0l.3-1.67a2 2 0 0 1 2.64-1.53l1.6.58a8 8 0 0 0 1.24-2.16l-1.3-1.1a2 2 0 0 1 0-3.04l1.3-1.1a8 8 0 0 0-1.25-2.16l-1.6.58a2 2 0 0 1-2.63-1.53l-.3-1.67a8 8 0 0 0-2.5 0l-.3 1.67A2 2 0 0 1 5.81 5.8l-1.6-.58a8 8 0 0 0-1.24 2.16M7.5 10a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0m1 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0\"/>","<path d=\"M1.91 7.38A8.5 8.5 0 0 1 3.7 4.3a.5.5 0 0 1 .54-.13l1.92.68a1 1 0 0 0 1.32-.76l.36-2a.5.5 0 0 1 .4-.4 9 9 0 0 1 3.55 0q.32.08.38.4l.37 2a1 1 0 0 0 1.32.76l1.92-.68a.5.5 0 0 1 .54.13 8.5 8.5 0 0 1 1.78 3.08q.08.31-.15.54l-1.56 1.32a1 1 0 0 0 0 1.52l1.56 1.32a.5.5 0 0 1 .15.54 8.5 8.5 0 0 1-1.78 3.08.5.5 0 0 1-.54.13l-1.92-.68a1 1 0 0 0-1.32.76l-.37 2a.5.5 0 0 1-.38.4 8.5 8.5 0 0 1-3.56 0 .5.5 0 0 1-.39-.4l-.36-2a1 1 0 0 0-1.32-.76l-1.92.68a.5.5 0 0 1-.54-.13 8.5 8.5 0 0 1-1.78-3.08.5.5 0 0 1 .15-.54l1.56-1.32a1 1 0 0 0 0-1.52L2.06 7.92a.5.5 0 0 1-.15-.54M8 10a2 2 0 1 0 4 0 2 2 0 0 0-4 0\"/>"],"logout":["<path d=\"M8.5 11.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M11 3.5a.5.5 0 0 0-.58-.5l-7 1.08a.5.5 0 0 0-.42.49v10.86c0 .25.18.46.42.5l7 1.07a.5.5 0 0 0 .58-.5V10h5.17l-1 .87a.5.5 0 0 0 .66.76l2-1.75a.5.5 0 0 0 0-.76l-2-1.75a.5.5 0 1 0-.65.76l1 .87H11zm-1 .58v11.84L4 15V5zM12.5 16H12v-5h1v4.5a.5.5 0 0 1-.5.5M12 8V4h.5c.28 0 .5.22.5.5V8z\"/>","<path d=\"M11 3.5a.5.5 0 0 0-.58-.5l-7 1.08a.5.5 0 0 0-.42.49v10.86c0 .25.18.46.42.5l7 1.07a.5.5 0 0 0 .58-.5V10h5.17l-1 .87a.5.5 0 0 0 .66.76l2-1.75a.5.5 0 0 0 0-.76l-2-1.75a.5.5 0 1 0-.65.76l1 .87H11zm-2.5 7.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5m4 4.75H12v-5h1v4.5a.5.5 0 0 1-.5.5M12 8V4h.5c.28 0 .5.22.5.5V8z\"/>"],"cloud_upload":["<path d=\"M10 2c2.82 0 4.41 1.92 4.65 4.25h.07a3.33 3.33 0 0 1 3.27 3.66q-.48-.6-1.12-1.07a2.3 2.3 0 0 0-2.15-1.6h-.07a1 1 0 0 1-1-.9C13.45 4.33 12.11 3 10 3S6.55 4.32 6.35 6.35a1 1 0 0 1-1 .9h-.07A2.33 2.33 0 0 0 3 9.62 2.33 2.33 0 0 0 5.28 12h2.67q-.14.49-.18 1H5.28A3.33 3.33 0 0 1 2 9.62c0-1.8 1.37-3.27 3.1-3.37h.25C5.6 3.9 7.18 2 10 2m3.5 7a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9m1.6 4.9a.56.56 0 1 0 .8-.8l-2-2a.56.56 0 0 0-.8 0l-2 2a.56.56 0 1 0 .8.8l1.1-1.1v2.7a.5.5 0 0 0 1 0v-2.7z\"/>","<path d=\"M10 2c2.82 0 4.41 1.92 4.65 4.25h.07a3.33 3.33 0 0 1 3.27 3.66A5.74 5.74 0 0 0 7.77 13H5.28A3.33 3.33 0 0 1 2 9.62a3.33 3.33 0 0 1 3.28-3.37h.07C5.6 3.9 7.18 2 10 2m3.5 7a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9m1.6 4.9a.56.56 0 1 0 .8-.8l-2-2a.56.56 0 0 0-.8 0l-2 2a.56.56 0 1 0 .8.8l1.1-1.1v2.7a.5.5 0 0 0 1 0v-2.7z\"/>"],"verified_user":["<path d=\"M9.72 2.08a.5.5 0 0 1 .56 0q2.9 1.94 6.3 2.43A.5.5 0 0 1 17 5v4.6q-.48-.25-1-.4V5.44a16 16 0 0 1-5.6-2.08L10 3.1l-.4.25A16 16 0 0 1 4 5.43V9.5c0 3.24 1.8 5.64 5.48 7.25q.3.65.74 1.2l-.04.02a.5.5 0 0 1-.36 0C5.31 16.23 3 13.39 3 9.5V5a.5.5 0 0 1 .43-.5 15 15 0 0 0 6.3-2.42M19 14.5a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0m-2.15-1.85a.5.5 0 0 0-.7 0l-2.65 2.64-.65-.64a.5.5 0 0 0-.7.7l1 1c.2.2.5.2.7 0l3-3a.5.5 0 0 0 0-.7\"/>","<path d=\"M9.72 2.08a.5.5 0 0 1 .56 0q2.9 1.94 6.3 2.43A.5.5 0 0 1 17 5v4.6Q15.86 9 14.5 9a5.5 5.5 0 0 0-4.28 8.95l-.04.02a.5.5 0 0 1-.36 0C5.31 16.23 3 13.39 3 9.5V5a.5.5 0 0 1 .43-.5 15 15 0 0 0 6.3-2.42M19 14.5a4.5 4.5 0 1 0-9 0 4.5 4.5 0 0 0 9 0m-2.15-1.85c.2.2.2.5 0 .7l-3 3a.5.5 0 0 1-.7 0l-1-1a.5.5 0 0 1 .7-.7l.65.64 2.65-2.64c.2-.2.5-.2.7 0\"/>"],"palette":["<path d=\"M10 2a8 8 0 0 1 3.39 15.25c-1.09.5-2.33.44-3.3-.06a2.9 2.9 0 0 1-1.64-2.73q.04-.68.14-1.24.1-.59.14-1.02.03-.44-.08-.73-.09-.3-.45-.57a1 1 0 0 0-.84-.24q-.43.09-1.02.39c-.73.36-1.77.94-2.97.33-1.1-.56-1.43-1.87-1.22-2.92A8 8 0 0 1 10 2m0 1a7 7 0 0 0-6.87 5.66c-.15.78.13 1.54.69 1.83.68.35 1.25.07 2.08-.34.38-.18.83-.4 1.31-.48.52-.07 1.06.03 1.59.43q.58.44.79 1.02c.14.38.16.77.14 1.14s-.1.75-.15 1.12q-.1.55-.13 1.12c-.03.8.42 1.44 1.1 1.8.7.36 1.62.42 2.41.04A7 7 0 0 0 10 3m2.5 10a1 1 0 1 1 0 2 1 1 0 0 1 0-2m2-2.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m-2-2.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2m-3-.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2\"/>","<path d=\"M10 2a8 8 0 0 1 3.39 15.25c-1.09.5-2.33.44-3.3-.06a2.9 2.9 0 0 1-1.64-2.73q.04-.68.14-1.24.1-.59.14-1.02t-.08-.73q-.09-.3-.45-.57a1 1 0 0 0-.84-.24q-.44.09-1.02.39c-.73.36-1.77.94-2.97.33-1.1-.56-1.43-1.87-1.22-2.92A8 8 0 0 1 10 2m2.5 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2m2-2.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m0-3a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2-2.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-3-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2\"/>"],"volume_up":["<path d=\"M12 3a1 1 0 0 0-1.68-.73l-3.88 3.6A.5.5 0 0 1 6.1 6H3.5C2.67 6 2 6.67 2 7.5v5c0 .83.67 1.5 1.5 1.5h2.6a.5.5 0 0 1 .34.13l3.88 3.6a1 1 0 0 0 1.68-.74zM7.12 6.6 11 3v14l-3.88-3.6A1.5 1.5 0 0 0 6.1 13H3.5a.5.5 0 0 1-.5-.5v-5c0-.28.22-.5.5-.5h2.6c.38 0 .75-.14 1.02-.4m8.14-1.97a.5.5 0 0 1 .7.04 8 8 0 0 1 0 10.66.5.5 0 0 1-.74-.66 7 7 0 0 0 0-9.34.5.5 0 0 1 .04-.7m-1.18 8.3a.5.5 0 0 1-.18-.68 4.5 4.5 0 0 0 0-4.5.5.5 0 1 1 .86-.5 5.5 5.5 0 0 1 0 5.5.5.5 0 0 1-.68.18\"/>","<path d=\"M12 3a1 1 0 0 0-1.68-.73l-3.87 3.6A.5.5 0 0 1 6.1 6H3.5C2.67 6 2 6.67 2 7.5v5c0 .83.67 1.5 1.5 1.5h2.6a.5.5 0 0 1 .35.13l3.87 3.6a1 1 0 0 0 1.68-.74zm3.25 1.63a.5.5 0 0 1 .71.04 8 8 0 0 1 0 10.66.5.5 0 1 1-.75-.66 7 7 0 0 0 0-9.34.5.5 0 0 1 .04-.7m-1.17 8.3a.5.5 0 0 1-.19-.68 4.5 4.5 0 0 0 0-4.5.5.5 0 1 1 .87-.5 5.5 5.5 0 0 1 0 5.5.5.5 0 0 1-.68.18\"/>"],"tune":["<path d=\"M14.95 5a2.5 2.5 0 0 0-4.9 0H2.5a.5.5 0 0 0 0 1h7.55a2.5 2.5 0 0 0 4.9 0h2.55a.5.5 0 0 0 0-1zM12.5 7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m-2.55 7a2.5 2.5 0 0 0-4.9 0H2.5a.5.5 0 0 0 0 1h2.55a2.5 2.5 0 0 0 4.9 0h7.55a.5.5 0 0 0 0-1zM7.5 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3\"/>","<path d=\"M9.95 14a2.5 2.5 0 0 0-4.9 0H2.5a.5.5 0 0 0 0 1h2.55a2.5 2.5 0 0 0 4.9 0h7.55a.5.5 0 0 0 0-1zm5-9a2.5 2.5 0 0 0-4.9 0H2.5a.5.5 0 0 0 0 1h7.55a2.5 2.5 0 0 0 4.9 0h2.55a.5.5 0 0 0 0-1z\"/>"],"open_in_new":["<path d=\"M6 4a2 2 0 0 0-2 2v8c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2v-2.5a.5.5 0 0 1 1 0V14a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h2.5a.5.5 0 0 1 0 1zm5-.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v5a.5.5 0 0 1-1 0V4.7l-4.15 4.15a.5.5 0 0 1-.7-.7L15.29 4H11.5a.5.5 0 0 1-.5-.5\"/>","<path d=\"M6.25 4.5c-.97 0-1.75.78-1.75 1.75v7.5c0 .97.78 1.75 1.75 1.75h7.5c.97 0 1.75-.78 1.75-1.75v-2a.75.75 0 0 1 1.5 0v2c0 1.8-1.46 3.25-3.25 3.25h-7.5A3.25 3.25 0 0 1 3 13.75v-7.5C3 4.45 4.46 3 6.25 3h2a.75.75 0 0 1 0 1.5zm4.25-.75c0-.41.34-.75.75-.75h5c.41 0 .75.34.75.75v5a.75.75 0 0 1-1.5 0V5.56l-3.72 3.72a.75.75 0 1 1-1.06-1.06l3.72-3.72h-3.19a.75.75 0 0 1-.75-.75\"/>"],"star":["<path d=\"M9.1 2.9a1 1 0 0 1 1.8 0l1.93 3.91 4.31.63a1 1 0 0 1 .56 1.7l-3.12 3.05.73 4.3a1 1 0 0 1-1.45 1.05L10 15.51l-3.86 2.03a1 1 0 0 1-1.45-1.05l.74-4.3L2.3 9.14a1 1 0 0 1 .56-1.7l4.31-.63zm.9.44L8.07 7.25a1 1 0 0 1-.75.55L3 8.43l3.12 3.04a1 1 0 0 1 .3.89l-.75 4.3 3.87-2.03a1 1 0 0 1 .93 0l3.86 2.03-.74-4.3a1 1 0 0 1 .29-.89L17 8.43l-4.32-.63a1 1 0 0 1-.75-.55z\"/>","<path d=\"M9.1 2.9a1 1 0 0 1 1.8 0l1.93 3.91 4.31.63a1 1 0 0 1 .56 1.7l-3.12 3.05.73 4.3a1 1 0 0 1-1.45 1.05L10 15.51l-3.86 2.03a1 1 0 0 1-1.45-1.05l.74-4.3L2.3 9.14a1 1 0 0 1 .56-1.7l4.31-.63z\"/>"],"description":["<path d=\"M6.5 10a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zM4 4c0-1.1.9-2 2-2h4.59q.62.01 1.06.44l3.91 3.91c.28.28.44.67.44 1.06V16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8h-3.5A1.5 1.5 0 0 1 10 6.5V3zm5.5 4h3.3L11 3.2v3.3c0 .28.22.5.5.5\"/>","<path d=\"M10 6.5V2H5.5C4.67 2 4 2.67 4 3.5v13c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5V8h-4.5A1.5 1.5 0 0 1 10 6.5M6.5 10h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1m0 2h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1m0 2h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1M11 6.5V2.25L15.75 7H11.5a.5.5 0 0 1-.5-.5\"/>"],"history":["<path d=\"M10 4a6 6 0 1 1-5.98 5.54.5.5 0 1 0-1-.08L3 10a7 7 0 1 0 2-4.9V3.5a.5.5 0 0 0-1 0v3c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H5.53c1.1-1.23 2.7-2 4.47-2m0 2.5a.5.5 0 0 0-1 0v4c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H10z\"/>","<path d=\"M10 4a6 6 0 1 1-6 5.78.75.75 0 1 0-1.5-.06V10A7.5 7.5 0 1 0 5 4.41V3.25a.75.75 0 0 0-1.5 0v3c0 .41.34.75.75.75h3a.75.75 0 0 0 0-1.5H6.03A6 6 0 0 1 10 4m.5 2.25a.75.75 0 0 0-1.5 0v4c0 .41.34.75.75.75h3a.75.75 0 0 0 0-1.5H10.5z\"/>"],"lock":["<path d=\"M10 1a4 4 0 0 1 4 4v2.05a2.5 2.5 0 0 1 2 2.45v6a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-6c0-1.2.86-2.22 2-2.45V5a4 4 0 0 1 4-4M6.5 8C5.67 8 5 8.67 5 9.5v6c0 .83.67 1.5 1.5 1.5h7c.83 0 1.5-.67 1.5-1.5v-6c0-.83-.67-1.5-1.5-1.5zm3.5 3.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2M10 2a3 3 0 0 0-3 3v2h6V5a3 3 0 0 0-3-3\"/>","<path d=\"M10 1a4 4 0 0 1 4 4v2.05a2.5 2.5 0 0 1 2 2.45v6a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-6c0-1.2.86-2.22 2-2.45V5a4 4 0 0 1 4-4m0 10.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2M10 2a3 3 0 0 0-3 3v2h6V5a3 3 0 0 0-3-3\"/>"],"people":["<path d=\"M4.5 6.75a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0M6.75 3.5a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5m5.69 11.65q.79.33 2.06.35c1.88 0 2.92-.67 3.47-1.43a3 3 0 0 0 .53-1.5v-.07c0-.83-.67-1.5-1.5-1.5h-4.63q.36.44.53 1H17c.28 0 .5.22.5.5v.1l-.04.22q-.05.29-.3.66c-.33.46-1.04 1.02-2.66 1.02q-1.08-.01-1.69-.28-.12.43-.37.93M1.5 13c0-1.1.9-2 2-2H10a2 2 0 0 1 2 2v.08l-.01.18q-.01.17-.08.45c-.08.37-.25.86-.6 1.36-.7 1.01-2.05 1.93-4.56 1.93s-3.87-.92-4.57-1.93a4 4 0 0 1-.68-1.99V13m1 .06v.1l.06.33c.07.27.2.64.45 1C3.49 15.2 4.5 16 6.75 16s3.26-.8 3.74-1.5a3 3 0 0 0 .5-1.42l.01-.02V13a1 1 0 0 0-1-1H3.5a1 1 0 0 0-1 1zM13 7.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0M14.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5\"/>","<path d=\"M6.75 10a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5m5.69 5.14q.78.35 2.06.36c4 0 4-3 4-3 0-.83-.67-1.5-1.5-1.5h-4.63q.62.74.63 1.75v.36l-.02.25a5 5 0 0 1-.54 1.78M17 7.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0M1.5 13c0-1.1.9-2 2-2H10a2 2 0 0 1 2 2s0 4-5.25 4-5.25-4-5.25-4m11.5.1v.07Z\"/>"],"group":["<path d=\"M4.5 6.75a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0M6.75 3.5a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5m5.69 11.65q.79.33 2.06.35c1.88 0 2.92-.67 3.47-1.43a3 3 0 0 0 .53-1.5v-.07c0-.83-.67-1.5-1.5-1.5h-4.63q.36.44.53 1H17c.28 0 .5.22.5.5v.1l-.04.22q-.05.29-.3.66c-.33.46-1.04 1.02-2.66 1.02q-1.08-.01-1.69-.28-.12.43-.37.93M1.5 13c0-1.1.9-2 2-2H10a2 2 0 0 1 2 2v.08l-.01.18q-.01.17-.08.45c-.08.37-.25.86-.6 1.36-.7 1.01-2.05 1.93-4.56 1.93s-3.87-.92-4.57-1.93a4 4 0 0 1-.68-1.99V13m1 .06v.1l.06.33c.07.27.2.64.45 1C3.49 15.2 4.5 16 6.75 16s3.26-.8 3.74-1.5a3 3 0 0 0 .5-1.42l.01-.02V13a1 1 0 0 0-1-1H3.5a1 1 0 0 0-1 1zM13 7.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0M14.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5\"/>","<path d=\"M6.75 10a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5m5.69 5.14q.78.35 2.06.36c4 0 4-3 4-3 0-.83-.67-1.5-1.5-1.5h-4.63q.62.74.63 1.75v.36l-.02.25a5 5 0 0 1-.54 1.78M17 7.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0M1.5 13c0-1.1.9-2 2-2H10a2 2 0 0 1 2 2s0 4-5.25 4-5.25-4-5.25-4m11.5.1v.07Z\"/>"],"person_add":["<path d=\"M9 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8M6 6a3 3 0 1 1 6 0 3 3 0 0 1-6 0m-2 5a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9 9 0 0 0 9 18q.62 0 1.21-.06A6 6 0 0 1 9.6 17L9 17a8 8 0 0 1-4.33-1.05A3.4 3.4 0 0 1 3 13a1 1 0 0 1 1-1h5.6q.27-.54.66-1zm10.5 8a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9m0-7c.28 0 .5.22.5.5V14h1.5a.5.5 0 0 1 0 1H15v1.5a.5.5 0 0 1-1 0V15h-1.5a.5.5 0 0 1 0-1H14v-1.5c0-.28.22-.5.5-.5\"/>","<path d=\"M9 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8m-5 9a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9 9 0 0 0 9 18q.62 0 1.21-.06a5.5 5.5 0 0 1 .05-6.94zm10.5 8a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9m0-7c.28 0 .5.22.5.5V14h1.5a.5.5 0 0 1 0 1H15v1.5a.5.5 0 0 1-1 0V15h-1.5a.5.5 0 0 1 0-1H14v-1.5c0-.28.22-.5.5-.5\"/>"],"stop":["<path d=\"M15.5 4c.28 0 .5.22.5.5v11a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11c0-.28.22-.5.5-.5zm-11-1C3.67 3 3 3.67 3 4.5v11c0 .83.67 1.5 1.5 1.5h11c.83 0 1.5-.67 1.5-1.5v-11c0-.83-.67-1.5-1.5-1.5z\"/>","<path d=\"M4.5 3C3.67 3 3 3.67 3 4.5v11c0 .83.67 1.5 1.5 1.5h11c.83 0 1.5-.67 1.5-1.5v-11c0-.83-.67-1.5-1.5-1.5z\"/>"],"send":["<path d=\"M2.18 2.11a.5.5 0 0 1 .54-.06l15 7.5a.5.5 0 0 1 0 .9l-15 7.5a.5.5 0 0 1-.7-.58L3.98 10 2.02 2.63a.5.5 0 0 1 .16-.52m2.7 8.39-1.61 6.06L16.38 10 3.27 3.44 4.88 9.5h6.62a.5.5 0 1 1 0 1z\"/>","<path d=\"M2.72 2.05a.5.5 0 0 0-.7.58l1.5 5.62q.09.3.4.36l6.85 1.14c.28.05.28.45 0 .5l-6.85 1.14a.5.5 0 0 0-.4.36l-1.5 5.62a.5.5 0 0 0 .7.58l15-7.5a.5.5 0 0 0 0-.9z\"/>"],"dojo":["<path d=\"M16 8c0 1.78-.77 3.37-2 4.47v5.03a.5.5 0 0 1-.75.43L10 16.08l-3.25 1.85A.5.5 0 0 1 6 17.5v-5.03A5.98 5.98 0 0 1 10 2a6 6 0 0 1 6 6m-6 6c-1.1 0-2.12-.3-3-.8v3.44l2.75-1.57a.5.5 0 0 1 .5 0L13 16.64V13.2c-.88.5-1.9.8-3 .8m0-1a5 5 0 1 0 0-10 5 5 0 0 0 0 10\"/>","<path d=\"M16 8A6 6 0 1 1 4 8a6 6 0 0 1 12 0m-6 7c1.49 0 2.87-.46 4-1.25v3.75a.5.5 0 0 1-.8.4L10 16l-3.2 1.9a.5.5 0 0 1-.8-.4v-3.75A7 7 0 0 0 10 15\"/>"]};
+        const ICONS = {"add":["<path d=\"M10 2.5c.28 0 .5.22.5.5v6.5H17a.5.5 0 0 1 0 1h-6.5V17a.5.5 0 0 1-1 0v-6.5H3a.5.5 0 0 1 0-1h6.5V3c0-.28.22-.5.5-.5\"/>","<path d=\"M10 2.25c.41 0 .75.34.75.75v6.25H17a.75.75 0 0 1 0 1.5h-6.25V17a.75.75 0 0 1-1.5 0v-6.25H3a.75.75 0 0 1 0-1.5h6.25V3c0-.41.34-.75.75-.75\"/>"],"archive":["<path d=\"M8.5 10a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM2 4.75C2 3.78 2.78 3 3.75 3h12.5c.97 0 1.75.78 1.75 1.75v1.5c0 .7-.4 1.3-1 1.58V14a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7.83c-.6-.28-1-.88-1-1.58zM3.75 4a.75.75 0 0 0-.75.75v1.5c0 .41.34.75.75.75h12.5c.41 0 .75-.34.75-.75v-1.5a.75.75 0 0 0-.75-.75zM4 8v6c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V8z\"/>","<path d=\"M2 4.25C2 3.56 2.56 3 3.25 3h13.5c.69 0 1.25.56 1.25 1.25v1.5C18 6.44 17.44 7 16.75 7H3.25C2.56 7 2 6.44 2 5.75zM3 8h14v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3zm5.5 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1z\"/>"],"auto_awesome":["<path d=\"M7.4 12.8a1.04 1.04 0 0 0 1.59-.51l.45-1.37a2.3 2.3 0 0 1 1.47-1.48l1.4-.45A1.04 1.04 0 0 0 12.25 7l-1.37-.45A2.3 2.3 0 0 1 9.4 5.08L8.95 3.7a1 1 0 0 0-.82-.68 1.04 1.04 0 0 0-1.15.7l-.46 1.4a2.3 2.3 0 0 1-1.44 1.45L3.7 7a1.04 1.04 0 0 0 .02 1.97l1.37.45a2.3 2.3 0 0 1 1.48 1.48l.46 1.4q.1.3.38.5m.08-7.4.53-1.38.44 1.37a3.3 3.3 0 0 0 2.12 2.12l1.4.53-1.38.45a3.3 3.3 0 0 0-2.11 2.11l-.53 1.38-.45-1.38a3.3 3.3 0 0 0-2.1-2.12L4 7.96 5.4 7.5a3.4 3.4 0 0 0 2.08-2.12m6.06 11.45a.8.8 0 0 0 1.22-.4l.25-.76a1.1 1.1 0 0 1 .68-.68l.77-.25a.8.8 0 0 0-.02-1.52l-.77-.25a1.1 1.1 0 0 1-.68-.68l-.25-.77a.8.8 0 0 0-1.52.01l-.24.76a1.1 1.1 0 0 1-.67.68l-.77.25a.8.8 0 0 0 0 1.52l.77.25a1.1 1.1 0 0 1 .68.68l.25.77q.09.25.3.4m-.92-2.8-.18-.05.19-.06a2.1 2.1 0 0 0 1.3-1.32l.06-.18.05.18a2 2 0 0 0 1.32 1.32l.2.06-.18.06a2 2 0 0 0-1.32 1.32l-.06.18-.06-.18a2 2 0 0 0-1.32-1.32\"/>","<path d=\"M7.4 12.8a1.04 1.04 0 0 0 1.59-.51l.45-1.37a2.3 2.3 0 0 1 1.47-1.48l1.4-.45A1.04 1.04 0 0 0 12.25 7l-1.37-.45A2.3 2.3 0 0 1 9.4 5.08L8.95 3.7a1 1 0 0 0-.82-.68 1.04 1.04 0 0 0-1.15.7l-.46 1.4a2.3 2.3 0 0 1-1.44 1.45L3.7 7a1.04 1.04 0 0 0 .02 1.97l1.37.45a2.3 2.3 0 0 1 1.48 1.48l.46 1.4q.1.3.38.5m6.14 4.05a.8.8 0 0 0 1.22-.4l.25-.76a1.1 1.1 0 0 1 .68-.68l.77-.25a.8.8 0 0 0-.02-1.52l-.77-.25a1.1 1.1 0 0 1-.68-.68l-.25-.77a.8.8 0 0 0-1.52.01l-.24.76a1.1 1.1 0 0 1-.67.68l-.77.25a.8.8 0 0 0 0 1.52l.77.25a1.1 1.1 0 0 1 .68.68l.25.77q.09.25.3.4\"/>"],"auto_fix_high":["<path d=\"M16.5 2c.28 0 .5.22.5.5V3h.5a.5.5 0 0 1 0 1H17v.5a.5.5 0 0 1-1 0V4h-.5a.5.5 0 1 1 0-1h.5v-.5c0-.28.22-.5.5-.5m-10 4a.5.5 0 0 0 0-1H6v-.5a.5.5 0 0 0-1 0V5h-.5a.5.5 0 0 0 0 1H5v.5a.5.5 0 0 0 1 0V6zm9 9a.5.5 0 0 0 0-1H15v-.5a.5.5 0 0 0-1 0v.5h-.5a.5.5 0 1 0 0 1h.5v.5a.5.5 0 1 0 1 0V15zm-2.07-8.43a1.9 1.9 0 0 0-2.7 0l-8.17 8.16a1.91 1.91 0 1 0 2.7 2.7l8.17-8.16c.75-.74.75-1.96 0-2.7m-2 .7a.91.91 0 0 1 1.3 1.3l-.48.47-1.3-1.29zm-1.18 1.19 1.3 1.29-6.99 6.98a.91.91 0 0 1-1.3-1.29z\"/>","<path d=\"M17 2.5a.5.5 0 0 0-1 0V3h-.5a.5.5 0 0 0 0 1h.5v.5a.5.5 0 0 0 1 0V4h.5a.5.5 0 0 0 0-1H17zm-10 3a.5.5 0 0 1-.5.5H6v.5a.5.5 0 0 1-1 0V6h-.5a.5.5 0 0 1 0-1H5v-.5a.5.5 0 0 1 1 0V5h.5c.28 0 .5.22.5.5m9 9a.5.5 0 0 1-.5.5H15v.5a.5.5 0 0 1-1 0V15h-.5a.5.5 0 0 1 0-1h.5v-.5a.5.5 0 0 1 1 0v.5h.5c.28 0 .5.22.5.5m-2.57-7.93a1.9 1.9 0 0 0-2.7 0l-.48.47 2.7 2.71.48-.48c.75-.74.75-1.96 0-2.7m-1.18 3.89-2.7-2.71-6.99 6.98a1.91 1.91 0 1 0 2.7 2.7z\"/>"],"check":["<path d=\"M3.37 10.17a.5.5 0 0 0-.74.66l4 4.5c.19.22.52.23.72.02l10.5-10.5a.5.5 0 0 0-.7-.7L7.02 14.27z\"/>","<path d=\"M7.03 13.9 3.56 10a.75.75 0 0 0-1.12 1l4 4.5c.29.32.79.34 1.09.03l10.5-10.5a.75.75 0 0 0-1.06-1.06z\"/>"],"check_circle":["<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 1a7 7 0 1 0 0 14 7 7 0 0 0 0-14m3.36 4.65c.17.17.2.44.06.63l-.06.07-4 4a.5.5 0 0 1-.64.07l-.07-.06-2-2a.5.5 0 0 1 .63-.77l.07.06L9 11.3l3.65-3.65c.2-.2.51-.2.7 0\"/>","<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m3.36 5.65a.5.5 0 0 0-.64-.06l-.07.06L9 11.3 7.35 9.65l-.07-.06a.5.5 0 0 0-.7.7l.07.07 2 2 .07.06c.17.11.4.11.56 0l.07-.06 4-4 .07-.08a.5.5 0 0 0-.06-.63\"/>"],"close":["<path d=\"m4.09 4.22.06-.07a.5.5 0 0 1 .63-.06l.07.06L10 9.29l5.15-5.14a.5.5 0 0 1 .63-.06l.07.06c.18.17.2.44.06.63l-.06.07L10.71 10l5.14 5.15c.18.17.2.44.06.63l-.06.07a.5.5 0 0 1-.63.06l-.07-.06L10 10.71l-5.15 5.14a.5.5 0 0 1-.63.06l-.07-.06a.5.5 0 0 1-.06-.63l.06-.07L9.29 10 4.15 4.85a.5.5 0 0 1-.06-.63l.06-.07z\"/>","<path d=\"m3.9 4.05.07-.08a.75.75 0 0 1 .98-.07l.08.07L10 8.94l4.97-4.97a.75.75 0 0 1 .98-.07l.08.07c.27.27.3.68.07.98l-.07.08L11.06 10l4.97 4.97c.27.27.3.68.07.98l-.07.08a.75.75 0 0 1-.98.07l-.08-.07L10 11.06l-4.97 4.97a.75.75 0 0 1-.98.07l-.08-.07a.75.75 0 0 1-.07-.98l.07-.08L8.94 10 3.97 5.03a.75.75 0 0 1-.07-.98l.07-.08z\"/>"],"content_copy":["<path d=\"M7 7H5.5C4.67 7 4 7.67 4 8.5v6c0 .83.67 1.5 1.5 1.5h4c.65 0 1.2-.42 1.41-1h1.04a2.5 2.5 0 0 1-2.45 2h-4A2.5 2.5 0 0 1 3 14.5v-6A2.5 2.5 0 0 1 5.5 6H7zm7.5-4A2.5 2.5 0 0 1 17 5.5v6a2.5 2.5 0 0 1-2.5 2.5h-4A2.5 2.5 0 0 1 8 11.5v-6A2.5 2.5 0 0 1 10.5 3zm-4 1C9.67 4 9 4.67 9 5.5v6c0 .83.67 1.5 1.5 1.5h4c.83 0 1.5-.67 1.5-1.5v-6c0-.83-.67-1.5-1.5-1.5z\"/>","<path d=\"M7 11.5a3.5 3.5 0 0 0 3.5 3.5h1.45a2.5 2.5 0 0 1-2.45 2h-4A2.5 2.5 0 0 1 3 14.5v-6A2.5 2.5 0 0 1 5.5 6H7zM14.5 3A2.5 2.5 0 0 1 17 5.5v6a2.5 2.5 0 0 1-2.5 2.5h-4A2.5 2.5 0 0 1 8 11.5v-6A2.5 2.5 0 0 1 10.5 3z\"/>"],"dark_mode":["<path d=\"M15.5 13.5A6.98 6.98 0 0 1 4 14.39c2.83-1.09 4.56-2.42 5.6-4.4 1.04-2 1.33-4.16.75-6.9q1.36.17 2.58.87a7 7 0 0 1 2.55 9.54M5.45 16.92A7.98 7.98 0 1 0 9.88 2.04a.6.6 0 0 0-.61.73c.69 2.82.43 4.88-.55 6.76-.94 1.78-2.55 3.03-5.55 4.1a.6.6 0 0 0-.3.9 8 8 0 0 0 2.59 2.39\"/>","<path d=\"M16.36 14a7.98 7.98 0 0 1-13.48.54.6.6 0 0 1 .29-.9c3-1.08 4.61-2.33 5.55-4.11.98-1.88 1.24-3.94.55-6.76a.6.6 0 0 1 .61-.73A7.98 7.98 0 0 1 16.36 14\"/>"],"data_object":["<path d=\"M6.5 3A2.5 2.5 0 0 0 4 5.5v2.88c0 .5-.28.95-.72 1.17a.5.5 0 0 0 0 .9c.44.22.72.68.72 1.17v2.88A2.5 2.5 0 0 0 6.5 17a.5.5 0 0 0 0-1A1.5 1.5 0 0 1 5 14.5v-2.88c0-.62-.24-1.2-.66-1.62.42-.42.66-1 .66-1.62V5.5C5 4.67 5.67 4 6.5 4a.5.5 0 0 0 0-1m7 0A2.5 2.5 0 0 1 16 5.5v2.88c0 .5.28.95.72 1.17a.5.5 0 0 1 0 .9 1.3 1.3 0 0 0-.72 1.17v2.88a2.5 2.5 0 0 1-2.5 2.5.5.5 0 0 1 0-1c.83 0 1.5-.67 1.5-1.5v-2.88c0-.62.24-1.2.66-1.62A2.3 2.3 0 0 1 15 8.38V5.5c0-.83-.67-1.5-1.5-1.5a.5.5 0 0 1 0-1\"/>","<path d=\"M3.5 5.75A2.75 2.75 0 0 1 6.23 3a.75.75 0 0 1 0 1.5C5.55 4.5 5 5.06 5 5.75L5 8.38c0 .6-.21 1.17-.58 1.62.37.45.58 1.02.58 1.62v2.63c0 .7.56 1.25 1.25 1.25a.75.75 0 1 1 0 1.5 2.75 2.75 0 0 1-2.75-2.75v-2.63c0-.4-.22-.76-.57-.94a.75.75 0 0 1 0-1.36c.35-.18.57-.54.57-.94zm13 0A2.75 2.75 0 0 0 13.77 3a.75.75 0 0 0 0 1.5c.69 0 1.25.56 1.25 1.25L15 8.38c0 .6.21 1.17.58 1.62a2.6 2.6 0 0 0-.58 1.62v2.63c0 .7-.56 1.25-1.25 1.25a.75.75 0 1 0 0 1.5 2.75 2.75 0 0 0 2.75-2.75v-2.63c0-.4.22-.76.57-.94a.75.75 0 0 0 0-1.36 1.1 1.1 0 0 1-.57-.94z\"/>"],"delete":["<path d=\"M8.5 4h3a1.5 1.5 0 0 0-3 0m-1 0a2.5 2.5 0 0 1 5 0h5a.5.5 0 0 1 0 1h-1.05l-1.2 10.34A3 3 0 0 1 12.27 18H7.73a3 3 0 0 1-2.98-2.66L3.55 5H2.5a.5.5 0 0 1 0-1zM5.74 15.23A2 2 0 0 0 7.73 17h4.54a2 2 0 0 0 1.99-1.77L15.44 5H4.56zM8.5 7.5c.28 0 .5.22.5.5v6a.5.5 0 0 1-1 0V8c0-.28.22-.5.5-.5M12 8a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z\"/>","<path d=\"M8.5 4h3a1.5 1.5 0 0 0-3 0m-1 0a2.5 2.5 0 0 1 5 0h5a.5.5 0 0 1 0 1h-1.05l-1.2 10.34A3 3 0 0 1 12.27 18H7.73a3 3 0 0 1-2.98-2.66L3.55 5H2.5a.5.5 0 0 1 0-1zM9 8a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0zm2.5-.5a.5.5 0 0 0-.5.5v6a.5.5 0 0 0 1 0V8a.5.5 0 0 0-.5-.5\"/>"],"download":["<path d=\"M15.5 17a.5.5 0 0 1 .09 1H4.5a.5.5 0 0 1-.09-1H15.5M10 2a.5.5 0 0 1 .5.41V14.3l3.64-3.65a.5.5 0 0 1 .64-.06l.07.06c.17.17.2.44.06.63l-.06.07-4.5 4.5a.5.5 0 0 1-.25.14L10 16a.5.5 0 0 1-.4-.2l-4.46-4.45a.5.5 0 0 1 .64-.76l.07.06 3.65 3.64V2.5c0-.27.22-.5.5-.5\"/>","<path d=\"M15.24 16.5a.75.75 0 0 1 .1 1.5H4.76a.75.75 0 0 1-.1-1.5h10.6M10 2c.38 0 .7.28.75.65v10.3l2.97-2.98c.27-.26.68-.29.98-.07l.08.07c.27.27.3.68.07.98l-.07.08-4.24 4.25-.07.07-.1.05-.03.03-.1.03-.11.03-.07.01H10l-.15-.01-.08-.03a1 1 0 0 1-.26-.14l-4.29-4.29A.75.75 0 0 1 6.2 9.9l.08.07 2.97 2.97V2.75c0-.41.34-.75.75-.75\"/>"],"edit_note":["<path d=\"M11.5 8H16v-.59a2 2 0 0 0-.06-.4V7a1.5 1.5 0 0 0-.38-.65l-3.91-3.91A1.5 1.5 0 0 0 10.59 2H6a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2.22l-.01-.03A2 2 0 0 1 8 17H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h4v3.5c0 .83.67 1.5 1.5 1.5m0-1a.5.5 0 0 1-.5-.5V3.2L14.8 7zm3.3 2.55a1.87 1.87 0 1 1 2.65 2.64l-4.83 4.83a2 2 0 0 1-1.02.58l-1.5.37a.9.9 0 0 1-1.07-1.07l.37-1.5q.15-.6.58-1.02z\"/>","<path d=\"M10 6.5V2H5.5C4.67 2 4 2.67 4 3.5v13c0 .83.67 1.5 1.5 1.5h2.72a2 2 0 0 1-.16-1.35l.37-1.5a3 3 0 0 1 .84-1.48l4.83-4.83c.53-.53 1.21-.8 1.9-.84h-4.5A1.5 1.5 0 0 1 10 6.5m1 0V2.25L15.75 7H11.5a.5.5 0 0 1-.5-.5m6.45 3.05a1.87 1.87 0 0 0-2.64 0l-4.83 4.83a2 2 0 0 0-.58 1.02l-.37 1.5a.9.9 0 0 0 1.08 1.07l1.5-.37q.58-.16 1.01-.58l4.83-4.83c.73-.73.73-1.91 0-2.64\"/>"],"emoji_events":["<path d=\"M3 7a3 3 0 0 0 2.6 2.97 4.5 4.5 0 0 0 3.9 3.5v1.5h-2a2 2 0 0 0-2 2v.5c0 .27.23.5.5.5h8a.5.5 0 0 0 .5-.5v-.5a2 2 0 0 0-2-2h-2v-1.5a4.5 4.5 0 0 0 3.9-3.5A3 3 0 0 0 17 7V5.5c0-.83-.68-1.5-1.5-1.5h-1a2 2 0 0 0-2-2h-5a2 2 0 0 0-2 2h-1C3.67 4 3 4.67 3 5.5zm1.5-2h1v3.93A2 2 0 0 1 4 7V5.5c0-.28.22-.5.5-.5m10 0h1c.27 0 .5.22.5.5V7a2 2 0 0 1-1.5 1.94zm-1-1v5a3.5 3.5 0 0 1-7 .16V4a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1m-7 12.97a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1z\"/>","<path d=\"M5.5 4c0-1.1.9-2 2-2h5a2 2 0 0 1 2 2h1c.82 0 1.5.67 1.5 1.5V7a3 3 0 0 1-2.6 2.97 4.5 4.5 0 0 1-3.9 3.5v1.5h2a2 2 0 0 1 2 2v.5a.5.5 0 0 1-.5.5H6a.5.5 0 0 1-.5-.5v-.5c0-1.1.9-2 2-2h2v-1.5a4.5 4.5 0 0 1-3.9-3.5A3 3 0 0 1 3 7V5.5C3 4.67 3.67 4 4.5 4zm9 4.94A2 2 0 0 0 16 7V5.5a.5.5 0 0 0-.5-.5h-1zM5.5 5h-1a.5.5 0 0 0-.5.5V7a2 2 0 0 0 1.5 1.93z\"/>"],"error":["<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 1a7 7 0 1 0 0 14 7 7 0 0 0 0-14m0 9.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5M10 6a.5.5 0 0 1 .5.41V11a.5.5 0 0 1-1 .09V6.5c0-.28.22-.5.5-.5\"/>","<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 10.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5M10 6a.5.5 0 0 0-.5.41v4.68a.5.5 0 0 0 1 0V6.41A.5.5 0 0 0 10 6\"/>"],"fiber_manual_record":["<path d=\"M10 14.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16m-7 8a7 7 0 1 1 14 0 7 7 0 0 1-14 0\"/>","<path d=\"M2 10a8 8 0 1 1 16 0 8 8 0 0 1-16 0m8 4.5a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9\"/>"],"folder_open":["<path d=\"M3 5.5v6.6l1.5-2.6A3 3 0 0 1 7.1 8H15v-.5c0-.83-.67-1.5-1.5-1.5h-4a.5.5 0 0 1-.35-.15l-1.71-1.7A.5.5 0 0 0 7.09 4H4.5C3.67 4 3 4.67 3 5.5m1.28 10.48.22.02h9.4a2 2 0 0 0 1.73-1l2.17-3.75A1.5 1.5 0 0 0 16.5 9H7.1a2 2 0 0 0-1.73 1L3.2 13.75a1.5 1.5 0 0 0 1.08 2.23M2 14.46V5.5A2.5 2.5 0 0 1 4.5 3h2.59c.4 0 .78.16 1.06.44L9.7 5h3.79A2.5 2.5 0 0 1 16 7.5V8h.5a2.5 2.5 0 0 1 2.16 3.75L16.5 15.5a3 3 0 0 1-2.6 1.5H4.5a2.5 2.5 0 0 1-1.62-.6A2.5 2.5 0 0 1 2 14.46\"/>","<path d=\"M4.5 3A2.5 2.5 0 0 0 2 5.5v6.97l1.57-2.72A3.5 3.5 0 0 1 6.6 8H16v-.5A2.5 2.5 0 0 0 13.5 5H9.7L8.16 3.44A1.5 1.5 0 0 0 7.09 3zm-.07 7.25A2.5 2.5 0 0 1 6.6 9H17a2 2 0 0 1 1.73 3l-2.16 3.75A2.5 2.5 0 0 1 14.4 17H4a2 2 0 0 1-1.73-3z\"/>"],"grid_on":["<path d=\"M7.5 11c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4A1.5 1.5 0 0 1 2 16.5v-4c0-.83.67-1.5 1.5-1.5zm9 0c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4a1.5 1.5 0 0 1-1.5-1.5v-4c0-.83.67-1.5 1.5-1.5zm-9 1h-4a.5.5 0 0 0-.5.5v4c0 .28.22.5.5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5m9 0h-4a.5.5 0 0 0-.5.5v4c0 .28.22.5.5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5m-9-10C8.33 2 9 2.67 9 3.5v4C9 8.33 8.33 9 7.5 9h-4A1.5 1.5 0 0 1 2 7.5v-4C2 2.67 2.67 2 3.5 2zm9 0c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4A1.5 1.5 0 0 1 11 7.5v-4c0-.83.67-1.5 1.5-1.5zm-9 1h-4a.5.5 0 0 0-.5.5v4c0 .28.22.5.5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5m9 0h-4a.5.5 0 0 0-.5.5v4c0 .28.22.5.5.5h4a.5.5 0 0 0 .5-.5v-4a.5.5 0 0 0-.5-.5\"/>","<path d=\"M7.5 11c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4A1.5 1.5 0 0 1 2 16.5v-4c0-.83.67-1.5 1.5-1.5zm9 0c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4a1.5 1.5 0 0 1-1.5-1.5v-4c0-.83.67-1.5 1.5-1.5zm-9-9C8.33 2 9 2.67 9 3.5v4C9 8.33 8.33 9 7.5 9h-4A1.5 1.5 0 0 1 2 7.5v-4C2 2.67 2.67 2 3.5 2zm9 0c.83 0 1.5.67 1.5 1.5v4c0 .83-.67 1.5-1.5 1.5h-4A1.5 1.5 0 0 1 11 7.5v-4c0-.83.67-1.5 1.5-1.5z\"/>"],"help":["<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 1a7 7 0 1 0 0 14 7 7 0 0 0 0-14m0 10.5a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5m0-8a2.5 2.5 0 0 1 1.65 4.38l-.15.12-.22.17-.09.07-.16.15c-.33.36-.53.85-.53 1.61a.5.5 0 0 1-1 0 3.2 3.2 0 0 1 1.16-2.62l.25-.19.12-.1A1.5 1.5 0 0 0 10 6.5c-.83 0-1.5.67-1.5 1.5a.5.5 0 0 1-1 0A2.5 2.5 0 0 1 10 5.5\"/>","<path d=\"M10 2a8 8 0 1 1 0 16 8 8 0 0 1 0-16m0 11.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5m0-8A2.5 2.5 0 0 0 7.5 8a.5.5 0 0 0 1 0 1.5 1.5 0 1 1 2.63.98l-.1.11-.12.1-.25.19q-.19.14-.35.32A3.2 3.2 0 0 0 9.5 12a.5.5 0 0 0 1 0c0-.76.2-1.25.53-1.61l.08-.08.08-.07.09-.07.22-.17.15-.12A2.5 2.5 0 0 0 10 5.5\"/>"],"info":["<path d=\"M10.5 8.91a.5.5 0 0 0-1 .09v4.6a.5.5 0 0 0 1-.1V8.91m.3-2.16a.75.75 0 1 0-1.5 0 .75.75 0 0 0 1.5 0M18 10a8 8 0 1 0-16 0 8 8 0 0 0 16 0M3 10a7 7 0 1 1 14 0 7 7 0 0 1-14 0\"/>","<path d=\"M18 10a8 8 0 1 0-16 0 8 8 0 0 0 16 0M9.5 8.91a.5.5 0 0 1 1 0v4.69a.5.5 0 0 1-1 0V8.9m-.25-2.16a.75.75 0 1 1 1.5 0 .75.75 0 0 1-1.5 0\"/>"],"inventory_2":["<path d=\"M11.3 2.48a3.5 3.5 0 0 0-2.6 0l-5.76 2.3A1.5 1.5 0 0 0 2 6.18v7.64c0 .62.37 1.17.94 1.4l5.76 2.3a3.5 3.5 0 0 0 2.6 0l5.76-2.3c.57-.23.94-.78.94-1.4V6.18a1.5 1.5 0 0 0-.94-1.4zm-2.23.93a2.5 2.5 0 0 1 1.86 0l5.22 2.09-2.27.91-6.16-2.46zm-2.7 1.08 6.16 2.46L10 7.96 3.85 5.5zm4.13 4.35 6.5-2.6v7.58a.5.5 0 0 1-.31.47l-5.76 2.3q-.2.09-.43.13zm-1 0v7.88a3 3 0 0 1-.43-.13l-5.76-2.3a.5.5 0 0 1-.31-.47V6.24z\"/>","<path d=\"m10 7.96 3.03-1.21-7.5-3-2.59 1.03a2 2 0 0 0-.36.21zm-7.96-2.1Q2 6 2 6.17v7.64c0 .62.37 1.17.94 1.4l5.76 2.3q.4.15.8.21v-8.9zm8.46 11.87q.4-.05.8-.21l5.76-2.3c.57-.23.94-.78.94-1.4V6.18q0-.17-.04-.33L10.5 8.84zM17.42 5l-3.04 1.22-7.5-3 1.82-.73a3.5 3.5 0 0 1 2.6 0l5.76 2.3q.2.09.36.21\"/>"],"keyboard":["<path d=\"M5 12.5c0-.28.22-.5.5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M11.5 8a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5m3.75-.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0M5.5 8a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5m2.25 1.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m2.25.75A.75.75 0 1 0 10 9a.75.75 0 0 0 0 1.5m3.76-.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0M8.5 8a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M2 5.5C2 4.67 2.67 4 3.5 4h13c.83 0 1.5.67 1.5 1.5v8c0 .83-.67 1.5-1.5 1.5h-13A1.5 1.5 0 0 1 2 13.5zM3.5 5a.5.5 0 0 0-.5.5v8c0 .28.22.5.5.5h13a.5.5 0 0 0 .5-.5v-8a.5.5 0 0 0-.5-.5z\"/>","<path d=\"M3.5 4C2.67 4 2 4.67 2 5.5v8c0 .83.67 1.5 1.5 1.5h13c.83 0 1.5-.67 1.5-1.5v-8c0-.83-.67-1.5-1.5-1.5zm2.75 3.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m6 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0M5 12.5c0-.28.22-.5.5-.5h9a.5.5 0 0 1 0 1h-9a.5.5 0 0 1-.5-.5M14.5 8a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5M7 10.5A.75.75 0 1 1 7 9a.75.75 0 0 1 0 1.5m3.75-.75a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0m2.26.75A.75.75 0 1 1 13 9a.75.75 0 0 1 0 1.5M9.25 7.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0\"/>"],"keyboard_double_arrow_down":["<path d=\"M15.15 9.65a.5.5 0 1 1 .7.7l-5.5 5.5a.5.5 0 0 1-.7 0l-5.5-5.5a.5.5 0 1 1 .7-.7L10 14.79zm0-5a.5.5 0 1 1 .7.7l-5.5 5.5a.5.5 0 0 1-.7 0l-5.5-5.5a.5.5 0 1 1 .7-.7L10 9.79z\"/>","<path d=\"M14.72 9.97a.75.75 0 1 1 1.06 1.06l-5.25 5.25c-.3.3-.77.3-1.06 0l-5.25-5.25a.75.75 0 1 1 1.06-1.06L10 14.69zm0-5.5a.75.75 0 1 1 1.06 1.06l-5.25 5.25c-.3.3-.77.3-1.06 0L4.22 5.53a.75.75 0 1 1 1.06-1.06L10 9.19z\"/>"],"library_music":["<path d=\"M14.7 2.23a1 1 0 0 1 1.3.95V13.5a2.5 2.5 0 1 1-1-2V6.18L8 8.37v7.13a2.5 2.5 0 1 1-1-2V5.37a1 1 0 0 1 .7-.96zM8 7.32l7-2.19V3.18L8 5.37zM5.5 14a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3m6.5-.5a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0\"/>","<path d=\"M15.99 3.02a1 1 0 0 0-1.29-.8l-7 2.2a1 1 0 0 0-.7.95v8.13q-.64-.48-1.5-.5A2.5 2.5 0 1 0 8 15.5V8.37l7-2.19v5.32q-.64-.48-1.5-.5a2.5 2.5 0 1 0 2.5 2.5V3.18z\"/>"],"light_mode":["<path d=\"M10 2c.28 0 .5.22.5.5v1a.5.5 0 0 1-1 0v-1c0-.28.22-.5.5-.5m0 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8m0-1a3 3 0 1 1 0-6 3 3 0 0 1 0 6m7.5-2.5a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1zM10 16c.28 0 .5.22.5.5v1a.5.5 0 0 1-1 0v-1c0-.28.22-.5.5-.5m-6.5-5.5a.5.5 0 0 0 0-1H2.46a.5.5 0 0 0 0 1zm.65-6.35c.2-.2.5-.2.7 0l1 1a.5.5 0 1 1-.7.7l-1-1a.5.5 0 0 1 0-.7m.7 11.7a.5.5 0 0 1-.7-.7l1-1a.5.5 0 0 1 .7.7zm11-11.7a.5.5 0 0 0-.7 0l-1 1a.5.5 0 0 0 .7.7l1-1a.5.5 0 0 0 0-.7m-.7 11.7a.5.5 0 0 0 .7-.7l-1-1a.5.5 0 0 0-.7.7z\"/>","<path d=\"M10 2c.28 0 .5.22.5.5v1a.5.5 0 0 1-1 0v-1c0-.28.22-.5.5-.5m4 8a4 4 0 1 1-8 0 4 4 0 0 1 8 0m3.5.5a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1zM10 16c.28 0 .5.22.5.5v1a.5.5 0 0 1-1 0v-1c0-.28.22-.5.5-.5m-6.5-5.5a.5.5 0 0 0 0-1H2.46a.5.5 0 0 0 0 1zm.65-6.35c.2-.2.5-.2.7 0l1 1a.5.5 0 1 1-.7.7l-1-1a.5.5 0 0 1 0-.7m.7 11.7a.5.5 0 0 1-.7-.7l1-1a.5.5 0 0 1 .7.7zm11-11.7a.5.5 0 0 0-.7 0l-1 1a.5.5 0 0 0 .7.7l1-1a.5.5 0 0 0 0-.7m-.7 11.7a.5.5 0 0 0 .7-.7l-1-1a.5.5 0 0 0-.7.7z\"/>"],"movie":["<path d=\"M5 4a3 3 0 0 0-3 3v6a3 3 0 0 0 3 3h5a3 3 0 0 0 3-3v-.32l3.04 2.1c.83.57 1.96-.03 1.96-1.03v-7.5c0-1-1.13-1.6-1.96-1.03L13 7.32V7a3 3 0 0 0-3-3zm8 4.54 3.6-2.5c.17-.1.4.01.4.21v7.5c0 .2-.23.32-.4.2L13 11.46zM3 7c0-1.1.9-2 2-2h5a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z\"/>","<path d=\"M2 7a3 3 0 0 1 3-3h5a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H5a3 3 0 0 1-3-3zm14.04 7.78L14 13.37V6.63l2.04-1.4c.83-.58 1.96.01 1.96 1.02v7.5c0 1-1.13 1.6-1.96 1.03\"/>"],"opacity":["<path d=\"M9.65 2.15c.2-.2.5-.2.7 0 .54.53 1.8 2.06 2.95 3.9 1.13 1.82 2.2 4.05 2.2 5.95 0 1.84-.53 3.35-1.5 4.4a5.3 5.3 0 0 1-4 1.6c-1.61 0-3-.54-4-1.6A6.3 6.3 0 0 1 4.5 12c0-1.9 1.07-4.13 2.2-5.95a25 25 0 0 1 2.95-3.9m-2.1 4.43C6.43 8.38 5.5 10.4 5.5 12c0 1.66.47 2.9 1.24 3.72A4.3 4.3 0 0 0 10 17a4.3 4.3 0 0 0 3.26-1.28A5.3 5.3 0 0 0 14.5 12c0-1.6-.93-3.62-2.05-5.42A27 27 0 0 0 10 3.24c-.59.67-1.56 1.9-2.45 3.34\"/>","<path d=\"M9.65 2.15c.2-.2.5-.2.7 0 .54.53 1.8 2.06 2.95 3.9 1.13 1.82 2.2 4.05 2.2 5.95 0 1.84-.53 3.35-1.5 4.4a5.3 5.3 0 0 1-4 1.6c-1.61 0-3-.54-4-1.6A6.3 6.3 0 0 1 4.5 12c0-1.9 1.07-4.13 2.2-5.95a25 25 0 0 1 2.95-3.9\"/>"],"pause":["<path d=\"M5 2a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zM4 4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1zm9-2a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm-1 2a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1z\"/>","<path d=\"M5 2a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2zm8 0a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2z\"/>"],"play_arrow":["<path d=\"M17.22 8.69a1.5 1.5 0 0 1 0 2.62l-10 5.5A1.5 1.5 0 0 1 5 15.5v-11A1.5 1.5 0 0 1 7.22 3.2zm-.48 1.75a.5.5 0 0 0 0-.88l-10-5.5A.5.5 0 0 0 6 4.5v11c0 .38.4.62.74.44z\"/>","<path d=\"M17.22 8.68a1.5 1.5 0 0 1 0 2.63l-10 5.5A1.5 1.5 0 0 1 5 15.5v-11A1.5 1.5 0 0 1 7.22 3.2z\"/>"],"remove":["<path d=\"M3 10c0-.28.22-.5.5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 3 10\"/>","<path d=\"M3 10c0-.41.34-.75.75-.75h12.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 10\"/>"],"restart_alt":["<path d=\"M16 10A6 6 0 0 0 5.53 6H7.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 1 0v1.6a7 7 0 1 1-1.98 4.36.5.5 0 0 1 1 .08L4 10a6 6 0 0 0 12 0\"/>","<path d=\"M16 10a6 6 0 0 0-9.97-4.5h1.22a.75.75 0 0 1 0 1.5h-3a.75.75 0 0 1-.75-.75v-3a.75.75 0 0 1 1.5 0v1.16a7.5 7.5 0 1 1-2.5 5.31.75.75 0 1 1 1.5.06V10a6 6 0 0 0 12 0\"/>"],"speed":["<path d=\"M10 2a8 8 0 0 1 5.44 13.87l-.08.06a.5.5 0 0 1-.6-.8l.25-.24a7 7 0 0 0 1.97-4.39h-1.5A.5.5 0 0 1 15 10c0-.27.2-.5.48-.5h1.5a7 7 0 0 0-6.48-6.48v1.5A.5.5 0 0 1 10 5c-.27 0-.5-.2-.5-.48v-1.5A7 7 0 0 0 5.42 4.7l1.06 1.06c.2.2.17.5-.02.7-.18.18-.5.2-.69.01L4.71 5.42A7 7 0 0 0 3.02 9.5h1.5c.27 0 .48.23.48.5s-.2.5-.48.5h-1.5c.12 1.7.85 3.24 1.97 4.39l.25.24.07.08a.5.5 0 0 1-.75.66A8 8 0 0 1 10 2m3.2 4.1a.5.5 0 0 1 .74.64l-.01.01-.02.04-.08.14a195 195 0 0 1-2.1 3.64l-.37.6q-.15.24-.3.39a1.5 1.5 0 0 1-2.12-2.12c.12-.12.46-.4.86-.72a153 153 0 0 1 3.23-2.5q.08-.05.12-.09l.04-.02\"/>","<path d=\"M10 2a8 8 0 0 1 5.52 13.8.75.75 0 0 1-1.04-1.1 6.5 6.5 0 0 0 1.94-3.7h-1.17a.75.75 0 0 1 0-1.5h1.23a6.5 6.5 0 0 0-5.73-5.96v1.27c0 .4-.36.69-.75.69-.4 0-.75-.3-.75-.69V3.54A6.5 6.5 0 0 0 5.97 4.9l.8.82a.75.75 0 0 1-1.05 1.06l-.81-.82A6.5 6.5 0 0 0 3.52 9.5h1.3a.75.75 0 0 1 0 1.5H3.58c.2 1.34.82 2.54 1.71 3.48l.23.23.05.05a.75.75 0 0 1-1.09 1.03A8 8 0 0 1 10 2m3.2 4.1a.5.5 0 0 1 .74.64l-.01.01-.02.04-.08.14a195 195 0 0 1-2.1 3.64l-.37.6q-.15.24-.3.39a1.5 1.5 0 0 1-2.12-2.12c.12-.12.46-.4.86-.72a153 153 0 0 1 3.23-2.5q.08-.05.12-.09l.04-.02\"/>"],"sports_esports":["<path d=\"M8.33 4.71a2 2 0 0 0-1.35-.17l-.9.17c-.7.14-1.32.6-1.66 1.25-1.1 2.16-1.94 3.93-2.27 5.43a4.5 4.5 0 0 0 .82 4.06c.66.82 1.8.65 2.4-.02l1.51-1.73A2 2 0 0 1 8.4 13h3.19a2 2 0 0 1 1.52.7c.51.6 1.04 1.2 1.51 1.73.6.67 1.75.84 2.4.02a4.5 4.5 0 0 0 .82-4.06c-.33-1.5-1.16-3.27-2.27-5.43a2.4 2.4 0 0 0-1.66-1.25l-.9-.17a2 2 0 0 0-1.35.17l-.06.03Q11.11 5 10.6 5H9.4q-.53-.01-1.02-.26zm-1.16.81q.4-.07.72.08l.05.03Q8.6 6 9.4 6h1.18q.79-.01 1.47-.37l.05-.03q.31-.15.71-.08l.9.17c.41.08.77.35.96.72 1.12 2.18 1.89 3.84 2.18 5.2.29 1.31.12 2.3-.62 3.22-.18.22-.59.26-.87-.06l-1.5-1.73A3 3 0 0 0 11.59 12H8.4a3 3 0 0 0-2.27 1.04l-1.5 1.73c-.3.32-.7.28-.88.06-.73-.92-.9-1.9-.62-3.22.3-1.36 1.06-3.02 2.18-5.2.2-.37.55-.64.97-.72zM10 8.5A.75.75 0 1 0 10 7a.75.75 0 0 0 0 1.5\"/>","<path d=\"M8.33 4.71a2 2 0 0 0-1.35-.17l-.9.17c-.7.14-1.32.6-1.66 1.25-1.1 2.16-1.94 3.93-2.27 5.43a4.5 4.5 0 0 0 .82 4.06c.66.82 1.8.65 2.4-.02L6.9 13.7A2 2 0 0 1 8.4 13h3.2a2 2 0 0 1 1.51.7l1.51 1.73c.6.67 1.75.84 2.4.02a4.5 4.5 0 0 0 .82-4.06c-.32-1.5-1.16-3.27-2.27-5.43a2.4 2.4 0 0 0-1.66-1.25l-.9-.17a2 2 0 0 0-1.35.17l-.06.03Q11.11 5 10.6 5H9.4q-.53-.01-1.02-.26zM10 8.5A.75.75 0 1 1 10 7a.75.75 0 0 1 0 1.5\"/>"],"upload_file":["<path d=\"M6 2a2 2 0 0 0-2 2v5.2q.49-.13 1-.18V4a1 1 0 0 1 1-1h4v3.5c0 .83.67 1.5 1.5 1.5H15v8a1 1 0 0 1-1 1h-3.6q-.27.54-.66 1H14a2 2 0 0 0 2-2V7.41c0-.4-.16-.78-.44-1.06l-3.91-3.91A1.5 1.5 0 0 0 10.59 2zm8.8 5h-3.3a.5.5 0 0 1-.5-.5V3.2zM5.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9m2.35-4.85a.5.5 0 1 1-.7.7L6 13.71v2.79a.5.5 0 0 1-1 0v-2.8l-1.15 1.15a.5.5 0 1 1-.7-.7l2-2A.5.5 0 0 1 5.5 12a.5.5 0 0 1 .35.14z\"/>","<path d=\"M10 2v4.5c0 .83.67 1.5 1.5 1.5H16v8.5c0 .83-.67 1.5-1.5 1.5H9.74A5.5 5.5 0 0 0 4 9.2V3.5C4 2.67 4.67 2 5.5 2zm1 .25V6.5c0 .28.22.5.5.5h4.25zM5.5 19a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9m2.35-4.85a.5.5 0 1 1-.7.7L6 13.71v2.79a.5.5 0 0 1-1 0v-2.8l-1.15 1.15a.5.5 0 1 1-.7-.7l2-2A.5.5 0 0 1 5.5 12a.5.5 0 0 1 .35.14z\"/>"],"warning":["<path d=\"M7.37 3.56a3 3 0 0 1 5.26 0l5.5 10A3 3 0 0 1 15.5 18h-11a3 3 0 0 1-2.63-4.44zm4.38.48a2 2 0 0 0-3.5 0l-5.5 10A2 2 0 0 0 4.5 17h11a2 2 0 0 0 1.75-2.96zM10 12.75a.75.75 0 1 1 0 1.5.75.75 0 0 1 0-1.5m0-6.25c.28 0 .5.22.5.5v4a.5.5 0 0 1-1 0V7c0-.28.22-.5.5-.5\"/>","<path d=\"M7.37 3.56a3 3 0 0 1 5.26 0l5.5 10A3 3 0 0 1 15.5 18h-11a3 3 0 0 1-2.63-4.44zM10 12.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5m0-6.25a.5.5 0 0 0-.5.5v4a.5.5 0 0 0 1 0V7a.5.5 0 0 0-.5-.5\"/>"],"zoom_in":["<path d=\"M8.5 5.5c.28 0 .5.22.5.5v2h2a.5.5 0 0 1 0 1H9v2a.5.5 0 0 1-1 0V9H6a.5.5 0 0 1 0-1h2V6c0-.28.22-.5.5-.5m0-3.5a6.5 6.5 0 0 1 4.94 10.73l3.41 3.42a.5.5 0 0 1-.63.76l-.07-.06-3.42-3.41A6.5 6.5 0 1 1 8.5 2m0 1a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11\"/>","<path d=\"M8.5 2a6.5 6.5 0 0 1 4.94 10.73l3.41 3.42a.5.5 0 0 1-.63.76l-.07-.06-3.42-3.41A6.5 6.5 0 1 1 8.5 2m0 3.5A.5.5 0 0 0 8 6v2H6a.5.5 0 0 0 0 1h2v2a.5.5 0 0 0 1 0V9h2a.5.5 0 0 0 0-1H9V6a.5.5 0 0 0-.5-.5\"/>"],"cloud":["<path d=\"M10 4c2.82 0 4.41 1.92 4.65 4.25h.07A3.33 3.33 0 0 1 18 11.62 3.33 3.33 0 0 1 14.72 15H5.28A3.33 3.33 0 0 1 2 11.62c0-1.8 1.37-3.27 3.1-3.37h.25C5.6 5.9 7.18 4 10 4m0 1C7.89 5 6.55 6.32 6.35 8.35a1 1 0 0 1-1 .9h-.07A2.33 2.33 0 0 0 3 11.62 2.33 2.33 0 0 0 5.28 14h9.44A2.33 2.33 0 0 0 17 11.62a2.33 2.33 0 0 0-2.28-2.37h-.07a1 1 0 0 1-1-.9C13.45 6.32 12.11 5 10 5\"/>","<path d=\"M10 4c2.82 0 4.41 1.92 4.65 4.25h.07A3.33 3.33 0 0 1 18 11.62 3.33 3.33 0 0 1 14.72 15H5.28A3.33 3.33 0 0 1 2 11.62a3.33 3.33 0 0 1 3.28-3.37h.07C5.6 5.9 7.18 4 10 4\"/>"],"sync":["<path d=\"M11.41 3.64a.5.5 0 0 0 0-.71L9.3.8a.5.5 0 0 0-.7.7l1 1a7.5 7.5 0 0 0-4.08 13.5.5.5 0 0 0 .6-.8A6.5 6.5 0 0 1 10.14 3.5L8.59 5.04a.5.5 0 0 0 .7.7zM8.6 16.36a.5.5 0 0 0 0 .71l2.12 2.12a.5.5 0 0 0 .7-.7l-1-1a7.5 7.5 0 0 0 4.07-13.5.5.5 0 1 0-.59.8q.37.28.7.61a6.5 6.5 0 0 1-4.73 11.1l1.55-1.55a.5.5 0 1 0-.7-.7z\"/>","<path d=\"M9.89 3.75a6.25 6.25 0 0 0-3.63 11.26.75.75 0 0 1-.9 1.2q-.44-.34-.84-.73a7.75 7.75 0 0 1 4.83-13.2l-.59-.59A.75.75 0 0 1 9.82.63l2.12 2.12c.3.3.3.77 0 1.06L9.82 5.93a.75.75 0 0 1-1.06-1.06zm.22 12.5a6.25 6.25 0 0 0 3.63-11.26.75.75 0 0 1 .9-1.2q.44.33.84.73a7.75 7.75 0 0 1-4.83 13.2l.59.59a.75.75 0 1 1-1.06 1.06l-2.12-2.12a.75.75 0 0 1 0-1.06l2.12-2.13a.75.75 0 1 1 1.06 1.07z\"/>"],"search":["<path d=\"M13.73 14.44a6.5 6.5 0 1 1 .7-.7l3.42 3.4a.5.5 0 0 1-.63.77l-.07-.06zm-.71-.71A5.5 5.5 0 0 0 15 9.5a5.5 5.5 0 1 0-1.98 4.23\"/>","<path d=\"M13.54 14.6a6.5 6.5 0 1 1 1.06-1.06l3.43 3.43a.75.75 0 0 1-.98 1.13l-.08-.07zm.96-5.1a5 5 0 1 0-10 0 5 5 0 0 0 10 0\"/>"],"flag":["<path d=\"M5 13h11.5a.5.5 0 0 0 .42-.78L14.1 8l2.82-4.22A.5.5 0 0 0 16.5 3h-12a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 1 0zm0-1V4h10.57l-2.49 3.72a.5.5 0 0 0 0 .56L15.57 12z\"/>","<path d=\"M5 13h11.5a.5.5 0 0 0 .42-.78L14.1 8l2.82-4.22A.5.5 0 0 0 16.5 3h-12a.5.5 0 0 0-.5.5v14a.5.5 0 0 0 1 0z\"/>"],"straighten":["<path d=\"M12.5 2c.83 0 1.5.67 1.5 1.5v13c0 .83-.67 1.5-1.5 1.5h-5A1.5 1.5 0 0 1 6 16.5v-13C6 2.67 6.67 2 7.5 2zm-5 1a.5.5 0 0 0-.5.5v1h2.5a.5.5 0 0 1 0 1H7V7h3.5a.5.5 0 0 1 0 1H7v1.5h2.5a.5.5 0 0 1 0 1H7V12h3.5a.5.5 0 0 1 0 1H7v1.5h2.5a.5.5 0 0 1 0 1H7v1c0 .28.22.5.5.5h5a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5z\"/>","<path d=\"M12.5 2c.83 0 1.5.67 1.5 1.5v13c0 .83-.67 1.5-1.5 1.5h-5A1.5 1.5 0 0 1 6 16.5v-13C6 2.67 6.67 2 7.5 2zM7 15.5h2.5a.5.5 0 0 0 0-1H7zM7 13h3.5a.5.5 0 0 0 0-1H7zm0-2.5h2.5a.5.5 0 0 0 0-1H7zM7 8h3.5a.5.5 0 0 0 0-1H7zm0-2.5h2.5a.5.5 0 0 0 0-1H7z\"/>"],"music_note":["<path d=\"M10.15 2.02a.5.5 0 0 0-.65.48v9.9A3.24 3.24 0 0 0 4 14.75a3.25 3.25 0 1 0 6.5-.25V7.18l5.85 1.8A.5.5 0 0 0 17 8.5V5.98a2.5 2.5 0 0 0-1.76-2.4zM16 7.82l-5.5-1.69V3.18l4.44 1.36c.63.2 1.06.78 1.06 1.44zM5 14.75a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0\"/>","<path d=\"M10.15 2.02a.5.5 0 0 0-.65.48v9.9A3.24 3.24 0 0 0 4 14.75a3.25 3.25 0 1 0 6.5-.25V7.18l5.85 1.8A.5.5 0 0 0 17 8.5V5.98a2.5 2.5 0 0 0-1.76-2.4z\"/>"],"person":["<path d=\"M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8M7 6a3 3 0 1 1 6 0 3 3 0 0 1-6 0m-2 5a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9 9 0 0 0 10 18c1.85 0 3.58-.39 4.87-1.2A4.4 4.4 0 0 0 17 13a2 2 0 0 0-2-2zm-1 2a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1c0 1.3-.62 2.28-1.67 2.95A8 8 0 0 1 10 17a8 8 0 0 1-4.33-1.05A3.4 3.4 0 0 1 4 13\"/>","<path d=\"M10 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8m-5 9a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9 9 0 0 0 10 18c1.85 0 3.58-.39 4.87-1.2A4.4 4.4 0 0 0 17 13a2 2 0 0 0-2-2z\"/>"],"settings":["<path d=\"M1.91 7.38A8.5 8.5 0 0 1 3.7 4.3a.5.5 0 0 1 .54-.13l1.92.68a1 1 0 0 0 1.32-.76l.36-2a.5.5 0 0 1 .4-.4 9 9 0 0 1 3.55 0q.32.08.38.4l.37 2a1 1 0 0 0 1.32.76l1.92-.68a.5.5 0 0 1 .54.13 8.5 8.5 0 0 1 1.78 3.08q.08.31-.15.54l-1.56 1.32a1 1 0 0 0 0 1.52l1.56 1.32a.5.5 0 0 1 .15.54 8.5 8.5 0 0 1-1.78 3.08.5.5 0 0 1-.54.13l-1.92-.68a1 1 0 0 0-1.32.76l-.37 2a.5.5 0 0 1-.38.4 8.5 8.5 0 0 1-3.56 0 .5.5 0 0 1-.39-.4l-.36-2a1 1 0 0 0-1.32-.76l-1.92.68a.5.5 0 0 1-.54-.13 8.5 8.5 0 0 1-1.78-3.08.5.5 0 0 1 .15-.54l1.56-1.32a1 1 0 0 0 0-1.52L2.06 7.92a.5.5 0 0 1-.15-.54m1.06 0 1.3 1.1a2 2 0 0 1 0 3.04l-1.3 1.1q.45 1.19 1.25 2.16l1.6-.58a2 2 0 0 1 2.63 1.53l.3 1.67a8 8 0 0 0 2.5 0l.3-1.67a2 2 0 0 1 2.64-1.53l1.6.58a8 8 0 0 0 1.24-2.16l-1.3-1.1a2 2 0 0 1 0-3.04l1.3-1.1a8 8 0 0 0-1.25-2.16l-1.6.58a2 2 0 0 1-2.63-1.53l-.3-1.67a8 8 0 0 0-2.5 0l-.3 1.67A2 2 0 0 1 5.81 5.8l-1.6-.58a8 8 0 0 0-1.24 2.16M7.5 10a2.5 2.5 0 1 1 5 0 2.5 2.5 0 0 1-5 0m1 0a1.5 1.5 0 1 0 3 0 1.5 1.5 0 0 0-3 0\"/>","<path d=\"M1.91 7.38A8.5 8.5 0 0 1 3.7 4.3a.5.5 0 0 1 .54-.13l1.92.68a1 1 0 0 0 1.32-.76l.36-2a.5.5 0 0 1 .4-.4 9 9 0 0 1 3.55 0q.32.08.38.4l.37 2a1 1 0 0 0 1.32.76l1.92-.68a.5.5 0 0 1 .54.13 8.5 8.5 0 0 1 1.78 3.08q.08.31-.15.54l-1.56 1.32a1 1 0 0 0 0 1.52l1.56 1.32a.5.5 0 0 1 .15.54 8.5 8.5 0 0 1-1.78 3.08.5.5 0 0 1-.54.13l-1.92-.68a1 1 0 0 0-1.32.76l-.37 2a.5.5 0 0 1-.38.4 8.5 8.5 0 0 1-3.56 0 .5.5 0 0 1-.39-.4l-.36-2a1 1 0 0 0-1.32-.76l-1.92.68a.5.5 0 0 1-.54-.13 8.5 8.5 0 0 1-1.78-3.08.5.5 0 0 1 .15-.54l1.56-1.32a1 1 0 0 0 0-1.52L2.06 7.92a.5.5 0 0 1-.15-.54M8 10a2 2 0 1 0 4 0 2 2 0 0 0-4 0\"/>"],"logout":["<path d=\"M8.5 11.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5M11 3.5a.5.5 0 0 0-.58-.5l-7 1.08a.5.5 0 0 0-.42.49v10.86c0 .25.18.46.42.5l7 1.07a.5.5 0 0 0 .58-.5V10h5.17l-1 .87a.5.5 0 0 0 .66.76l2-1.75a.5.5 0 0 0 0-.76l-2-1.75a.5.5 0 1 0-.65.76l1 .87H11zm-1 .58v11.84L4 15V5zM12.5 16H12v-5h1v4.5a.5.5 0 0 1-.5.5M12 8V4h.5c.28 0 .5.22.5.5V8z\"/>","<path d=\"M11 3.5a.5.5 0 0 0-.58-.5l-7 1.08a.5.5 0 0 0-.42.49v10.86c0 .25.18.46.42.5l7 1.07a.5.5 0 0 0 .58-.5V10h5.17l-1 .87a.5.5 0 0 0 .66.76l2-1.75a.5.5 0 0 0 0-.76l-2-1.75a.5.5 0 1 0-.65.76l1 .87H11zm-2.5 7.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5m4 4.75H12v-5h1v4.5a.5.5 0 0 1-.5.5M12 8V4h.5c.28 0 .5.22.5.5V8z\"/>"],"cloud_upload":["<path d=\"M10 2c2.82 0 4.41 1.92 4.65 4.25h.07a3.33 3.33 0 0 1 3.27 3.66q-.48-.6-1.12-1.07a2.3 2.3 0 0 0-2.15-1.6h-.07a1 1 0 0 1-1-.9C13.45 4.33 12.11 3 10 3S6.55 4.32 6.35 6.35a1 1 0 0 1-1 .9h-.07A2.33 2.33 0 0 0 3 9.62 2.33 2.33 0 0 0 5.28 12h2.67q-.14.49-.18 1H5.28A3.33 3.33 0 0 1 2 9.62c0-1.8 1.37-3.27 3.1-3.37h.25C5.6 3.9 7.18 2 10 2m3.5 7a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9m1.6 4.9a.56.56 0 1 0 .8-.8l-2-2a.56.56 0 0 0-.8 0l-2 2a.56.56 0 1 0 .8.8l1.1-1.1v2.7a.5.5 0 0 0 1 0v-2.7z\"/>","<path d=\"M10 2c2.82 0 4.41 1.92 4.65 4.25h.07a3.33 3.33 0 0 1 3.27 3.66A5.74 5.74 0 0 0 7.77 13H5.28A3.33 3.33 0 0 1 2 9.62a3.33 3.33 0 0 1 3.28-3.37h.07C5.6 3.9 7.18 2 10 2m3.5 7a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9m1.6 4.9a.56.56 0 1 0 .8-.8l-2-2a.56.56 0 0 0-.8 0l-2 2a.56.56 0 1 0 .8.8l1.1-1.1v2.7a.5.5 0 0 0 1 0v-2.7z\"/>"],"verified_user":["<path d=\"M9.72 2.08a.5.5 0 0 1 .56 0q2.9 1.94 6.3 2.43A.5.5 0 0 1 17 5v4.6q-.48-.25-1-.4V5.44a16 16 0 0 1-5.6-2.08L10 3.1l-.4.25A16 16 0 0 1 4 5.43V9.5c0 3.24 1.8 5.64 5.48 7.25q.3.65.74 1.2l-.04.02a.5.5 0 0 1-.36 0C5.31 16.23 3 13.39 3 9.5V5a.5.5 0 0 1 .43-.5 15 15 0 0 0 6.3-2.42M19 14.5a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0m-2.15-1.85a.5.5 0 0 0-.7 0l-2.65 2.64-.65-.64a.5.5 0 0 0-.7.7l1 1c.2.2.5.2.7 0l3-3a.5.5 0 0 0 0-.7\"/>","<path d=\"M9.72 2.08a.5.5 0 0 1 .56 0q2.9 1.94 6.3 2.43A.5.5 0 0 1 17 5v4.6Q15.86 9 14.5 9a5.5 5.5 0 0 0-4.28 8.95l-.04.02a.5.5 0 0 1-.36 0C5.31 16.23 3 13.39 3 9.5V5a.5.5 0 0 1 .43-.5 15 15 0 0 0 6.3-2.42M19 14.5a4.5 4.5 0 1 0-9 0 4.5 4.5 0 0 0 9 0m-2.15-1.85c.2.2.2.5 0 .7l-3 3a.5.5 0 0 1-.7 0l-1-1a.5.5 0 0 1 .7-.7l.65.64 2.65-2.64c.2-.2.5-.2.7 0\"/>"],"palette":["<path d=\"M10 2a8 8 0 0 1 3.39 15.25c-1.09.5-2.33.44-3.3-.06a2.9 2.9 0 0 1-1.64-2.73q.04-.68.14-1.24.1-.59.14-1.02.03-.44-.08-.73-.09-.3-.45-.57a1 1 0 0 0-.84-.24q-.43.09-1.02.39c-.73.36-1.77.94-2.97.33-1.1-.56-1.43-1.87-1.22-2.92A8 8 0 0 1 10 2m0 1a7 7 0 0 0-6.87 5.66c-.15.78.13 1.54.69 1.83.68.35 1.25.07 2.08-.34.38-.18.83-.4 1.31-.48.52-.07 1.06.03 1.59.43q.58.44.79 1.02c.14.38.16.77.14 1.14s-.1.75-.15 1.12q-.1.55-.13 1.12c-.03.8.42 1.44 1.1 1.8.7.36 1.62.42 2.41.04A7 7 0 0 0 10 3m2.5 10a1 1 0 1 1 0 2 1 1 0 0 1 0-2m2-2.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2m0-3a1 1 0 1 1 0 2 1 1 0 0 1 0-2m-2-2.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2m-3-.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2\"/>","<path d=\"M10 2a8 8 0 0 1 3.39 15.25c-1.09.5-2.33.44-3.3-.06a2.9 2.9 0 0 1-1.64-2.73q.04-.68.14-1.24.1-.59.14-1.02t-.08-.73q-.09-.3-.45-.57a1 1 0 0 0-.84-.24q-.44.09-1.02.39c-.73.36-1.77.94-2.97.33-1.1-.56-1.43-1.87-1.22-2.92A8 8 0 0 1 10 2m2.5 11a1 1 0 1 0 0 2 1 1 0 0 0 0-2m2-2.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m0-3a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2-2.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-3-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2\"/>"],"volume_up":["<path d=\"M12 3a1 1 0 0 0-1.68-.73l-3.88 3.6A.5.5 0 0 1 6.1 6H3.5C2.67 6 2 6.67 2 7.5v5c0 .83.67 1.5 1.5 1.5h2.6a.5.5 0 0 1 .34.13l3.88 3.6a1 1 0 0 0 1.68-.74zM7.12 6.6 11 3v14l-3.88-3.6A1.5 1.5 0 0 0 6.1 13H3.5a.5.5 0 0 1-.5-.5v-5c0-.28.22-.5.5-.5h2.6c.38 0 .75-.14 1.02-.4m8.14-1.97a.5.5 0 0 1 .7.04 8 8 0 0 1 0 10.66.5.5 0 0 1-.74-.66 7 7 0 0 0 0-9.34.5.5 0 0 1 .04-.7m-1.18 8.3a.5.5 0 0 1-.18-.68 4.5 4.5 0 0 0 0-4.5.5.5 0 1 1 .86-.5 5.5 5.5 0 0 1 0 5.5.5.5 0 0 1-.68.18\"/>","<path d=\"M12 3a1 1 0 0 0-1.68-.73l-3.87 3.6A.5.5 0 0 1 6.1 6H3.5C2.67 6 2 6.67 2 7.5v5c0 .83.67 1.5 1.5 1.5h2.6a.5.5 0 0 1 .35.13l3.87 3.6a1 1 0 0 0 1.68-.74zm3.25 1.63a.5.5 0 0 1 .71.04 8 8 0 0 1 0 10.66.5.5 0 1 1-.75-.66 7 7 0 0 0 0-9.34.5.5 0 0 1 .04-.7m-1.17 8.3a.5.5 0 0 1-.19-.68 4.5 4.5 0 0 0 0-4.5.5.5 0 1 1 .87-.5 5.5 5.5 0 0 1 0 5.5.5.5 0 0 1-.68.18\"/>"],"tune":["<path d=\"M14.95 5a2.5 2.5 0 0 0-4.9 0H2.5a.5.5 0 0 0 0 1h7.55a2.5 2.5 0 0 0 4.9 0h2.55a.5.5 0 0 0 0-1zM12.5 7a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3m-2.55 7a2.5 2.5 0 0 0-4.9 0H2.5a.5.5 0 0 0 0 1h2.55a2.5 2.5 0 0 0 4.9 0h7.55a.5.5 0 0 0 0-1zM7.5 16a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3\"/>","<path d=\"M9.95 14a2.5 2.5 0 0 0-4.9 0H2.5a.5.5 0 0 0 0 1h2.55a2.5 2.5 0 0 0 4.9 0h7.55a.5.5 0 0 0 0-1zm5-9a2.5 2.5 0 0 0-4.9 0H2.5a.5.5 0 0 0 0 1h7.55a2.5 2.5 0 0 0 4.9 0h2.55a.5.5 0 0 0 0-1z\"/>"],"open_in_new":["<path d=\"M6 4a2 2 0 0 0-2 2v8c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2v-2.5a.5.5 0 0 1 1 0V14a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h2.5a.5.5 0 0 1 0 1zm5-.5c0-.28.22-.5.5-.5h5c.28 0 .5.22.5.5v5a.5.5 0 0 1-1 0V4.7l-4.15 4.15a.5.5 0 0 1-.7-.7L15.29 4H11.5a.5.5 0 0 1-.5-.5\"/>","<path d=\"M6.25 4.5c-.97 0-1.75.78-1.75 1.75v7.5c0 .97.78 1.75 1.75 1.75h7.5c.97 0 1.75-.78 1.75-1.75v-2a.75.75 0 0 1 1.5 0v2c0 1.8-1.46 3.25-3.25 3.25h-7.5A3.25 3.25 0 0 1 3 13.75v-7.5C3 4.45 4.46 3 6.25 3h2a.75.75 0 0 1 0 1.5zm4.25-.75c0-.41.34-.75.75-.75h5c.41 0 .75.34.75.75v5a.75.75 0 0 1-1.5 0V5.56l-3.72 3.72a.75.75 0 1 1-1.06-1.06l3.72-3.72h-3.19a.75.75 0 0 1-.75-.75\"/>"],"star":["<path d=\"M9.1 2.9a1 1 0 0 1 1.8 0l1.93 3.91 4.31.63a1 1 0 0 1 .56 1.7l-3.12 3.05.73 4.3a1 1 0 0 1-1.45 1.05L10 15.51l-3.86 2.03a1 1 0 0 1-1.45-1.05l.74-4.3L2.3 9.14a1 1 0 0 1 .56-1.7l4.31-.63zm.9.44L8.07 7.25a1 1 0 0 1-.75.55L3 8.43l3.12 3.04a1 1 0 0 1 .3.89l-.75 4.3 3.87-2.03a1 1 0 0 1 .93 0l3.86 2.03-.74-4.3a1 1 0 0 1 .29-.89L17 8.43l-4.32-.63a1 1 0 0 1-.75-.55z\"/>","<path d=\"M9.1 2.9a1 1 0 0 1 1.8 0l1.93 3.91 4.31.63a1 1 0 0 1 .56 1.7l-3.12 3.05.73 4.3a1 1 0 0 1-1.45 1.05L10 15.51l-3.86 2.03a1 1 0 0 1-1.45-1.05l.74-4.3L2.3 9.14a1 1 0 0 1 .56-1.7l4.31-.63z\"/>"],"description":["<path d=\"M6.5 10a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zm0 2a.5.5 0 0 0 0 1h7a.5.5 0 0 0 0-1zM4 4c0-1.1.9-2 2-2h4.59q.62.01 1.06.44l3.91 3.91c.28.28.44.67.44 1.06V16a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V8h-3.5A1.5 1.5 0 0 1 10 6.5V3zm5.5 4h3.3L11 3.2v3.3c0 .28.22.5.5.5\"/>","<path d=\"M10 6.5V2H5.5C4.67 2 4 2.67 4 3.5v13c0 .83.67 1.5 1.5 1.5h9c.83 0 1.5-.67 1.5-1.5V8h-4.5A1.5 1.5 0 0 1 10 6.5M6.5 10h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1m0 2h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1m0 2h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1M11 6.5V2.25L15.75 7H11.5a.5.5 0 0 1-.5-.5\"/>"],"history":["<path d=\"M10 4a6 6 0 1 1-5.98 5.54.5.5 0 1 0-1-.08L3 10a7 7 0 1 0 2-4.9V3.5a.5.5 0 0 0-1 0v3c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H5.53c1.1-1.23 2.7-2 4.47-2m0 2.5a.5.5 0 0 0-1 0v4c0 .28.22.5.5.5h3a.5.5 0 0 0 0-1H10z\"/>","<path d=\"M10 4a6 6 0 1 1-6 5.78.75.75 0 1 0-1.5-.06V10A7.5 7.5 0 1 0 5 4.41V3.25a.75.75 0 0 0-1.5 0v3c0 .41.34.75.75.75h3a.75.75 0 0 0 0-1.5H6.03A6 6 0 0 1 10 4m.5 2.25a.75.75 0 0 0-1.5 0v4c0 .41.34.75.75.75h3a.75.75 0 0 0 0-1.5H10.5z\"/>"],"lock":["<path d=\"M10 1a4 4 0 0 1 4 4v2.05a2.5 2.5 0 0 1 2 2.45v6a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-6c0-1.2.86-2.22 2-2.45V5a4 4 0 0 1 4-4M6.5 8C5.67 8 5 8.67 5 9.5v6c0 .83.67 1.5 1.5 1.5h7c.83 0 1.5-.67 1.5-1.5v-6c0-.83-.67-1.5-1.5-1.5zm3.5 3.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2M10 2a3 3 0 0 0-3 3v2h6V5a3 3 0 0 0-3-3\"/>","<path d=\"M10 1a4 4 0 0 1 4 4v2.05a2.5 2.5 0 0 1 2 2.45v6a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 15.5v-6c0-1.2.86-2.22 2-2.45V5a4 4 0 0 1 4-4m0 10.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2M10 2a3 3 0 0 0-3 3v2h6V5a3 3 0 0 0-3-3\"/>"],"people":["<path d=\"M4.5 6.75a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0M6.75 3.5a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5m5.69 11.65q.79.33 2.06.35c1.88 0 2.92-.67 3.47-1.43a3 3 0 0 0 .53-1.5v-.07c0-.83-.67-1.5-1.5-1.5h-4.63q.36.44.53 1H17c.28 0 .5.22.5.5v.1l-.04.22q-.05.29-.3.66c-.33.46-1.04 1.02-2.66 1.02q-1.08-.01-1.69-.28-.12.43-.37.93M1.5 13c0-1.1.9-2 2-2H10a2 2 0 0 1 2 2v.08l-.01.18q-.01.17-.08.45c-.08.37-.25.86-.6 1.36-.7 1.01-2.05 1.93-4.56 1.93s-3.87-.92-4.57-1.93a4 4 0 0 1-.68-1.99V13m1 .06v.1l.06.33c.07.27.2.64.45 1C3.49 15.2 4.5 16 6.75 16s3.26-.8 3.74-1.5a3 3 0 0 0 .5-1.42l.01-.02V13a1 1 0 0 0-1-1H3.5a1 1 0 0 0-1 1zM13 7.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0M14.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5\"/>","<path d=\"M6.75 10a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5m5.69 5.14q.78.35 2.06.36c4 0 4-3 4-3 0-.83-.67-1.5-1.5-1.5h-4.63q.62.74.63 1.75v.36l-.02.25a5 5 0 0 1-.54 1.78M17 7.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0M1.5 13c0-1.1.9-2 2-2H10a2 2 0 0 1 2 2s0 4-5.25 4-5.25-4-5.25-4m11.5.1v.07Z\"/>"],"group":["<path d=\"M4.5 6.75a2.25 2.25 0 1 1 4.5 0 2.25 2.25 0 0 1-4.5 0M6.75 3.5a3.25 3.25 0 1 0 0 6.5 3.25 3.25 0 0 0 0-6.5m5.69 11.65q.79.33 2.06.35c1.88 0 2.92-.67 3.47-1.43a3 3 0 0 0 .53-1.5v-.07c0-.83-.67-1.5-1.5-1.5h-4.63q.36.44.53 1H17c.28 0 .5.22.5.5v.1l-.04.22q-.05.29-.3.66c-.33.46-1.04 1.02-2.66 1.02q-1.08-.01-1.69-.28-.12.43-.37.93M1.5 13c0-1.1.9-2 2-2H10a2 2 0 0 1 2 2v.08l-.01.18q-.01.17-.08.45c-.08.37-.25.86-.6 1.36-.7 1.01-2.05 1.93-4.56 1.93s-3.87-.92-4.57-1.93a4 4 0 0 1-.68-1.99V13m1 .06v.1l.06.33c.07.27.2.64.45 1C3.49 15.2 4.5 16 6.75 16s3.26-.8 3.74-1.5a3 3 0 0 0 .5-1.42l.01-.02V13a1 1 0 0 0-1-1H3.5a1 1 0 0 0-1 1zM13 7.5a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0M14.5 5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5\"/>","<path d=\"M6.75 10a3.25 3.25 0 1 0 0-6.5 3.25 3.25 0 0 0 0 6.5m5.69 5.14q.78.35 2.06.36c4 0 4-3 4-3 0-.83-.67-1.5-1.5-1.5h-4.63q.62.74.63 1.75v.36l-.02.25a5 5 0 0 1-.54 1.78M17 7.5a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0M1.5 13c0-1.1.9-2 2-2H10a2 2 0 0 1 2 2s0 4-5.25 4-5.25-4-5.25-4m11.5.1v.07Z\"/>"],"person_add":["<path d=\"M9 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8M6 6a3 3 0 1 1 6 0 3 3 0 0 1-6 0m-2 5a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9 9 0 0 0 9 18q.62 0 1.21-.06A6 6 0 0 1 9.6 17L9 17a8 8 0 0 1-4.33-1.05A3.4 3.4 0 0 1 3 13a1 1 0 0 1 1-1h5.6q.27-.54.66-1zm10.5 8a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9m0-7c.28 0 .5.22.5.5V14h1.5a.5.5 0 0 1 0 1H15v1.5a.5.5 0 0 1-1 0V15h-1.5a.5.5 0 0 1 0-1H14v-1.5c0-.28.22-.5.5-.5\"/>","<path d=\"M9 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8m-5 9a2 2 0 0 0-2 2c0 1.7.83 2.97 2.13 3.8A9 9 0 0 0 9 18q.62 0 1.21-.06a5.5 5.5 0 0 1 .05-6.94zm10.5 8a4.5 4.5 0 1 0 0-9 4.5 4.5 0 0 0 0 9m0-7c.28 0 .5.22.5.5V14h1.5a.5.5 0 0 1 0 1H15v1.5a.5.5 0 0 1-1 0V15h-1.5a.5.5 0 0 1 0-1H14v-1.5c0-.28.22-.5.5-.5\"/>"],"stop":["<path d=\"M15.5 4c.28 0 .5.22.5.5v11a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11c0-.28.22-.5.5-.5zm-11-1C3.67 3 3 3.67 3 4.5v11c0 .83.67 1.5 1.5 1.5h11c.83 0 1.5-.67 1.5-1.5v-11c0-.83-.67-1.5-1.5-1.5z\"/>","<path d=\"M4.5 3C3.67 3 3 3.67 3 4.5v11c0 .83.67 1.5 1.5 1.5h11c.83 0 1.5-.67 1.5-1.5v-11c0-.83-.67-1.5-1.5-1.5z\"/>"],"send":["<path d=\"M2.18 2.11a.5.5 0 0 1 .54-.06l15 7.5a.5.5 0 0 1 0 .9l-15 7.5a.5.5 0 0 1-.7-.58L3.98 10 2.02 2.63a.5.5 0 0 1 .16-.52m2.7 8.39-1.61 6.06L16.38 10 3.27 3.44 4.88 9.5h6.62a.5.5 0 1 1 0 1z\"/>","<path d=\"M2.72 2.05a.5.5 0 0 0-.7.58l1.5 5.62q.09.3.4.36l6.85 1.14c.28.05.28.45 0 .5l-6.85 1.14a.5.5 0 0 0-.4.36l-1.5 5.62a.5.5 0 0 0 .7.58l15-7.5a.5.5 0 0 0 0-.9z\"/>"],"dojo":["<path d=\"M16 8c0 1.78-.77 3.37-2 4.47v5.03a.5.5 0 0 1-.75.43L10 16.08l-3.25 1.85A.5.5 0 0 1 6 17.5v-5.03A5.98 5.98 0 0 1 10 2a6 6 0 0 1 6 6m-6 6c-1.1 0-2.12-.3-3-.8v3.44l2.75-1.57a.5.5 0 0 1 .5 0L13 16.64V13.2c-.88.5-1.9.8-3 .8m0-1a5 5 0 1 0 0-10 5 5 0 0 0 0 10\"/>","<path d=\"M16 8A6 6 0 1 1 4 8a6 6 0 0 1 12 0m-6 7c1.49 0 2.87-.46 4-1.25v3.75a.5.5 0 0 1-.8.4L10 16l-3.2 1.9a.5.5 0 0 1-.8-.4v-3.75A7 7 0 0 0 10 15\"/>"] ,"chevron_left":["<path d=\"M12.7 3.3a.5.5 0 0 1 0 .7L7.71 9l4.99 4.99a.5.5 0 0 1-.7.7l-5.34-5.34a.5.5 0 0 1 0-.7L12 3.3a.5.5 0 0 1 .7 0z\"/>","<path d=\"M13.03 2.97a.75.75 0 0 1 0 1.06L8.06 9l4.97 4.97a.75.75 0 1 1-1.06 1.06l-5.5-5.5a.75.75 0 0 1 0-1.06l5.5-5.5a.75.75 0 0 1 1.06 0z\"/>"],"chevron_right":["<path d=\"M7.3 3.3a.5.5 0 0 0 0 .7L12.29 9 7.3 13.99a.5.5 0 0 0 .7.7l5.34-5.34a.5.5 0 0 0 0-.7L8 3.3a.5.5 0 0 0-.7 0z\"/>","<path d=\"M6.97 2.97a.75.75 0 0 0 0 1.06L11.94 9l-4.97 4.97a.75.75 0 1 0 1.06 1.06l5.5-5.5a.75.75 0 0 0 0-1.06l-5.5-5.5a.75.75 0 0 0-1.06 0z\"/>"],"leaderboard":["<path d=\"M3 15.5V17h4v-7H3zm5 1.5h4V6H8zm5 0h4V3h-4z\"/>","<path d=\"M2.5 17.5h15a.75.75 0 0 0 0-1.5H18V2.75a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0-.75.75V16h-2V6.75A.75.75 0 0 0 9.25 6h-4.5A.75.75 0 0 0 4 6.75V16H2.5a.75.75 0 0 0 0 1.5z\"/>"],"publish":["<path d=\"M10 2a.5.5 0 0 1 .5.5v9.79l3.15-3.15a.5.5 0 0 1 .7.72l-4 4a.5.5 0 0 1-.7 0l-4-4a.5.5 0 0 1 .7-.72l3.15 3.15V2.5A.5.5 0 0 1 10 2M4 16.5h12a.5.5 0 0 1 0 1H4a.5.5 0 0 1 0-1z\"/>","<path d=\"M10 1.75c.41 0 .75.34.75.75v8.98l2.62-2.62a.75.75 0 1 1 1.06 1.06l-3.9 3.9a.75.75 0 0 1-1.06 0l-3.9-3.9a.75.75 0 1 1 1.06-1.06l2.62 2.62V2.5c0-.41.34-.75.75-.75M3.25 16h13.5a.75.75 0 0 1 0 1.5H3.25a.75.75 0 0 1 0-1.5z\"/>"],"stop_circle":["<path d=\"M10 2a8 8 0 1 0 0 16 8 8 0 0 0 0-16m-2.5 5h5v6h-5z\"/>","<path d=\"M10 1.25a8.75 8.75 0 1 0 0 17.5 8.75 8.75 0 0 0 0-17.5m0 1.5a7.25 7.25 0 1 1 0 14.5 7.25 7.25 0 0 1 0-14.5m-2.75 4.5h5.5v5.5h-5.5z\"/>"],"upload":["<path d=\"M10 14a.5.5 0 0 0 .5-.5V4.7l3.15 3.15a.5.5 0 0 0 .7-.7l-4-4a.5.5 0 0 0-.7 0l-4 4a.5.5 0 0 0 .7.7L9.5 4.7v8.8a.5.5 0 0 0 .5.5M4 16.5h12a.5.5 0 0 0 0-1H4a.5.5 0 0 0 0 1z\"/>","<path d=\"M10 14.75a.75.75 0 0 0 .75-.75V5.06l2.62 2.62a.75.75 0 1 0 1.06-1.06l-3.9-3.9a.75.75 0 0 0-1.06 0l-3.9 3.9a.75.75 0 1 0 1.06 1.06l2.62-2.62V14c0 .41.34.75.75.75M3.25 16h13.5a.75.75 0 0 1 0 1.5H3.25a.75.75 0 0 1 0-1.5z\"/>"],"library_music":["<path d=\"M7 3v9.5A2.5 2.5 0 1 1 6 10V5h8v7.5A2.5 2.5 0 1 1 13 10V3z\"/>","<path d=\"M6.25 3A.75.75 0 0 0 5.5 3.75v8.1a3.25 3.25 0 1 0 1.5 2.74V6.5h5v5.35a3.25 3.25 0 1 0 1.5 2.74V3.75A.75.75 0 0 0 12.75 3z\"/>" ]};
 
         function renderIcon(node) {
             if (!node || node.firstElementChild) return;
@@ -11112,7 +11858,7 @@
         // ---------- オート演奏 (BETA) ----------
         // 譜面のノーツを、曲の時間に合わせて自動で打つ。判定・スコアは通常のプレイと同じ経路(triggerLanePress)を通る
         // ペナルティ: オート演奏中はスコアが 1/4。その回で一度でもオートを使ったらランキング対象外
-        const AUTO_SCORE_RATE = 0.25;
+        const AUTO_SCORE_RATE = 1.0;
         let autoPlayEnabled = false;
         let autoUsedThisRun = false;
 
@@ -11131,9 +11877,9 @@
         }
 
         function setAutoPlay(on) {
-            if (on && dojoActive()) {
+            if (on && (dojoActive() || (eloRankActive && !isAdmin()))) {
                 document.querySelectorAll('.auto-toggle').forEach(cb => { cb.checked = false; });
-                showToast('段位道場の挑戦中はオート演奏を使えません', 'warning');
+                showToast(eloRankActive ? 'ランク挑戦中はオート演奏を使えません' : '段位道場の挑戦中はオート演奏を使えません', 'warning');
                 return;
             }
             autoPlayEnabled = !!on;
@@ -11143,7 +11889,7 @@
             if (!autoPlayEnabled) autoPlayReset();
             updateRankingBadge();
             showToast(autoPlayEnabled
-                ? 'オート演奏をONにしました(ベータ)。スコアは1/4になり、ランキングには登録できません'
+                ? 'オート演奏をONにしました(ベータ)。スコアは通常計算ですが、ランキングには登録できません'
                 : 'オート演奏をOFFにしました', autoPlayEnabled ? 'warning' : 'info');
         }
 
