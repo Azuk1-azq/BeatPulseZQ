@@ -9938,7 +9938,7 @@
                 }
                 const meta = await fbGetValue(`rooms/${inv.roomId}/meta`);
                 if (!meta) throw new Error('セッションはすでに終了しています');
-                await fbSetValue(`rooms/${inv.roomId}/players/${account.uid}`, { id: account.id, ready: inv.mode === 'rank2v2' ? false : true, slot: Number.isFinite(Number(inv.slot)) ? Number(inv.slot) : 1, team: inv.mode === 'rank2v2' ? 'B' : 'B', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
+                await fbSetValue(`rooms/${inv.roomId}/players/${account.uid}`, { id: account.id, ready: inv.mode === 'rank2v2' ? false : true, slot: Number.isFinite(Number(inv.slot)) ? Number(inv.slot) : 1, team: inv.mode === 'rank2v2' ? 'A' : 'B', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
                 await fbRemoveValue(`users/${account.uid}/invites/${inv.roomId}`);
                 pendingInvite = null;
                 enterRoom(inv.roomId, 'guest', meta);
@@ -9981,7 +9981,7 @@
             const readyBtn = document.getElementById('room-ready-btn');
             if (readyBtn) readyBtn.classList.toggle('hidden', room.mode !== 'rank2v2');
             setRoomStatus(room.mode === 'rank2v2'
-                ? (role === 'host' ? '2v2ランク：フレンドの参加を待っています…' : '2v2ランク：準備OKを押して待機してください')
+                ? (role === 'host' ? '2v2ランク：準備OKを押してください（フレンドは任意）' : '2v2ランク：参加しました。準備OKを押してください')
                 : (role === 'host' ? 'フレンドの参加を待っています…' : '参加しました。スタートを待っています…'));
             openModal('room-modal');
             showFriendScreen(true);
@@ -10009,7 +10009,7 @@
 
             document.getElementById('room-me-state').textContent = me.ready ? '準備OK' : '準備中';
             if (room.mode === 'rank2v2') {
-                const humansReady = entries.length === 2 && entries.every(([,p]) => !!p.ready);
+                const humansReady = entries.length >= 1 && entries.every(([,p]) => !!p.ready);
                 document.getElementById('room-friend-id').textContent = `${entries.length}/2 人参加・2v2`;
                 const otherHuman = entries.find(([uid]) => uid !== account.uid);
                 document.getElementById('room-friend-state').textContent = otherHuman
@@ -10023,9 +10023,9 @@
                         ? '<span class="ms">done</span><span>準備OK済み</span>'
                         : '<span class="ms">check_circle</span><span>準備OK</span>';
                 }
-                setRoomStatus(entries.length < 2
-                    ? '2v2ランク：フレンド1人を待っています…'
-                    : (humansReady ? '両チームの準備OK！まもなく2v2ランク開始！' : 'あなたとフレンドの2人が「準備OK」を押すと2v2ランク開始'));
+                setRoomStatus(humansReady
+                    ? '準備OK！まもなく2v2ランク開始！'
+                    : (entries.length < 2 ? '2v2ランク：準備OKを押してください（フレンドは任意）' : 'あなたとフレンドの2人が「準備OK」を押すと2v2ランク開始'));
             } else {
                 document.getElementById('room-friend-state').textContent = friend.ready ? '準備OK' : '待機中';
                 const readyBtn = document.getElementById('room-ready-btn');
@@ -10051,7 +10051,7 @@
 
             // ホストが、2人そろったらカウントダウン開始の合図を出す
             const readyToStart = room.mode === 'rank2v2'
-                ? entries.length === 2 && entries.every(([,p]) => !!p.ready)
+                ? entries.length >= 1 && entries.every(([,p]) => !!p.ready)
                 : me.ready && friend.ready;
             if (room.role === 'host' && meta.state !== 'countdown' && meta.state !== 'started' && readyToStart) {
                 fbSetValue(`rooms/${room.id}/meta/state`, 'countdown').catch(() => {});
@@ -10543,7 +10543,7 @@
             if (!currentChart || !currentChart.notes.length) { showToast('譜面が読み込まれていません', 'warning'); return; }
             if (!audioBuffer) { showToast('曲が読み込まれていません', 'warning'); return; }
 
-            shareTarget = { uid: uid, id: id, mode: mode === 'battle' ? 'battle' : 'coop' };
+            shareTarget = { uid: uid, id: id, mode: mode === 'rank2v2' ? 'rank2v2' : (mode === 'battle' ? 'battle' : 'coop') };
             document.getElementById('share-friend').textContent = id;
             document.getElementById('share-mode').textContent = modeLabel(shareTarget.mode);
             const isOnline = !!(currentChart.online && currentChart.online.id);
