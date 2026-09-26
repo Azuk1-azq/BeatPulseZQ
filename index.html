@@ -7691,7 +7691,7 @@
             showEloRankLoading('曲を探しています');
             try {
                 if (!onlineEntries.length) await refreshOnlineList();
-                let candidates = onlineEntries.filter(e => Number.isFinite(e.starRating));
+                let candidates = onlineEntries.filter(e => e && isValidOnlineId(e.id));
                 if (!candidates.length) {
                     showToast('ランクに使える曲が見つかりませんでした。時間をおいて試してください', 'warning');
                     return;
@@ -7707,7 +7707,7 @@
                         updateEloRankLoading('NORMALの曲をさらに探しています');
                         try {
                             const deepEntries = await fetchOnlineEntriesUpTo(2000);
-                            let deepCandidates = deepEntries.filter(e => Number.isFinite(e.starRating));
+                            let deepCandidates = deepEntries.filter(e => e && isValidOnlineId(e.id));
                             normals = deepCandidates.filter(e => normalizeDifficulty(e.difficulty) === 'normal');
                         } catch (e) {}
                     }
@@ -7716,13 +7716,19 @@
                         return;
                     }
                     // 決定戦(最初の2回)は必ずNORMAL表記の曲の中からのみ選ぶ(他難易度へのフォールバックはしない)
-                    entry = pickRankSong(normals, ELO_PLACEMENT_STAR, 15);
+                    entry = normals.some(e => Number.isFinite(e.starRating))
+                        ? pickRankSong(normals.filter(e => Number.isFinite(e.starRating)), ELO_PLACEMENT_STAR, 15)
+                        : normals[Math.floor(Math.random() * normals.length)];
                 } else {
                     entry = pickRankSong(candidates, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE);
                 }
                 closeModal('elo-rank-modal');
                 updateEloRankLoading('譜面をダウンロードしています');
                 await downloadOnlineChart(entry);
+                if (!Number.isFinite(Number(entry.starRating)) || Number(entry.starRating) <= 0) {
+                    const localStar = Number(computeStarRating(currentChart, entry.difficulty));
+                    if (Number.isFinite(localStar) && localStar > 0) entry.starRating = localStar;
+                }
                 eloRankActive = true;
                 lockAutoPlayForRank(); // ランク挑戦中はオート演奏を使えないようにする
                 eloRankContext = {
@@ -7755,12 +7761,13 @@
             showEloRankLoading('対戦相手を準備しています');
             try {
                 if (!onlineEntries.length) await refreshOnlineList();
-                const candidates = onlineEntries.filter(e => Number.isFinite(e.starRating));
+                const candidates = onlineEntries.filter(e => e && isValidOnlineId(e.id));
                 if (!candidates.length) {
                     showToast('対戦に使える曲が見つかりませんでした。時間をおいて試してください', 'warning');
                     return;
                 }
-                const entry = pickRankSong(candidates, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE);
+                const rated = candidates.filter(e => Number.isFinite(e.starRating));
+                const entry = rated.length ? pickRankSong(rated, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE) : candidates[Math.floor(Math.random() * candidates.length)];
                 if (!entry) throw new Error('対戦曲を選べませんでした');
                 closeModal('elo-rank-modal');
                 updateEloRankLoading('対戦曲をダウンロードしています');
@@ -9921,7 +9928,7 @@
                 }
                 const meta = await fbGetValue(`rooms/${inv.roomId}/meta`);
                 if (!meta) throw new Error('セッションはすでに終了しています');
-                await fbSetValue(`rooms/${inv.roomId}/players/${account.uid}`, { id: account.id, ready: true, slot: Number.isFinite(Number(inv.slot)) ? Number(inv.slot) : 1, team: (Number(inv.slot) % 4) < 2 ? 'A' : 'B', at: Date.now() });
+                await fbSetValue(`rooms/${inv.roomId}/players/${account.uid}`, { id: account.id, ready: true, slot: Number.isFinite(Number(inv.slot)) ? Number(inv.slot) : 1, team: 'B', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
                 await fbRemoveValue(`users/${account.uid}/invites/${inv.roomId}`);
                 pendingInvite = null;
                 enterRoom(inv.roomId, 'guest', meta);
@@ -9989,8 +9996,8 @@
             document.getElementById('room-me-state').textContent = me.ready ? '準備OK' : '準備中';
             if (room.mode === 'rank2v2') {
                 document.getElementById('room-friend-id').textContent = `${entries.length}/4 人参加`;
-                document.getElementById('room-friend-state').textContent = entries.length >= 4 && entries.every(([,p]) => p.ready) ? '4人準備OK' : '4人そろうのを待っています';
-                setRoomStatus(entries.length >= 4 ? '4人そろいました。スタートを待っています…' : `2v2ランク：${entries.length}/4人。フレンド一覧から残りを招待してください`);
+                document.getElementById('room-friend-state').textContent = entries.length >= 2 && entries.every(([,p]) => p.ready) ? '人間2人準備OK＋BOT2人' : 'フレンド1人を待っています';
+                setRoomStatus(entries.length >= 2 ? '人間2人＋BOT2人でスタートできます。準備を待っています…' : '2v2ランク：フレンド1人を待っています…');
             } else {
                 document.getElementById('room-friend-state').textContent = friend.ready ? '準備OK' : '待機中';
             }
@@ -10014,7 +10021,7 @@
 
             // ホストが、2人そろったらカウントダウン開始の合図を出す
             const readyToStart = room.mode === 'rank2v2'
-                ? entries.length === 4 && entries.every(([,p]) => !!p.ready)
+                ? entries.length === 2 && entries.every(([,p]) => !!p.ready)
                 : me.ready && friend.ready;
             if (room.role === 'host' && meta.state !== 'countdown' && meta.state !== 'started' && readyToStart) {
                 fbSetValue(`rooms/${room.id}/meta/state`, 'countdown').catch(() => {});
@@ -10028,10 +10035,12 @@
 
             if (room.mode === 'rank2v2') {
                 const results = entries.filter(([,p]) => p.result && typeof p.result === 'object');
-                if (results.length === 4 && !room.finishedShown) {
+                if (results.length >= 2 && !room.finishedShown) {
+                    const botPack = build2v2BotResults(players);
                     room.finishedShown = true;
-                    const map = Object.fromEntries(results);
-                    show2v2RoomResult(map, players);
+                    const map = Object.assign({}, Object.fromEntries(results), botPack ? botPack.results : {});
+                    const displayPlayers = Object.assign({}, players, botPack ? botPack.players : {});
+                    show2v2RoomResult(map, displayPlayers);
                 }
             } else if (me.result && friendResult && !room.finishedShown) {
                 room.finishedShown = true;
@@ -10160,9 +10169,37 @@
             }
         }
 
+        function build2v2BotResults(players) {
+            const ids = Object.keys(players || {}).filter(uid => players[uid] && !String(uid).startsWith('bot-'));
+            if (ids.length < 2) return null;
+            const humanA = ids.find(uid => String(players[uid].team || 'A') === 'A') || ids[0];
+            const humanB = ids.find(uid => uid !== humanA) || ids[1];
+            const bots = {
+                'bot-1': { id: 'BOT 1', slot: 2, team: 'A' },
+                'bot-2': { id: 'BOT 2', slot: 3, team: 'B' }
+            };
+            const make = (botId, team, seed) => {
+                const ctx = { star: Number(room.star) || 0, songElo: starToEloRating(Number(room.star) || 0), botElo: Math.max(0, Math.round(ids.reduce((sum, uid) => sum + (Number(players[uid].elo) || ELO_RANK_DEFAULT), 0) / ids.length)) };
+                // BOTごとに少しだけ強さを変えつつ、同じルームでは両端末で再計算しても結果を揃える。
+                const oldRandom = Math.random;
+                let state = 2166136261 ^ seed;
+                Math.random = () => {
+                    state ^= state << 13; state ^= state >>> 17; state ^= state << 5;
+                    return ((state >>> 0) % 1000000) / 1000000;
+                };
+                try { return { id: botId.toUpperCase().replace('-', ' '), score: generateRankBattleBotScore(ctx, currentChart), completed: true, bot: true, at: Date.now() }; }
+                finally { Math.random = oldRandom; }
+            };
+            return { players: Object.assign({}, players, bots), results: {
+                'bot-1': make('bot-1', 'A', 101),
+                'bot-2': make('bot-2', 'B', 202)
+            }};
+        }
+
         async function update2v2RankElo(results, players) {
             if (!account || !room || room.mode !== 'rank2v2') return;
             const ids = Object.keys(results || {});
+            const humanIds = ids.filter(uid => !String(uid).startsWith('bot-'));
             const teamA = ids.filter(uid => String((players[uid] || {}).team || (Number((players[uid] || {}).slot) < 2 ? 'A' : 'B')) === 'A');
             const teamB = ids.filter(uid => !teamA.includes(uid));
             const sum = team => team.reduce((n,uid) => n + (Number(results[uid].score) || 0), 0);
@@ -10170,6 +10207,7 @@
             const outcome = scoreA === scoreB ? 0.5 : (teamA.includes(account.uid) ? (scoreA > scoreB ? 1 : 0) : (scoreB > scoreA ? 1 : 0));
             let oppSum = 0, oppN = 0;
             for (const uid of (teamA.includes(account.uid) ? teamB : teamA)) {
+                if (String(uid).startsWith('bot-')) continue;
                 try {
                     const d = await fbGetValue(`users/${uid}/eloRank`);
                     if (d && Number.isFinite(Number(d.elo))) { oppSum += Number(d.elo); oppN++; }
@@ -10420,12 +10458,20 @@
             showEloRankLoading('2v2ランクの曲を選んでいます');
             try {
                 if (!onlineEntries.length) await refreshOnlineList();
-                const candidates = onlineEntries.filter(e => Number.isFinite(e.starRating));
+                // 初期ランク未所持でも遊べるよう、★未計算の曲も候補に含める。
+                const candidates = onlineEntries.filter(e => e && isValidOnlineId(e.id));
                 if (!candidates.length) throw new Error('ランクに使える曲が見つかりません');
-                const entry = pickRankSong(candidates, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE);
+                const rated = candidates.filter(e => Number.isFinite(e.starRating));
+                let entry = rated.length
+                    ? pickRankSong(rated, starForRate(refreshInternalRate()), ELO_INTERNAL_STAR_TOLERANCE)
+                    : candidates[Math.floor(Math.random() * candidates.length)];
                 if (!entry) throw new Error('2v2ランク曲を選べませんでした');
                 updateEloRankLoading('2v2ランクの譜面をダウンロードしています');
                 await downloadOnlineChart(entry);
+                if (!Number.isFinite(Number(entry.starRating)) || Number(entry.starRating) <= 0) {
+                    const localStar = Number(computeStarRating(currentChart, entry.difficulty));
+                    if (Number.isFinite(localStar) && localStar > 0) entry.starRating = localStar;
+                }
                 openShareInvite(uid, id, 'rank2v2');
                 showToast(`${id}を2v2ランクに招待します。あと2人を追加招待してください`, 'success');
             } catch (err) {
@@ -10495,7 +10541,7 @@
                     const players = Object.keys(livePlayers || {});
                     room.playerUids = players;
                     if (players.includes(target.uid)) throw new Error('そのフレンドはすでに参加しています');
-                    if (players.length >= 4) throw new Error('2v2は4人までです');
+                    if (players.length >= 2) throw new Error('2v2ランクは人間2人までです（残り2枠はBOT）');
                     const slot = players.length;
                     await fbSetValue(`users/${target.uid}/invites/${room.id}`, {
                         roomId: room.id, from: account.uid, fromId: account.id,
@@ -10506,7 +10552,7 @@
                     shareTarget = null;
                     setShareStatus('');
                     closeModal('share-modal');
-                    showToast(`${target.id}を2v2ランクに招待しました (${slot + 1}/4)`, 'success');
+                    showToast(`${target.id}を2v2ランクに招待しました（人間2人＋BOT2人）`, 'success');
                 } catch (err) {
                     showToast(describeOnlineError(err), 'error');
                 }
@@ -10547,7 +10593,7 @@
                     shared: !!shareChart,
                     sharedMedia: !!mediaFile,
                     state: 'waiting',
-                    maxPlayers: target.mode === 'rank2v2' ? 4 : 2,
+                    maxPlayers: target.mode === 'rank2v2' ? 2 : 2,
                     chartId: isOnline ? currentChart.online.id : '',
                     createdAt: Date.now()
                 };
@@ -10601,7 +10647,7 @@
                     at: Date.now()
                 });
                 await fbSetValue(`rooms/${roomId}/meta`, meta);
-                await fbSetValue(`rooms/${roomId}/players/${account.uid}`, { id: account.id, ready: true, slot: 0, team: 'A', at: Date.now() });
+                await fbSetValue(`rooms/${roomId}/players/${account.uid}`, { id: account.id, ready: true, slot: 0, team: 'A', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
                 await fbSetValue(`users/${target.uid}/invites/${roomId}`, {
                     roomId: roomId, from: account.uid, fromId: account.id,
                     mode: meta.mode, chartId: meta.chartId, chartTitle: meta.chartTitle,
