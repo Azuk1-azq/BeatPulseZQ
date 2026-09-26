@@ -10001,7 +10001,7 @@
             document.getElementById('room-me-state').textContent = me.ready ? '準備OK' : '準備中';
             if (room.mode === 'rank2v2') {
                 const humansReady = entries.length === 2 && entries.every(([,p]) => !!p.ready);
-                document.getElementById('room-friend-id').textContent = `${entries.length}/2 人間 + BOT2`;
+                document.getElementById('room-friend-id').textContent = `${entries.length}/2 人間 + 4人チーム戦`;
                 const otherHuman = entries.find(([uid]) => uid !== account.uid);
                 document.getElementById('room-friend-state').textContent = otherHuman
                     ? (otherHuman[1].ready ? `${otherHuman[1].id || 'FRIEND'}：準備OK` : `${otherHuman[1].id || 'FRIEND'}：準備中`)
@@ -10154,7 +10154,7 @@
             lastPushedScore = -1;
             roomPushTimer = setInterval(pushRoomLive, ROOM_PUSH_INTERVAL);
             pushRoomLive();
-            showToast(room.mode === 'rank2v2' ? '⚔️ 2v2ランク開始！ 人間2人＋BOT2人で90秒チーム戦！' : modeLabel(room.mode) + ' スタート！', 'success');
+            showToast(room.mode === 'rank2v2' ? '⚔️ 2v2ランク開始！ 4人で90秒チーム戦！' : modeLabel(room.mode) + ' スタート！', 'success');
         }
 
         function pushRoomLive() {
@@ -10582,7 +10582,7 @@
                     const players = Object.keys(livePlayers || {});
                     room.playerUids = players;
                     if (players.includes(target.uid)) throw new Error('そのフレンドはすでに参加しています');
-                    if (players.length >= 2) throw new Error('2v2ランクは人間2人までです（残り2枠はBOT）');
+                    if (players.length >= 2) throw new Error('2v2ランクは人間2人までです（4人チーム戦）');
                     const slot = players.length;
                     await fbSetValue(`users/${target.uid}/invites/${room.id}`, {
                         roomId: room.id, from: account.uid, fromId: account.id,
@@ -10593,7 +10593,7 @@
                     shareTarget = null;
                     setShareStatus('');
                     closeModal('share-modal');
-                    showToast(`${target.id}を2v2ランクに招待しました（人間2人＋BOT2人）`, 'success');
+                    showToast(`${target.id}を2v2ランクに招待しました（4人チーム戦）`, 'success');
                 } catch (err) {
                     showToast(describeOnlineError(err), 'error');
                 }
