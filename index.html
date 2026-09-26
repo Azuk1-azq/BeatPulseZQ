@@ -3102,6 +3102,7 @@
                 <div id="room-status" class="status-line"></div>
             </div>
             <div class="dlg-foot">
+                <button id="room-ready-btn" class="btn btn-filled has-icon hidden" type="button" onclick="toggleRoomReady()"><span class="ms">check_circle</span><span>準備OK</span></button>
                 <button class="btn btn-text" onclick="leaveRoom(true)" data-autofocus>セッションを抜ける</button>
             </div>
         </div>
@@ -9928,7 +9929,7 @@
                 }
                 const meta = await fbGetValue(`rooms/${inv.roomId}/meta`);
                 if (!meta) throw new Error('セッションはすでに終了しています');
-                await fbSetValue(`rooms/${inv.roomId}/players/${account.uid}`, { id: account.id, ready: true, slot: Number.isFinite(Number(inv.slot)) ? Number(inv.slot) : 1, team: 'B', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
+                await fbSetValue(`rooms/${inv.roomId}/players/${account.uid}`, { id: account.id, ready: inv.mode === 'rank2v2' ? false : true, slot: Number.isFinite(Number(inv.slot)) ? Number(inv.slot) : 1, team: inv.mode === 'rank2v2' ? 'B' : 'B', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
                 await fbRemoveValue(`users/${account.uid}/invites/${inv.roomId}`);
                 pendingInvite = null;
                 enterRoom(inv.roomId, 'guest', meta);
@@ -9962,13 +9963,17 @@
             friendResult = null;
 
             const titleNode = document.getElementById('room-title');
-            if (titleNode) titleNode.textContent = modeLabel(room.mode);
+            if (titleNode) titleNode.textContent = room.mode === 'rank2v2' ? '2v2ランク対戦' : modeLabel(room.mode);
             document.getElementById('room-chart').textContent = room.chartTitle || '(無題)';
             document.getElementById('room-me-id').textContent = account ? account.id : '-';
             document.getElementById('room-friend-id').textContent = room.friendId || '-';
             document.getElementById('room-result').classList.add('hidden');
             document.getElementById('room-countdown').classList.add('hidden');
-            setRoomStatus(role === 'host' ? 'フレンドの参加を待っています…' : '参加しました。スタートを待っています…');
+            const readyBtn = document.getElementById('room-ready-btn');
+            if (readyBtn) readyBtn.classList.toggle('hidden', room.mode !== 'rank2v2');
+            setRoomStatus(room.mode === 'rank2v2'
+                ? (role === 'host' ? '2v2ランク：フレンドの参加を待っています…' : '2v2ランク：準備OKを押して待機してください')
+                : (role === 'host' ? 'フレンドの参加を待っています…' : '参加しました。スタートを待っています…'));
             openModal('room-modal');
             showFriendScreen(true);
 
@@ -9995,11 +10000,27 @@
 
             document.getElementById('room-me-state').textContent = me.ready ? '準備OK' : '準備中';
             if (room.mode === 'rank2v2') {
-                document.getElementById('room-friend-id').textContent = `${entries.length}/4 人参加`;
-                document.getElementById('room-friend-state').textContent = entries.length >= 2 && entries.every(([,p]) => p.ready) ? '人間2人準備OK＋BOT2人' : 'フレンド1人を待っています';
-                setRoomStatus(entries.length >= 2 ? '人間2人＋BOT2人でスタートできます。準備を待っています…' : '2v2ランク：フレンド1人を待っています…');
+                const humansReady = entries.length === 2 && entries.every(([,p]) => !!p.ready);
+                document.getElementById('room-friend-id').textContent = `${entries.length}/2 人間 + BOT2`;
+                const otherHuman = entries.find(([uid]) => uid !== account.uid);
+                document.getElementById('room-friend-state').textContent = otherHuman
+                    ? (otherHuman[1].ready ? `${otherHuman[1].id || 'FRIEND'}：準備OK` : `${otherHuman[1].id || 'FRIEND'}：準備中`)
+                    : 'フレンド1人を待っています';
+                const readyBtn = document.getElementById('room-ready-btn');
+                if (readyBtn) {
+                    readyBtn.classList.remove('hidden');
+                    readyBtn.disabled = !me || !me.id || meta.state === 'countdown' || meta.state === 'started';
+                    readyBtn.innerHTML = me.ready
+                        ? '<span class="ms">done</span><span>準備OK済み</span>'
+                        : '<span class="ms">check_circle</span><span>準備OK</span>';
+                }
+                setRoomStatus(entries.length < 2
+                    ? '2v2ランク：フレンド1人を待っています…'
+                    : (humansReady ? '両チームの準備OK！まもなく2v2ランク開始！' : '人間2人が「準備OK」を押すと2v2ランク開始'));
             } else {
                 document.getElementById('room-friend-state').textContent = friend.ready ? '準備OK' : '待機中';
+                const readyBtn = document.getElementById('room-ready-btn');
+                if (readyBtn) readyBtn.classList.add('hidden');
             }
 
             if (meta.state === 'declined') {
@@ -10045,6 +10066,23 @@
             } else if (me.result && friendResult && !room.finishedShown) {
                 room.finishedShown = true;
                 showRoomResult(me.result, friendResult);
+            }
+        }
+
+        async function toggleRoomReady() {
+            if (!room || room.mode !== 'rank2v2' || !account) return;
+            try {
+                const current = await fbGetValue(`rooms/${room.id}/players/${account.uid}`);
+                if (!current || current.ready === undefined) {
+                    showToast('2v2ランクの参加状態を確認できません', 'warning');
+                    return;
+                }
+                if (room.started) return;
+                const nextReady = !current.ready;
+                await fbSetValue(`rooms/${room.id}/players/${account.uid}/ready`, nextReady);
+                showToast(nextReady ? '準備OK！相手の準備を待っています' : '準備を解除しました', nextReady ? 'success' : 'info');
+            } catch (err) {
+                showToast(describeOnlineError(err), 'error');
             }
         }
 
@@ -10116,7 +10154,7 @@
             lastPushedScore = -1;
             roomPushTimer = setInterval(pushRoomLive, ROOM_PUSH_INTERVAL);
             pushRoomLive();
-            showToast(modeLabel(room.mode) + ' スタート！', 'success');
+            showToast(room.mode === 'rank2v2' ? '⚔️ 2v2ランク開始！ 人間2人＋BOT2人で90秒チーム戦！' : modeLabel(room.mode) + ' スタート！', 'success');
         }
 
         function pushRoomLive() {
@@ -10358,6 +10396,9 @@
                     const diff = playState.score - fScore;
                     statusNode.textContent = diff >= 0 ? `+${diff} リード中！` : `${diff} 負けてる…`;
                     statusNode.dataset.tone = diff >= 0 ? 'win' : 'lose';
+                } else if (room.mode === 'rank2v2') {
+                    statusNode.textContent = `2v2ランク：あなた ${playState.score.toLocaleString()} / 相手 ${fScore.toLocaleString()}`;
+                    statusNode.dataset.tone = 'win';
                 } else {
                     statusNode.textContent = `2人の合計: ${playState.score + fScore}`;
                     statusNode.dataset.tone = 'coop';
@@ -10647,7 +10688,7 @@
                     at: Date.now()
                 });
                 await fbSetValue(`rooms/${roomId}/meta`, meta);
-                await fbSetValue(`rooms/${roomId}/players/${account.uid}`, { id: account.id, ready: true, slot: 0, team: 'A', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
+                await fbSetValue(`rooms/${roomId}/players/${account.uid}`, { id: account.id, ready: target.mode === 'rank2v2' ? false : true, slot: 0, team: 'A', elo: Number(eloRankState.elo) || ELO_RANK_DEFAULT, at: Date.now() });
                 await fbSetValue(`users/${target.uid}/invites/${roomId}`, {
                     roomId: roomId, from: account.uid, fromId: account.id,
                     mode: meta.mode, chartId: meta.chartId, chartTitle: meta.chartTitle,
