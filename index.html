@@ -699,6 +699,15 @@
         .diff-row { display: flex; flex-wrap: wrap; gap: 8px; }
         .dist-diff-btn[aria-pressed="true"] { background: color-mix(in srgb, var(--c) 24%, var(--dialog-bg)); color: var(--text); border-color: var(--c); }
         .field-title { display: block; margin-bottom: 6px; font: 400 14px/20px var(--font); color: var(--text); }
+        .dist-star-panel { display: flex; flex-direction: column; gap: 10px; padding: 12px 14px; border-radius: 8px; background: var(--card-2, var(--card)); border: 1px solid var(--card-stroke); }
+        .dist-star-head { display: flex; align-items: center; gap: 8px; font: 600 13px/18px var(--font); color: var(--text); }
+        .dist-star-note { font: 400 12px/18px var(--font); color: var(--text-2); margin: 0; }
+        .dist-star-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+        .dist-star-chip { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 999px; background: var(--ctl); border: 1px solid var(--ctl-stroke); font: 600 12px/16px var(--font); color: var(--text-2); }
+        .dist-star-chip .dsc-label { color: var(--c); }
+        .dist-star-chip .dsc-star { color: var(--text); }
+        .dist-star-chip.is-reco { border-color: var(--c); background: color-mix(in srgb, var(--c) 22%, var(--dialog-bg)); box-shadow: 0 0 0 1px var(--c) inset; }
+        .dist-star-chip .dsc-badge { font: 700 10px/14px var(--font); padding: 2px 7px; border-radius: 999px; background: var(--c); color: var(--on-lane, #101418); }
 
         /* Key config rows */
         .keyrow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 14px; border-radius: 4px; background: var(--card); border: 1px solid var(--card-stroke); }
@@ -760,8 +769,7 @@
         [data-device="mobile"] canvas, [data-device="mobile"] .pad { touch-action: none; }
 
         [data-device="mobile"] .titlebar { height: calc(48px + env(safe-area-inset-top)); padding: env(safe-area-inset-top) 4px 0 14px; overflow: hidden; }
-        [data-device="mobile"] .logo { height: 20px; }
-        [data-device="mobile"] .brand h1 { font-size: 14px; }
+        [data-device="mobile"] .brand { display: none; }
         [data-device="mobile"] .actions .status-chip { display: none; }
         [data-device="mobile"] .actions .status-chip[data-connected="true"] { display: inline-flex; }
         [data-device="mobile"] .icon-btn, [data-device="mobile"] .actions .btn.has-icon { width: 40px; height: 40px; flex: none; }
@@ -926,6 +934,26 @@
         .oc-title { font: 600 14px/20px var(--font); overflow-wrap: anywhere; }
         .oc-sub { font: 400 12px/16px var(--font); color: var(--text-2); overflow-wrap: anywhere; }
         .oc-detail { font: 400 12px/18px var(--font); color: var(--text-2); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 54px; overflow: hidden; }
+        .oc-diff-wrap { display: flex; flex-direction: column; gap: 6px; }
+        .oc-diff-row { display: flex; align-items: center; gap: 8px; }
+        .oc-diff-label { flex: none; min-width: 52px; }
+        .oc-diff { flex-wrap: wrap; align-self: flex-start; }
+        .oc-star { display: flex; align-items: center; gap: 6px; }
+        .oc-star-value { font: 700 15px/20px var(--font); transition: color .2s; }
+        .oc-star-extreme {
+            background: linear-gradient(90deg, #ef4444, #a855f7, #ef4444);
+            background-size: 200% auto;
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+            animation: starGlowPulse 1.8s ease-in-out infinite, starGlowShift 3.2s linear infinite;
+        }
+        @keyframes starGlowPulse {
+            0%, 100% { filter: drop-shadow(0 0 5px rgba(239,68,68,.55)) drop-shadow(0 0 9px rgba(168,85,247,.5)); }
+            50% { filter: drop-shadow(0 0 9px rgba(239,68,68,.9)) drop-shadow(0 0 15px rgba(168,85,247,.85)); }
+        }
+        @keyframes starGlowShift { from { background-position: 0% center; } to { background-position: 200% center; } }
+        .oc-star-note { font: 400 11px/16px var(--font); color: var(--text-2); }
+        .oc-star-unrated { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 8px 10px; border-radius: 8px; background: var(--card-2, var(--card)); border: 1px dashed var(--outline-variant); }
+        .oc-star-unrated p { font: 400 12px/18px var(--font); color: var(--text-2); margin: 0; }
         .oc-tag { display: inline-flex; align-items: center; gap: 4px; font: 400 12px/16px var(--font); color: var(--success); overflow-wrap: anywhere; }
         .oc-tag .ms { --s: 14px; }
         .oc-note { font: 400 11px/16px var(--font); color: var(--text-3); overflow-wrap: anywhere; }
@@ -2189,6 +2217,12 @@
                             <button type="button" id="dist-diff-pluse" data-k="pluse" onclick="setDistDifficulty('pluse')" class="chip dist-diff-btn" aria-pressed="false"><span class="ms chip-check">check</span>PLUSE!</button>
                         </div>
                     </div>
+                    <div id="dist-star-panel" class="dist-star-panel hidden">
+                        <div class="dist-star-head"><span class="ms" style="color:var(--accent)">auto_awesome</span>譜面の傾向から★レーティングとおすすめ難易度を算出しました</div>
+                        <div id="dist-star-chips" class="dist-star-chips"></div>
+                        <p class="dist-star-note">BeatPulse ZQによる自動算出</p>
+                        <button type="button" id="dist-star-apply" class="btn btn-text has-icon" style="align-self:flex-start" onclick="applySuggestedDifficulty()"><span class="ms">auto_awesome</span><span id="dist-star-apply-label">おすすめの難易度を選ぶ</span></button>
+                    </div>
                     <button class="btn btn-filled has-icon" style="width:100%" onclick="downloadDistribution()"><span class="ms">archive</span>曲とJSONをダウンロード</button>
                     <hr class="divider">
                     <h4 class="t-title-s" style="display:flex;align-items:center;gap:8px"><span class="ms" style="color:var(--accent)">cloud_upload</span>オンラインにアップロード</h4>
@@ -2509,7 +2543,7 @@
                 </section>
                 <section class="dlg-section">
                     <h4><span class="ms">info</span>BeatPulse ZQ について</h4>
-                    <p>バージョン 1.18 ・ © 2026 BeatPulse ZQ ・ アイコン: Microsoft Fluent System Icons (MIT License)</p>
+                    <p>バージョン 2.0 ・ © 2026 BeatPulse ZQ ・ アイコン: Microsoft Fluent System Icons (MIT License)</p>
                     <div class="about-links">
                         <a class="btn has-icon" href="home.html" target="_blank" rel="noopener"><span class="ms">open_in_new</span>ホームページ</a>
                         <a class="btn has-icon" href="https://discord.gg/uQX6xcuxsT" target="_blank" rel="noopener"><span class="ms">open_in_new</span>公式Discord</a>
@@ -4243,6 +4277,7 @@
 
         // モーダルを開いたとき、読み込み済み譜面の情報を表示し、配布用フォームへ引き継ぐ
         function refreshChartModal() {
+            renderDistStarPanel();
             const box = document.getElementById('chart-meta-info');
             const meta = currentChart && currentChart.meta && typeof currentChart.meta === 'object' ? currentChart.meta : null;
             if (!box) return;
@@ -5683,6 +5718,194 @@
             return cyrb53(notes.join('|') + '#' + zones.join('|'));
         }
 
+        // ---------- ★レーティングの自動計算 ----------
+        // 単純なノーツ数ではなく、「一か所に固まっているか、ばらけているか(集中度)」と
+        // 「連打(同じレーンへの高速な連続入力)」を軸に、同時押し・ロング率・BPM・速度変化も
+        // 加味して星の数(0.00〜10.00)を機械的に見積もる。公式のような厳密な指標ではなく、
+        // 「だいたいこれくらいの難しさ」を数値で比較できるようにするための目安。
+        function computeStarRating(chart, difficultyKey) {
+            const notes = (chart.notes || []).filter(n => n && Number.isFinite(n.time));
+            if (!notes.length) return 0;
+            const sorted = [...notes].sort((a, b) => a.time - b.time || a.lane - b.lane);
+            const bpm = Number(chart.bpm) || 120;
+            const lastEnd = Math.max(...sorted.map(n => n.time + (n.type === 'hold' ? (n.duration || 0) : 0)));
+            const duration = Math.max(1, lastEnd - sorted[0].time || lastEnd);
+            const n = sorted.length;
+
+            const avgNps = n / duration; // 曲全体でならしたノーツ/秒(あくまで基準線として弱めに使う)
+
+            // ピーク密度: 2秒の窓をずらして、もっとも「一か所に集まっている」区間のノーツ/秒を探す
+            const WINDOW = 2;
+            let peakNps = avgNps;
+            let start = 0;
+            for (let end = 0; end < sorted.length; end++) {
+                while (sorted[end].time - sorted[start].time > WINDOW) start++;
+                const nps = (end - start + 1) / WINDOW;
+                if (nps > peakNps) peakNps = nps;
+            }
+            // 集中度: 一番密集した区間が全体平均よりどれだけ突出しているか。
+            // 高いほど「一部だけに固まっている(ばらけていない)」譜面で、突発的な難所として難易度を押し上げる
+            const burstRatio = Math.min(3, Math.max(0, peakNps / Math.max(0.5, avgNps) - 1));
+
+            // 同時押し(コード)率: 50ms以内に別レーンのノーツが重なっている割合
+            let chordHits = 0;
+            for (let i = 0; i < sorted.length; i++) {
+                for (let j = i + 1; j < sorted.length; j++) {
+                    if (sorted[j].time - sorted[i].time > 0.05) break;
+                    if (sorted[j].lane !== sorted[i].lane) { chordHits++; break; }
+                }
+            }
+            const chordRatio = chordHits / n;
+
+            // 連打: 同じレーンに180ms未満の間隔で連続して来るノーツを検出(トリル/ロール)。
+            // 割合(streamRatio)に加えて、最長の連打の長さ(maxRun)も持久力要素として見る
+            let streamHits = 0, curRun = 1, maxRun = 1;
+            for (let i = 1; i < sorted.length; i++) {
+                const gap = sorted[i].time - sorted[i - 1].time;
+                if (sorted[i].lane === sorted[i - 1].lane && gap > 0 && gap < 0.18) {
+                    streamHits++; curRun++;
+                    if (curRun > maxRun) maxRun = curRun;
+                } else {
+                    curRun = 1;
+                }
+            }
+            const streamRatio = streamHits / n;
+
+            const holdRatio = notes.filter(nn => nn.type === 'hold').length / n;
+            const zoneCount = (chart.speedZones || []).length;
+
+            // 重み付けして1つの粗い指標にまとめる。
+            // 単純な物量(avgNps)は控えめにし、集中度(burstRatio)と連打(streamRatio/maxRun)を重視
+            let raw =
+                avgNps * 0.25 +
+                peakNps * 0.55 +
+                burstRatio * 1.6 +
+                chordRatio * 6 +
+                streamRatio * 5 +
+                Math.min(3, maxRun * 0.15) +
+                holdRatio * 1.5 +
+                Math.max(0, (bpm - 120) / 60) +
+                Math.min(2, zoneCount * 0.3);
+
+            // EASY/NORMAL/HARD/PLUSE! の難易度表記に応じて底上げ・底下げする。
+            // 見た目の音符パターンが近くても、投稿者がEASYとして出した譜面は明らかに易しく作られているはずなので下げ、
+            // HARD/PLUSE!は逆に上げて、難易度表記と★のずれを小さくする
+            const diffMultiplier = STAR_DIFF_MULTIPLIER[normalizeDifficulty(difficultyKey)] ?? 1;
+            raw *= diffMultiplier;
+
+            // 上限を10に切り詰めず、10.00を超えて「明らかにもっと難しい」場合はそのまま超過した数値を返す
+            // (表示側で 10.00 を超えていたら "10+" と出す)
+            const stars = Math.max(0, Math.log2(raw + 1) * 2.1);
+            return Math.round(stars * 100) / 100;
+        }
+        const STAR_DIFF_MULTIPLIER = { easy: 0.35, normal: 0.8, hard: 1.4, pluse: 2.3 };
+
+        // ---------- アップロード前の★レーティング目安 & 難易度おすすめ ----------
+        // 難易度表記(EASY/NORMAL/HARD/PLUSE!)を選ぶ前の段階では、表記による補正(diffMultiplier)を
+        // まだ決められないので、まず表記の影響を受けない生のパターン(multiplier=1)で★を算出し、
+        // その値がどの難易度帯に近いかで「この譜面ならこの表記が近い」というおすすめを出す。
+        // あくまで機械的な目安であり、最終的な表記はユーザーの判断に委ねる
+        const DIFF_SUGGEST_THRESHOLDS = [
+            { key: 'easy',   max: 2.0 },
+            { key: 'normal', max: 4.0 },
+            { key: 'hard',   max: 6.5 },
+            { key: 'pluse',  max: Infinity }
+        ];
+        function computeChartDifficultySuggestion(chart) {
+            if (!chart || !Array.isArray(chart.notes) || !chart.notes.length) return null;
+            const neutral = computeStarRating(chart, null); // 難易度表記による補正なしの、譜面そのものの傾向
+            const hit = DIFF_SUGGEST_THRESHOLDS.find(t => neutral < t.max);
+            const key = hit ? hit.key : 'pluse';
+            const stars = {};
+            DIFF_ORDER.forEach(k => { stars[k] = computeStarRating(chart, k); });
+            return { key, neutral, stars };
+        }
+
+        let distSuggestedDifficulty = null;
+
+        // 配布/アップロード用フォームに、読み込み中の譜面から算出した★とおすすめ難易度を表示する
+        function renderDistStarPanel() {
+            const panel = document.getElementById('dist-star-panel');
+            const chipsBox = document.getElementById('dist-star-chips');
+            if (!panel || !chipsBox) return;
+
+            const chart = (currentChart && Array.isArray(currentChart.notes) && currentChart.notes.length) ? chartForExport() : null;
+            const suggestion = chart ? computeChartDifficultySuggestion(chart) : null;
+            distSuggestedDifficulty = suggestion;
+
+            if (!suggestion) {
+                panel.classList.add('hidden');
+                chipsBox.innerHTML = '';
+                return;
+            }
+
+            panel.classList.remove('hidden');
+            chipsBox.innerHTML = DIFF_ORDER.map(k => {
+                const isReco = k === suggestion.key;
+                return `<span class="dist-star-chip${isReco ? ' is-reco' : ''}" data-k="${k}">` +
+                    `<span class="dsc-label">${DIFFICULTIES[k].label}</span>` +
+                    `<span class="dsc-star">★${formatStarRating(suggestion.stars[k])}</span>` +
+                    (isReco ? '<span class="dsc-badge">おすすめ</span>' : '') +
+                    `</span>`;
+            }).join('');
+
+            const applyLabel = document.getElementById('dist-star-apply-label');
+            if (applyLabel) applyLabel.textContent = `おすすめの ${DIFFICULTIES[suggestion.key].label} を選ぶ`;
+        }
+
+        // 「おすすめの難易度を選ぶ」ボタン: 推定結果をそのまま難易度チップに反映する
+        function applySuggestedDifficulty() {
+            if (!distSuggestedDifficulty) return;
+            setDistDifficulty(distSuggestedDifficulty.key);
+            showToast(`難易度を ${DIFFICULTIES[distSuggestedDifficulty.key].label} に設定しました(目安 ★${formatStarRating(distSuggestedDifficulty.stars[distSuggestedDifficulty.key])})`, 'success');
+        }
+
+        // ★の表示用フォーマット: 10.00を超えていたら "10+" とだけ出す
+        function formatStarRating(v) {
+            if (typeof v !== 'number' || !Number.isFinite(v)) return '';
+            return v >= 10 ? '10+' : v.toFixed(2);
+        }
+
+        const STAR_RATING_CACHE_KEY = 'beatpulse_star_ratings';
+        function getStarRatingCache() {
+            try { return JSON.parse(localStorage.getItem(STAR_RATING_CACHE_KEY) || '{}') || {}; } catch (e) { return {}; }
+        }
+        function getCachedStarRating(id) {
+            const v = Number(getStarRatingCache()[id]);
+            return Number.isFinite(v) ? v : null;
+        }
+        function setCachedStarRating(id, rating) {
+            try {
+                const cache = getStarRatingCache();
+                cache[id] = Math.round(rating * 100) / 100;
+                localStorage.setItem(STAR_RATING_CACHE_KEY, JSON.stringify(cache));
+            } catch (e) {}
+        }
+
+        // 譜面本体だけをダウンロードして(曲は取得せず、プレイ可能な状態にもしない)★レーティングを計算し、この端末に保存する
+        async function rateOnlineChartLocally(entry) {
+            if (onlineBusy || !isValidOnlineId(entry.id)) return;
+            setOnlineBusy(true);
+            try {
+                const raw = await fbGetValue(`charts/${entry.id}`);
+                if (!raw || typeof raw !== 'object') throw new Error('譜面データが見つかりません');
+                const chart = sanitizeChart(Object.assign({}, raw, { notes: toArray(raw.notes), speedZones: toArray(raw.speedZones) }));
+                if (!chart || !chart.notes.length) throw new Error('譜面データが壊れています');
+
+                const rating = computeStarRating(chart, entry.difficulty);
+                setCachedStarRating(entry.id, rating);
+                entry.starRating = rating;
+                entry.starRatingLocal = true;
+                showToast(`★${formatStarRating(rating)} のレーティングをつけました(この端末に保存されます)`, 'success');
+                renderOnlineList();
+            } catch (err) {
+                showToast(describeOnlineError(err), 'error');
+            } finally {
+                setOnlineBusy(false);
+            }
+        }
+
+
         function base64ToBytes(b64) {
             const bin = atob(b64);
             const out = new Uint8Array(bin.length);
@@ -5774,7 +5997,8 @@
                 mediaFileName: str(d.mediaFileName, 200),
                 mediaMime: str(d.mediaMime, 100),
                 mediaSize: num(d.mediaSize),
-                mediaChunks: Math.max(0, Math.min(ONLINE_MAX_MEDIA_CHUNKS, Math.floor(num(d.mediaChunks))))
+                mediaChunks: Math.max(0, Math.min(ONLINE_MAX_MEDIA_CHUNKS, Math.floor(num(d.mediaChunks)))),
+                starRating: Number.isFinite(Number(d.starRating)) ? Number(d.starRating) : null
             };
         }
 
@@ -5793,6 +6017,12 @@
                     });
                 }
                 entries.sort((a, b) => (b.createdAt - a.createdAt) || (a.id < b.id ? 1 : -1));
+                entries.forEach(e => { // サーバー側に★が無くても、この端末で計算済みならキャッシュから復元する
+                    if (e.starRating === null) {
+                        const cached = getCachedStarRating(e.id);
+                        if (cached !== null) { e.starRating = cached; e.starRatingLocal = true; }
+                    }
+                });
                 onlineEntries = entries;
                 renderOnlineList();
             } catch (err) {
@@ -5800,6 +6030,9 @@
                 status.textContent = describeOnlineError(err);
             }
         }
+
+        let onlineGroupSelection = new Map(); // 曲名でまとめたときに、どの難易度を表示中か(曲名キー -> entry.id)
+        const ONLINE_DIFF_ORDER = ['easy', 'normal', 'hard', 'pluse'];
 
         function renderOnlineList() {
             const status = document.getElementById('online-status');
@@ -5812,58 +6045,178 @@
                 ? `${shown.length} / ${onlineEntries.length} 件`
                 : 'まだ譜面がありません。';
 
+            // 同じ曲名の譜面は、難易度違いとしてひとつのカードにまとめる(表記ゆれは前後の空白・大文字小文字のみ吸収)
+            const groups = new Map();
+            const groupOrder = [];
             shown.forEach(entry => {
+                const key = (entry.title || '').trim().toLowerCase() || `__untitled_${entry.id}`;
+                if (!groups.has(key)) { groups.set(key, []); groupOrder.push(key); }
+                groups.get(key).push(entry);
+            });
+
+            groupOrder.forEach(key => {
+                const entries = groups.get(key);
+                entries.sort((a, b) => {
+                    const ia = ONLINE_DIFF_ORDER.indexOf(a.difficulty), ib = ONLINE_DIFF_ORDER.indexOf(b.difficulty);
+                    if (ia !== ib) return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+                    return (b.createdAt - a.createdAt) || (a.id < b.id ? 1 : -1);
+                });
+
+                // 前回このカードで選んでいた難易度を覚えておいて復元する(なければ一番易しい/新しいものを先頭に)
+                const savedId = onlineGroupSelection.get(key);
+                const active = entries.find(e => e.id === savedId) || entries[0];
+                onlineGroupSelection.set(key, active.id);
+
                 const card = el('div', 'oc');
 
                 const head = el('div', 'oc-head');
                 const titleBox = el('div');
-                titleBox.appendChild(el('div', 'oc-title', entry.title || '(無題)'));
-                titleBox.appendChild(el('div', 'oc-sub', `作者: ${entry.author || '-'}${entry.uploaderId ? ' ・ 投稿: ' + entry.uploaderId : ''}`));
+                titleBox.appendChild(el('div', 'oc-title', entries[0].title || '(無題)'));
+                const authors = Array.from(new Set(entries.map(e => e.author).filter(Boolean)));
+                titleBox.appendChild(el('div', 'oc-sub', `作者: ${authors.join(' / ') || '-'}${active.uploaderId ? ' ・ 投稿: ' + active.uploaderId : ''}`));
                 head.appendChild(titleBox);
-                const badge = difficultyBadge(entry.difficulty);
-                if (badge) head.appendChild(badge);
+                if (entries.length === 1) { // 難易度が1つだけなら今まで通りバッジ表示
+                    const badge = difficultyBadge(active.difficulty);
+                    if (badge) head.appendChild(badge);
+                }
                 card.appendChild(head);
 
-                if (entry.detail) card.appendChild(el('p', 'oc-detail', entry.detail));
-                if (entry.hasMedia && entry.mediaChunks > 0) {
-                    const tag = el('div', 'oc-tag');
-                    tag.appendChild(iconEl('music_note'));
-                    tag.appendChild(document.createTextNode(`曲つき: ${entry.mediaFileName || entry.audioFile} (${formatBytes(entry.mediaSize)})`));
-                    card.appendChild(tag);
-                    card.appendChild(el('p', 'oc-note', '投稿者が音源の権利・許諾を有していることを確認して投稿されています'));
-                } else if (entry.audioFile) {
-                    card.appendChild(el('p', 'oc-note', `必要な曲: ${entry.audioFile}(曲は含まれません)`));
+                if (entries.length > 1) { // 難易度違い(同じ難易度が複数あるときはさらにその中で)を行ごとに分けて出す
+                    const byDiff = new Map();
+                    entries.forEach(e => {
+                        const dk = e.difficulty || '';
+                        if (!byDiff.has(dk)) byDiff.set(dk, []);
+                        byDiff.get(dk).push(e); // entries は既に新しい順に並んでいるので、同じ難易度内も新しい順のまま
+                    });
+                    const diffKeys = Array.from(byDiff.keys()).sort((a, b) => {
+                        const ia = ONLINE_DIFF_ORDER.indexOf(a), ib = ONLINE_DIFF_ORDER.indexOf(b);
+                        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+                    });
+
+                    const diffWrap = el('div', 'oc-diff-wrap');
+                    diffKeys.forEach(dk => {
+                        const bucket = byDiff.get(dk);
+                        const diff = DIFFICULTIES[dk];
+                        const row = el('div', 'oc-diff-row');
+                        const label = el('span', 'diff-tag oc-diff-label', diff ? diff.label : (dk || '?'));
+                        label.dataset.k = dk;
+                        row.appendChild(label);
+
+                        const chipGroup = el('div', 'oc-diff seg');
+                        chipGroup.setAttribute('role', 'group');
+                        chipGroup.setAttribute('aria-label', `${diff ? diff.label : (dk || '?')}の譜面を選択`);
+                        bucket.forEach((e, idx) => {
+                            // 同じ難易度が複数あるときは作者名(なければ投稿日、それも無ければ番号)で見分ける
+                            const chipLabel = bucket.length > 1
+                                ? (e.author || (e.createdAt ? new Date(e.createdAt).toLocaleDateString('ja-JP') : `#${idx + 1}`))
+                                : (diff ? diff.label : (dk || '?'));
+                            const btn = el('button', 'seg-btn', chipLabel);
+                            btn.type = 'button';
+                            btn.setAttribute('aria-pressed', String(e.id === active.id));
+                            btn.addEventListener('click', () => { onlineGroupSelection.set(key, e.id); renderOnlineList(); });
+                            chipGroup.appendChild(btn);
+                        });
+                        row.appendChild(chipGroup);
+                        diffWrap.appendChild(row);
+                    });
+                    card.appendChild(diffWrap);
                 }
 
-                const foot = el('div', 'oc-foot');
-                const dateStr = entry.createdAt ? new Date(entry.createdAt).toLocaleDateString('ja-JP') : '';
-                foot.appendChild(el('span', 'oc-meta', `${entry.noteCount}ノーツ ・ ${entry.duration ? formatTime(entry.duration).slice(0, 5) : '--:--'} ・ ${dateStr}`));
-
-                const btns = el('div', 'oc-btns');
-                const rankBtn = el('button', 'btn has-icon');
-                rankBtn.type = 'button';
-                rankBtn.append(iconEl('emoji_events'), document.createTextNode('ランキング'));
-                rankBtn.addEventListener('click', () => openRanking({ id: entry.id, title: entry.title, difficulty: entry.difficulty }));
-                const dlBtn = el('button', 'btn btn-filled has-icon online-action-btn');
-                dlBtn.type = 'button';
-                dlBtn.append(iconEl('download'), document.createTextNode('ダウンロード'));
-                dlBtn.addEventListener('click', () => downloadOnlineChart(entry));
-                dlBtn.disabled = onlineBusy;
-                btns.append(rankBtn, dlBtn);
-                if (isAdmin()) { // 管理者だけに出る操作
-                    const clr = el('button', 'btn btn-danger online-action-btn', 'ランキング消去');
-                    clr.type = 'button';
-                    clr.addEventListener('click', () => adminClearRanking(entry));
-                    const del = el('button', 'btn btn-danger online-action-btn', '削除');
-                    del.type = 'button';
-                    del.addEventListener('click', () => askAdminDelete(entry));
-                    btns.append(clr, del);
-                }
-                foot.appendChild(btns);
-                card.appendChild(foot);
-
+                renderOnlineEntryBody(card, active);
                 list.appendChild(card);
             });
+        }
+
+        // ★の数値(0〜10)を色にする: 緑→黄→赤→紫のグラデーションで、8以上は赤紫の発光表示にする
+        function starRatingColor(v) {
+            v = Math.max(0, Math.min(10, Number(v) || 0));
+            const stops = [
+                { at: 0, c: [34, 197, 94] },    // 緑   #22c55e (0〜5はほぼ緑のまま)
+                { at: 5.0, c: [250, 204, 21] }, // 黄   #facc15 (ここからようやく黄色になり始める)
+                { at: 7.0, c: [239, 68, 68] },  // 赤   #ef4444
+                { at: 8.5, c: [168, 85, 247] }, // 紫   #a855f7
+                { at: 10, c: [217, 70, 200] }   // 紫寄りの終点(発光の起点色として使う)
+            ];
+            for (let i = 0; i < stops.length - 1; i++) {
+                const a = stops[i], b = stops[i + 1];
+                if (v >= a.at && v <= b.at) {
+                    const t = (v - a.at) / (b.at - a.at);
+                    const c = a.c.map((ac, idx) => Math.round(ac + (b.c[idx] - ac) * t));
+                    return `rgb(${c[0]},${c[1]},${c[2]})`;
+                }
+            }
+            const last = stops[stops.length - 1].c;
+            return `rgb(${last[0]},${last[1]},${last[2]})`;
+        }
+
+        function applyStarRatingStyle(valueEl, rating) {
+            if (rating >= 8.5) { // 高難易度は赤×紫のグラデーション発光にする
+                valueEl.classList.add('oc-star-extreme');
+                valueEl.style.color = '';
+            } else {
+                valueEl.classList.remove('oc-star-extreme');
+                valueEl.style.color = starRatingColor(rating);
+            }
+        }
+
+        // 1枚のカードの中身(説明文・曲つきタグ・メタ情報・ボタン群)を、選択中の難易度の譜面(entry)で描画する
+        function renderOnlineEntryBody(card, entry) {
+            if (typeof entry.starRating === 'number') {
+                const starRow = el('div', 'oc-star');
+                const starValue = el('span', 'oc-star-value', `★${formatStarRating(entry.starRating)}`);
+                applyStarRatingStyle(starValue, entry.starRating);
+                starRow.appendChild(starValue);
+                if (entry.starRatingLocal) starRow.appendChild(el('span', 'oc-star-note', '(この端末で計算・保存)'));
+                card.appendChild(starRow);
+            } else {
+                const unrated = el('div', 'oc-star-unrated');
+                unrated.appendChild(el('p', null, 'この曲は★レーティングに対応していません。ボタンを押すと、譜面だけをダウンロードして★レーティングを計算し、この端末に保存します(曲はダウンロードされず、プレイできる状態にはなりません)。'));
+                const rateBtn = el('button', 'btn has-icon online-action-btn');
+                rateBtn.type = 'button';
+                rateBtn.append(iconEl('star'), document.createTextNode('★レーティングをつける'));
+                rateBtn.disabled = onlineBusy;
+                rateBtn.addEventListener('click', () => rateOnlineChartLocally(entry));
+                unrated.appendChild(rateBtn);
+                card.appendChild(unrated);
+            }
+
+            if (entry.detail) card.appendChild(el('p', 'oc-detail', entry.detail));
+            if (entry.hasMedia && entry.mediaChunks > 0) {
+                const tag = el('div', 'oc-tag');
+                tag.appendChild(iconEl('music_note'));
+                tag.appendChild(document.createTextNode(`曲つき: ${entry.mediaFileName || entry.audioFile} (${formatBytes(entry.mediaSize)})`));
+                card.appendChild(tag);
+                card.appendChild(el('p', 'oc-note', '投稿者が音源の権利・許諾を有していることを確認して投稿されています'));
+            } else if (entry.audioFile) {
+                card.appendChild(el('p', 'oc-note', `必要な曲: ${entry.audioFile}(曲は含まれません)`));
+            }
+
+            const foot = el('div', 'oc-foot');
+            const dateStr = entry.createdAt ? new Date(entry.createdAt).toLocaleDateString('ja-JP') : '';
+            foot.appendChild(el('span', 'oc-meta', `${entry.noteCount}ノーツ ・ ${entry.duration ? formatTime(entry.duration).slice(0, 5) : '--:--'} ・ ${dateStr}`));
+
+            const btns = el('div', 'oc-btns');
+            const rankBtn = el('button', 'btn has-icon');
+            rankBtn.type = 'button';
+            rankBtn.append(iconEl('emoji_events'), document.createTextNode('ランキング'));
+            rankBtn.addEventListener('click', () => openRanking({ id: entry.id, title: entry.title, difficulty: entry.difficulty }));
+            const dlBtn = el('button', 'btn btn-filled has-icon online-action-btn');
+            dlBtn.type = 'button';
+            dlBtn.append(iconEl('download'), document.createTextNode('ダウンロード'));
+            dlBtn.addEventListener('click', () => downloadOnlineChart(entry));
+            dlBtn.disabled = onlineBusy;
+            btns.append(rankBtn, dlBtn);
+            if (isAdmin()) { // 管理者だけに出る操作
+                const clr = el('button', 'btn btn-danger online-action-btn', 'ランキング消去');
+                clr.type = 'button';
+                clr.addEventListener('click', () => adminClearRanking(entry));
+                const del = el('button', 'btn btn-danger online-action-btn', '削除');
+                del.type = 'button';
+                del.addEventListener('click', () => askAdminDelete(entry));
+                btns.append(clr, del);
+            }
+            foot.appendChild(btns);
+            card.appendChild(foot);
         }
 
         // ----- ダウンロード -----
@@ -6253,7 +6606,8 @@
                 audioFile: audioFile,
                 createdAt: Date.now(),
                 uploaderId: account ? account.id : '',
-                uploaderUid: account ? account.uid : ''
+                uploaderUid: account ? account.uid : '',
+                starRating: computeStarRating(chartOut, meta.difficulty) // 投稿時にノーツ密度・同時押し・BPM等から自動計算
             };
 
             setOnlineBusy(true);
