@@ -9883,7 +9883,7 @@
                 battle.addEventListener('click', () => openShareInvite(uid, id, 'battle'));
                 const rank2v2 = el('button', 'btn btn-filled has-icon account-action-btn');
                 rank2v2.type = 'button';
-                rank2v2.title = 'フレンド3人で2v2ランク';
+                rank2v2.title = 'フレンド1人と2v2ランク';
                 rank2v2.appendChild(iconEl('group'));
                 rank2v2.appendChild(el('span', '', '2v2ランク'));
                 rank2v2.addEventListener('click', () => start2v2RankInvite(uid, id));
@@ -10010,7 +10010,7 @@
             document.getElementById('room-me-state').textContent = me.ready ? '準備OK' : '準備中';
             if (room.mode === 'rank2v2') {
                 const humansReady = entries.length === 2 && entries.every(([,p]) => !!p.ready);
-                document.getElementById('room-friend-id').textContent = `${entries.length}/2 人間 + 4人チーム戦`;
+                document.getElementById('room-friend-id').textContent = `${entries.length}/2 人参加・2v2`;
                 const otherHuman = entries.find(([uid]) => uid !== account.uid);
                 document.getElementById('room-friend-state').textContent = otherHuman
                     ? (otherHuman[1].ready ? `${otherHuman[1].id || 'FRIEND'}：準備OK` : `${otherHuman[1].id || 'FRIEND'}：準備中`)
@@ -10025,7 +10025,7 @@
                 }
                 setRoomStatus(entries.length < 2
                     ? '2v2ランク：フレンド1人を待っています…'
-                    : (humansReady ? '両チームの準備OK！まもなく2v2ランク開始！' : '人間2人が「準備OK」を押すと2v2ランク開始'));
+                    : (humansReady ? '両チームの準備OK！まもなく2v2ランク開始！' : 'あなたとフレンドの2人が「準備OK」を押すと2v2ランク開始'));
             } else {
                 document.getElementById('room-friend-state').textContent = friend.ready ? '準備OK' : '待機中';
                 const readyBtn = document.getElementById('room-ready-btn');
@@ -10523,7 +10523,7 @@
                     if (Number.isFinite(localStar) && localStar > 0) entry.starRating = localStar;
                 }
                 openShareInvite(uid, id, 'rank2v2');
-                showToast(`${id}を2v2ランクに招待します。あと2人を追加招待してください`, 'success');
+                showToast(`${id}を2v2ランクに招待します。2v2ランクの4人対戦です`, 'success');
             } catch (err) {
                 showToast(describeOnlineError(err), 'error');
             } finally {
@@ -10591,7 +10591,7 @@
                     const players = Object.keys(livePlayers || {});
                     room.playerUids = players;
                     if (players.includes(target.uid)) throw new Error('そのフレンドはすでに参加しています');
-                    if (players.length >= 2) throw new Error('2v2ランクは人間2人までです（4人チーム戦）');
+                    if (players.length >= 2) throw new Error('2v2ランクはフレンド1人までです（4人対戦）');
                     const slot = players.length;
                     await fbSetValue(`users/${target.uid}/invites/${room.id}`, {
                         roomId: room.id, from: account.uid, fromId: account.id,
@@ -10602,7 +10602,7 @@
                     shareTarget = null;
                     setShareStatus('');
                     closeModal('share-modal');
-                    showToast(`${target.id}を2v2ランクに招待しました（4人チーム戦）`, 'success');
+                    showToast(`${target.id}を2v2ランクに招待しました（4人対戦）`, 'success');
                 } catch (err) {
                     showToast(describeOnlineError(err), 'error');
                 }
