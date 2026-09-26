@@ -10221,13 +10221,14 @@
             if (ids.length < 2) return null;
             const humanA = ids.find(uid => String(players[uid].team || 'A') === 'A') || ids[0];
             const humanB = ids.find(uid => uid !== humanA) || ids[1];
+            // 2v2ランクは「自分＋フレンド」vs「AI＋AI」。AIは同じ相手チーム。
             const bots = {
-                'bot-1': { id: 'BOT 1', slot: 2, team: 'A' },
-                'bot-2': { id: 'BOT 2', slot: 3, team: 'B' }
+                'bot-1': { id: 'AI 1', slot: 2, team: 'B' },
+                'bot-2': { id: 'AI 2', slot: 3, team: 'B' }
             };
             const make = (botId, team, seed) => {
                 const ctx = { star: Number(room.star) || 0, songElo: starToEloRating(Number(room.star) || 0), botElo: Math.max(0, Math.round(ids.reduce((sum, uid) => sum + (Number(players[uid].elo) || ELO_RANK_DEFAULT), 0) / ids.length)) };
-                // BOTごとに少しだけ強さを変えつつ、同じルームでは両端末で再計算しても結果を揃える。
+                // AIごとに少しだけ強さを変えつつ、同じルームでは両端末で再計算しても結果を揃える。
                 const oldRandom = Math.random;
                 let state = 2166136261 ^ seed;
                 Math.random = () => {
